@@ -2888,7 +2888,7 @@ namespace MibbleSharp
                 }
             }
             module = new SnmpModule(name, groups.OfType<MibValue>().ToList(), modules.OfType<SnmpCompliance>().ToList());
-            module.setComment(comment);
+            module.Comment = comment;
             node.AddValue(module);
             return node;
         }
