@@ -98,7 +98,6 @@ namespace MibbleSharp.Type
             {
                 this.symbols = symbols;
             }
-            setTag(true, MibTypeTag.INTEGER);
         }
 
         /**
@@ -123,6 +122,8 @@ namespace MibbleSharp.Type
          */
         public override MibType Initialize(MibSymbol symbol, MibLoaderLog log)
         {
+            setTag(true, MibTypeTag.INTEGER);
+
             if (constraint != null)
             {
                 constraint.Initialize(this, log);

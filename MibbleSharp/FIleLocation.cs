@@ -20,13 +20,14 @@
 // rights reserved.
 // C# conversion Copyright (c) 2016 Jeremy Gibbons. All rights reserved
 //
-
+using System;
 namespace MibbleSharp
 {
     /// <summary>
     /// A file location. This class contains a reference to an exact
     /// location (line, column) inside a text file.
     /// </summary>
+    [Serializable]
     public class FileLocation
     {
         private string file;

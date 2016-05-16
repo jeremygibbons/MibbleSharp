@@ -50,7 +50,7 @@ namespace MibbleSharp.Type
          */
         private BooleanType(bool primitive) : base("BOOLEAN", primitive)
         {
-            setTag(true, MibTypeTag.BOOLEAN);
+            
         }
 
         /**
@@ -72,6 +72,7 @@ namespace MibbleSharp.Type
          */
         public override MibType Initialize(MibSymbol symbol, MibLoaderLog log)
         {
+            setTag(true, MibTypeTag.BOOLEAN);
             return this;
         }
 

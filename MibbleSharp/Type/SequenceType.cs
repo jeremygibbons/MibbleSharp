@@ -61,7 +61,6 @@ namespace MibbleSharp.Type
         private SequenceType(bool primitive, IList<ElementType> elements) : base("SEQUENCE", primitive)
         {
             this.elements = elements;
-            setTag(true, MibTypeTag.SEQUENCE);
         }
 
         /**
@@ -86,6 +85,7 @@ namespace MibbleSharp.Type
          */
         public override MibType Initialize(MibSymbol symbol, MibLoaderLog log)
         {
+            setTag(true, MibTypeTag.SEQUENCE);
             elements.Select(e => e.Initialize(symbol, log));
             return this;
         }

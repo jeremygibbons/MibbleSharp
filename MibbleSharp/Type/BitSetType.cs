@@ -101,7 +101,6 @@ namespace MibbleSharp.Type
             {
                 this.symbols = symbols;
             }
-            setTag(true, MibTypeTag.BIT_STRING);
         }
 
         /**
@@ -127,6 +126,8 @@ namespace MibbleSharp.Type
         public override MibType Initialize(MibSymbol symbol, MibLoaderLog log)
         {
             string message;
+
+            setTag(true, MibTypeTag.BIT_STRING);
 
             if (constraint != null)
             {

@@ -70,7 +70,7 @@ namespace MibbleSharp.Type
         {
 
             this.constraint = constraint;
-            setTag(true, MibTypeTag.OCTET_STRING);
+
         }
 
         /**
@@ -95,7 +95,7 @@ namespace MibbleSharp.Type
          */
         public override MibType Initialize(MibSymbol symbol, MibLoaderLog log)
         {
-
+            setTag(true, MibTypeTag.OCTET_STRING);
             if (constraint != null)
             {
                 constraint.Initialize(this, log);

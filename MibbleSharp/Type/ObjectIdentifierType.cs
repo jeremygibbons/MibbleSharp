@@ -50,7 +50,7 @@ namespace MibbleSharp.Type
          */
         private ObjectIdentifierType(bool primitive) : base("OBJECT IDENTIFIER", primitive)
         {
-            setTag(true, MibTypeTag.OBJECT_IDENTIFIER);
+            
         }
 
         /**
@@ -72,6 +72,7 @@ namespace MibbleSharp.Type
          */
         public override MibType Initialize(MibSymbol symbol, MibLoaderLog log)
         {
+            setTag(true, MibTypeTag.OBJECT_IDENTIFIER);
             return this;
         }
 

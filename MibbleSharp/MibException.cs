@@ -22,55 +22,72 @@
 //
 
 using System;
+using System.Runtime.Serialization;
+using System.Security.Permissions;
 
 namespace MibbleSharp
 {
-    /**
-     * A MIB exception. This exception is used to report processing
-     * errors for operations on MIB types and values.
-     *
-     * @author   Per Cederberg, <per at percederberg dot net>
-     * @version  2.0
-     * @since    2.0
-     */
+    ///
+    /// <summary>
+    /// A MIB exception. This exception is used to report processing
+    /// errors for operations on MIB types and values.
+    /// </summary>
+    ///
     [Serializable]
     public class MibException : Exception
     {
-
-        /**
-         * The file location.
-         */
+        /// <summary>
+        /// The FileLocation where the exception was raised
+        /// </summary>
         private FileLocation location;
 
-        /**
-         * Creates a new MIB exception.
-         *
-         * @param location       the file location
-         * @param message        the error message
-         */
+        /// 
+        /// <summary>
+        /// Create a new MibException
+        /// </summary>
+        /// <param name="location">The FileLocation where the exception is being raised</param>
+        /// <param name="message">The detailed exception error message</param>
+        /// 
         public MibException(FileLocation location, string message) : base(message)
         {
             this.location = location;
         }
 
-        /**
-         * Creates a new MIB exception.
-         *
-         * @param file           the file containing the error
-         * @param line           the line number containing the error
-         * @param column         the column number containing the error
-         * @param message        the error message
-         */
+        /// 
+        /// <summary>
+        /// Create a new MibException
+        /// </summary>
+        /// <param name="file">The filename where the exception is being raised</param>
+        /// <param name="line">The line within the file where the exception was raised</param>
+        /// <param name="column">The column within the file where the exception was raised</param>
+        /// <param name="message">The detailed exception error message</param>
+        /// 
         public MibException(string file, int line, int column, string message) : this(new FileLocation(file, line, column), message)
         {
 
         }
 
-        /**
-         * Returns the error location.
-         *
-         * @return the error location
-         */
+        /// 
+        /// <summary>
+        /// Deserialize a MibException 
+        /// </summary>
+        /// <param name="info"></param>
+        /// <param name="context"></param>
+        /// 
+        [SecurityPermissionAttribute(SecurityAction.Demand, SerializationFormatter = true)]
+        // Constructor should be protected for unsealed classes, private for sealed classes.
+        // (The Serializer invokes this constructor through reflection, so it can be private)
+        protected MibException(SerializationInfo info, StreamingContext context)
+            : base(info, context)
+        {
+            this.location = (FileLocation) info.GetValue("Location", typeof(FileLocation));
+        }
+
+        /// 
+        /// <summary>
+        /// The FileLocation where this exception was raised
+        /// </summary>
+        /// 
         public FileLocation Location
         {
             get
@@ -78,6 +95,26 @@ namespace MibbleSharp
                 return location;
             }
         }
-    }
 
+        /// 
+        /// <summary>
+        /// Return object data for serialization
+        /// </summary>
+        /// <param name="info"></param>
+        /// <param name="context"></param>
+        /// 
+        [SecurityPermissionAttribute(SecurityAction.Demand, SerializationFormatter = true)]
+        public override void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            if (info == null)
+            {
+                throw new ArgumentNullException("info");
+            }
+
+            info.AddValue("Location", this.Location);
+            
+            // Call through to the base class to let it save its own state
+            base.GetObjectData(info, context);
+        }
+    }
 }
