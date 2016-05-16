@@ -276,7 +276,7 @@ namespace MibbleSharp.Snmp
                 {
                     name = pos.ToString();
                 }
-                log.addWarning(symbol.getLocation(),
+                log.AddWarning(symbol.getLocation(),
                                "sequence element " + name + " is undefined " +
                                "in MIB, a default symbol will be created");
                 name = element.Name;

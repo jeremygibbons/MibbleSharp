@@ -292,15 +292,15 @@ namespace MibbleSharp.Type
             MibSymbol sym;
             string message;
 
-            sym = context.findSymbol(name, false);
+            sym = context.FindSymbol(name, false);
             if (sym == null)
             {
-                sym = context.findSymbol(name, true);
+                sym = context.FindSymbol(name, true);
                 if (sym != null && log != null)
                 {
                     message = "missing import for '" + name + "', using " +
                               "definition from " + sym.getMib().getName();
-                    log.addWarning(location, message);
+                    log.AddWarning(location, message);
                 }
             }
             return sym;
@@ -339,11 +339,11 @@ namespace MibbleSharp.Type
          *
          * @since 2.4
          */
-        public MibSymbol findSymbol(string name, bool expanded)
+        public MibSymbol FindSymbol(string name, bool expanded)
         {
             if (type is MibContext)
             {
-                return ((MibContext)type).findSymbol(name, expanded);
+                return ((MibContext)type).FindSymbol(name, expanded);
             }
             else
             {

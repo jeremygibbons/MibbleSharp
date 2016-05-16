@@ -23,80 +23,69 @@
 
 namespace MibbleSharp
 {
-
-    /**
-     * A compound MIB context. This class attempts to resolve all symbols
-     * with either one of two MIB contexts, one of which will have
-     * priority.
-     *
-     * @author   Per Cederberg, <per at percederberg dot net>
-     * @version  2.4
-     * @since    2.0
-     */
+    /// <summary>
+    /// A compound MIB context. This class attempts to resolve all symbols
+    /// with either one of two MIB contexts, one of which will have
+    /// priority.
+    /// </summary>
     class CompoundContext : MibContext
     {
 
-    /**
-     * The first MIB context.
-     */
-    private MibContext first;
+        private MibContext first;
 
-    /**
-     * The second MIB context.
-     */
-    private MibContext second;
+        private MibContext second;
 
-    /**
-     * Creates a new compound MIB context.
-     *
-     * @param first          the primary MIB context
-     * @param second         the secondary MIB context
-     */
-    public CompoundContext(MibContext first, MibContext second)
-    {
-        this.first = first;
-        this.second = second;
-    }
-
-    /**
-     * Searches for a named MIB symbol. This method may search outside
-     * the normal (or strict) scope, thereby allowing a form of
-     * relaxed search. Note that the results from the normal and
-     * expanded search may not be identical, due to the context
-     * chaining and the same symbol name appearing in various
-     * contexts.<p>
-     *
-     * <strong>NOTE:</strong> This is an internal method that should
-     * only be called by the MIB loader.
-     *
-     * @param name           the symbol name
-     * @param expanded       the expanded scope flag
-     *
-     * @return the MIB symbol, or null if not found
-     *
-     * @since 2.4
-     */
-    public MibSymbol findSymbol(string name, bool expanded)
-    {
-        MibSymbol symbol;
-
-        symbol = first.findSymbol(name, expanded);
-        if (symbol == null)
+        ///
+        /// <summary>Creates a new compound MIB context.</summary>
+        ///    
+        /// <param name="first">The primary MIB context</param>
+        /// <param name="second">The secondary MIB context</param>
+        ///
+        public CompoundContext(MibContext first, MibContext second)
         {
-            symbol = second.findSymbol(name, expanded);
+            this.first = first;
+            this.second = second;
         }
-        return symbol;
-    }
 
-    /**
-     * Returns a string representation of this object.
-     *
-     * @return a string representation of this object
-     */
-    public string toString()
-    {
-        return first.ToString() + ", " + second.ToString();
+        ///
+        /// <summary>
+        /// Searches for a named MIB symbol. This method may search outside
+        /// the normal (or strict) scope, thereby allowing a form of
+        /// relaxed search. Note that the results from the normal and
+        /// expanded search may not be identical, due to the context
+        /// chaining and the same symbol name appearing in various
+        /// contexts.
+        /// </summary>
+        /// <remark>
+        /// NOTE: This is an internal method that should
+        /// only be called by the MIB loader.
+        /// </remark>
+        ///
+        /// <param name="name">The symbol name</param>
+        /// <param name="expanded">The expanded scope flag</param>
+        ///
+        /// <returns>The MIBSymbol, or null if not found</returns>
+        ///
+        public MibSymbol FindSymbol(string name, bool expanded)
+        {
+            MibSymbol symbol;
+
+            symbol = first.FindSymbol(name, expanded);
+            if (symbol == null)
+            {
+                symbol = second.FindSymbol(name, expanded);
+            }
+            return symbol;
+        }
+
+        /// <summary>
+        /// Get a string representation of the Compound Context
+        /// </summary>
+        /// <returns>A string representing the Compound Context</returns>
+        public override string ToString()
+        {
+            return first.ToString() + ", " + second.ToString();
+        }
     }
-}
 
 }

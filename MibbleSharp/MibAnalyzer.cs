@@ -527,7 +527,7 @@ namespace MibbleSharp
             }
             if (!Char.IsUpper(name[0]))
             {
-                log.addWarning(getLocation(node),
+                log.AddWarning(getLocation(node),
                                "type identifier '" + name + "' doesn't " +
                                "start with an uppercase character");
             }
@@ -841,7 +841,7 @@ namespace MibbleSharp
         public override Node ExitSetType(Production node)
         {
             // TODO: implement set type support
-            log.addError(getLocation(node),
+            log.AddError(getLocation(node),
                          "SET type currently unsupported");
             node.AddValue(new NullType());
             return node;
@@ -858,7 +858,7 @@ namespace MibbleSharp
         public override Node ExitSetOfType(Production node)
         {
             // TODO: implement set of type support
-            log.addError(getLocation(node),
+            log.AddError(getLocation(node),
                          "SET OF type currently unsupported");
             node.AddValue(new NullType());
             return node;
@@ -889,7 +889,7 @@ namespace MibbleSharp
         public override Node ExitEnumeratedType(Production node)
         {
             // TODO: implement enumerated type support
-            log.addError(getLocation(node),
+            log.AddError(getLocation(node),
                          "ENUMERATED type currently unsupported");
             node.AddValue(new NullType());
             return node;
@@ -906,7 +906,7 @@ namespace MibbleSharp
         public override Node ExitSelectionType(Production node)
         {
             // TODO: implement selection type support
-            log.addError(getLocation(node),
+            log.AddError(getLocation(node),
                          "selection type currently unsupported");
             node.AddValue(new NullType());
             return node;
@@ -1044,7 +1044,7 @@ namespace MibbleSharp
         public override Node ExitAnyType(Production node)
         {
             // TODO: implement any type support
-            log.addError(getLocation(node),
+            log.AddError(getLocation(node),
                          "ANY type currently unsupported");
             node.AddValue(new NullType());
             return node;
@@ -1109,7 +1109,7 @@ namespace MibbleSharp
         public override Node ExitOptionalOrDefaultElement(Production node)
         {
             // TODO: implement this method?
-            log.addError(getLocation(node),
+            log.AddError(getLocation(node),
                          "optional and default elements are currently " +
                          "unsupported");
             return null;
@@ -1418,7 +1418,7 @@ namespace MibbleSharp
         public override Node ExitAlphabetConstraint(Production node)
         {
             // TODO: implement alphabet constraints
-            log.addError(getLocation(node),
+            log.AddError(getLocation(node),
                          "FROM constraints are currently unsupported");
             return null;
         }
@@ -1434,7 +1434,7 @@ namespace MibbleSharp
         public override Node ExitContainedTypeConstraint(Production node)
         {
             // TODO: implement contained type constraints
-            log.addError(getLocation(node),
+            log.AddError(getLocation(node),
                          "INCLUDES constraints are currently unsupported");
             return null;
         }
@@ -1450,7 +1450,7 @@ namespace MibbleSharp
         public override Node ExitInnerTypeConstraint(Production node)
         {
             // TODO: implement inner type constraints
-            log.addError(getLocation(node),
+            log.AddError(getLocation(node),
                          "WITH COMPONENT(S) constraints are currently " +
                          "unsupported");
             return null;
@@ -1486,7 +1486,7 @@ namespace MibbleSharp
             }
             if (!Char.IsLower(name[0]))
             {
-                log.addWarning(getLocation(node),
+                log.AddWarning(getLocation(node),
                                "value identifier '" + name + "' doesn't " +
                                "start with a lowercase character");
             }
@@ -1845,7 +1845,7 @@ namespace MibbleSharp
                         }
                         catch (MibException e)
                         {
-                            log.addError(e.getLocation(), e.Message);
+                            log.AddError(e.Location, e.Message);
                             parent = null;
                         }
                     }

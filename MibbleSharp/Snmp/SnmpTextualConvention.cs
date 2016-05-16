@@ -281,10 +281,10 @@ namespace MibbleSharp.Snmp
      *
      * @since 2.4
      */
-    public MibSymbol findSymbol(string name, bool expanded)
+    public MibSymbol FindSymbol(string name, bool expanded)
     {
         if (syntax is MibContext) {
-            return ((MibContext)syntax).findSymbol(name, expanded);
+            return ((MibContext)syntax).FindSymbol(name, expanded);
         } else {
             return null;
         }

@@ -99,7 +99,7 @@ namespace MibbleSharp.Snmp
                 }
                 catch (MibException e)
                 {
-                    log.addError(e.getLocation(), e.Message);
+                    log.AddError(e.Location, e.Message);
                 }
             }
         }

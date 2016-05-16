@@ -365,7 +365,7 @@ namespace MibbleSharp.Type
          *
          * @since 2.4
          */
-        public MibSymbol findSymbol(string name, bool expanded)
+        public MibSymbol FindSymbol(string name, bool expanded)
         {
             return GetSymbol(name);
         }
