@@ -22,71 +22,100 @@
 //
 
 using System;
+using System.Runtime.Serialization;
+using System.Security.Permissions;
 
 namespace MibbleSharp
 {
-    /**
-     * A MIB loader exception. This exception is thrown when a MIB file
-     * couldn't be loaded properly, normally due to syntactical or
-     * semantical errors in the file.
-     *
-     * @author   Per Cederberg, <per at percederberg dot net>
-     * @version  2.3
-     * @since    2.0
-     */
+    /// 
+    /// <summary>
+    /// A MIB loader exception. This exception is thrown when a MIB file
+    /// couldn't be loaded properly, normally due to syntactical or
+    /// semantical errors in the file.
+    /// </summary>
+    /// 
     [Serializable]
     public class MibLoaderException : Exception
     {
+        private MibLoaderLog log;
 
-    /**
-     * The MIB loader log.
-     */
-    private MibLoaderLog log;
+        /// 
+        /// <summary>
+        /// Creates a new MibLoaderException
+        /// </summary>
+        /// <param name="log">The MIB loader log</param>
+        /// 
+        public MibLoaderException(MibLoaderLog log)
+        {
+            this.log = log;
+        }
 
-    /**
-     * Creates a new MIB loader exception.
-     *
-     * @param log            the MIB loader log
-     */
-    public MibLoaderException(MibLoaderLog log)
-    {
-        this.log = log;
+        /// 
+        /// <summary>
+        /// Creates a new MIB loader exception. The specified message will
+        /// be added to a new MIB loader log as an error.
+        /// </summary>
+        /// <param name="file">The MIB file for which an exception was raised during loading</param>
+        /// <param name="message">The detailed error message</param>
+        /// 
+        public MibLoaderException(string file, string message)
+        {
+            log = new MibLoaderLog();
+            log.AddError(file, -1, -1, message);
+        }
+
+        /// 
+        /// <summary>
+        /// Deserialize a MibLoaderException
+        /// </summary>
+        /// <param name="info"></param>
+        /// <param name="context"></param>
+        /// 
+        [SecurityPermissionAttribute(SecurityAction.Demand, SerializationFormatter = true)]
+        protected MibLoaderException(SerializationInfo info, StreamingContext context)
+            : base(info, context)
+        {
+            this.log = (MibLoaderLog) info.GetValue("Log", typeof(MibLoaderLog));
+        }
+
+        /// 
+        /// <summary>
+        /// The MIBLoader log
+        /// </summary>
+        /// 
+        public MibLoaderLog Log
+        {
+            get
+            {
+                return log;
+            }
+        }
+
+        /// 
+        /// <summary>
+        /// The detailed error message
+        /// </summary>
+        /// 
+        public override string Message
+        {
+            get
+            {
+                return "found " + log.ErrorCount + " MIB loader errors";
+            }
+
+        }
+
+        /// <summary>
+        /// Serialize a MibLoader log
+        /// </summary>
+        /// <param name="info"></param>
+        /// <param name="context"></param>
+        [SecurityPermissionAttribute(SecurityAction.Demand, SerializationFormatter = true)]
+        public override void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            info.AddValue("Log", log);
+            base.GetObjectData(info, context);
+        }
     }
-
-    /**
-     * Creates a new MIB loader exception. The specified message will
-     * be added to a new MIB loader log as an error.
-     *
-     * @param file           the file containg the error
-     * @param message        the error message
-     *
-     * @since 2.3
-     */
-    public MibLoaderException(string file, string message)
-    {
-        log = new MibLoaderLog();
-        log.AddError(file, -1, -1, message);
-    }
-
-    /**
-     * Returns the MIB loader log.
-     *
-     * @return the MIB loader log
-     */
-    public MibLoaderLog getLog()
-    {
-        return log;
-    }
-
-    /**
-     * Returns a error summary message.
-     *
-     * @return a error summary message
-     */
-    public string getMessage()
-    {
-        return "found " + log.ErrorCount + " MIB loader errors";
-    }
-}
 
 }
