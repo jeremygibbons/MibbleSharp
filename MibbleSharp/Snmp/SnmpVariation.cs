@@ -122,10 +122,10 @@ namespace MibbleSharp.Snmp
             MibType type = null;
 
             value = value.Initialize(log, null);
-            if (getBaseSymbol() != null)
+            if (BaseSymbol != null)
             {
                 // TODO: use utility function to retrieve correct base type here
-                type = getBaseSymbol().getType();
+                type = BaseSymbol.getType();
                 if (type is SnmpTextualConvention)
                 {
                     type = ((SnmpTextualConvention)type).getSyntax();
@@ -157,15 +157,18 @@ namespace MibbleSharp.Snmp
          *
          * @since 2.8
          */
-        public MibValueSymbol getBaseSymbol()
+        public MibValueSymbol BaseSymbol
         {
-            if (value is ObjectIdentifierValue)
+            get
             {
-                return ((ObjectIdentifierValue)value).getSymbol();
-            }
-            else
-            {
-                return null;
+                if (value is ObjectIdentifierValue)
+                {
+                    return ((ObjectIdentifierValue)value).getSymbol();
+                }
+                else
+                {
+                    return null;
+                }
             }
         }
 
@@ -185,9 +188,12 @@ namespace MibbleSharp.Snmp
          * @return the value syntax, or
          *         null if not set
          */
-        public MibType getSyntax()
+        public MibType Syntax
         {
-            return syntax;
+            get
+            {
+                return syntax;
+            }
         }
 
         /**
@@ -196,9 +202,12 @@ namespace MibbleSharp.Snmp
          * @return the value write syntax, or
          *         null if not set
          */
-        public MibType getWriteSyntax()
+        public MibType WriteSyntax
         {
-            return writeSyntax;
+            get
+            {
+                return writeSyntax;
+            }
         }
 
         /**
@@ -207,9 +216,12 @@ namespace MibbleSharp.Snmp
          * @return the access mode, or
          *         null if not set
          */
-        public SnmpAccess getAccess()
+        public SnmpAccess Access
         {
-            return access;
+            get
+            {
+                return access;
+            }
         }
 
         /**
@@ -220,9 +232,12 @@ namespace MibbleSharp.Snmp
          *
          * @see net.percederberg.mibble.MibValue
          */
-        public IList<MibValue> getRequiredCells()
+        public IList<MibValue> RequiredCells
         {
-            return requiredCells;
+            get
+            {
+                return requiredCells;
+            }
         }
 
         /**
@@ -231,9 +246,12 @@ namespace MibbleSharp.Snmp
          * @return the default value, or
          *         null if no default value has been set
          */
-        public MibValue getDefaultValue()
+        public MibValue DefaultValue
         {
-            return defaultValue;
+            get
+            {
+                return defaultValue;
+            }
         }
 
         /**
@@ -241,9 +259,12 @@ namespace MibbleSharp.Snmp
          *
          * @return the variation description
          */
-        public string getDescription()
+        public string Description
         {
-            return description;
+            get
+            {
+                return description;
+            }
         }
 
         /**
