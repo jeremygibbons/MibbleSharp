@@ -15,7 +15,8 @@
 using System;
 using System.Text;
 
-namespace PerCederberg.Grammatica.Runtime.RE {
+namespace PerCederberg.Grammatica.Runtime.RE
+{
 
     /**
      * A regular expression exception. This exception is thrown if a
@@ -25,12 +26,15 @@ namespace PerCederberg.Grammatica.Runtime.RE {
      * @author   Per Cederberg
      * @version  1.0
      */
-    public class RegExpException : Exception {
+    [Serializable]
+    public class RegExpException : Exception
+    {
 
         /**
          * The error type enumeration.
          */
-        public enum ErrorType {
+        public enum ErrorType
+        {
 
             /**
              * The unexpected character error constant. This error is
@@ -91,7 +95,8 @@ namespace PerCederberg.Grammatica.Runtime.RE {
          * @param pos            the error position
          * @param pattern        the regular expression pattern
          */
-        public RegExpException(ErrorType type, int pos, string pattern) {
+        public RegExpException(ErrorType type, int pos, string pattern)
+        {
             this.type = type;
             this.position = pos;
             this.pattern = pattern;
@@ -101,8 +106,10 @@ namespace PerCederberg.Grammatica.Runtime.RE {
          * The message property. This property contains the detailed
          * exception error message.
          */
-        public override string Message {
-            get{
+        public override string Message
+        {
+            get
+            {
                 return GetMessage();
             }
         }
@@ -112,38 +119,43 @@ namespace PerCederberg.Grammatica.Runtime.RE {
          *
          * @return the exception error message
          */
-        public string GetMessage() {
-            StringBuilder  buffer = new StringBuilder();
+        public string GetMessage()
+        {
+            StringBuilder buffer = new StringBuilder();
 
             // Append error type name
-            switch (type) {
-            case ErrorType.UNEXPECTED_CHARACTER:
-                buffer.Append("unexpected character");
-                break;
-            case ErrorType.UNTERMINATED_PATTERN:
-                buffer.Append("unterminated pattern");
-                break;
-            case ErrorType.UNSUPPORTED_SPECIAL_CHARACTER:
-                buffer.Append("unsupported character");
-                break;
-            case ErrorType.UNSUPPORTED_ESCAPE_CHARACTER:
-                buffer.Append("unsupported escape character");
-                break;
-            case ErrorType.INVALID_REPEAT_COUNT:
-                buffer.Append("invalid repeat count");
-                break;
-            default:
-                buffer.Append("internal error");
-                break;
+            switch (type)
+            {
+                case ErrorType.UNEXPECTED_CHARACTER:
+                    buffer.Append("unexpected character");
+                    break;
+                case ErrorType.UNTERMINATED_PATTERN:
+                    buffer.Append("unterminated pattern");
+                    break;
+                case ErrorType.UNSUPPORTED_SPECIAL_CHARACTER:
+                    buffer.Append("unsupported character");
+                    break;
+                case ErrorType.UNSUPPORTED_ESCAPE_CHARACTER:
+                    buffer.Append("unsupported escape character");
+                    break;
+                case ErrorType.INVALID_REPEAT_COUNT:
+                    buffer.Append("invalid repeat count");
+                    break;
+                default:
+                    buffer.Append("internal error");
+                    break;
             }
 
             // Append erroneous character
             buffer.Append(": ");
-            if (position < pattern.Length) {
+            if (position < pattern.Length)
+            {
                 buffer.Append('\'');
                 buffer.Append(pattern.Substring(position));
                 buffer.Append('\'');
-            } else {
+            }
+            else
+            {
                 buffer.Append("<end of pattern>");
             }
 

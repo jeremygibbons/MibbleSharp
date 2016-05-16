@@ -33,6 +33,7 @@ namespace MibbleSharp
      * @version  2.0
      * @since    2.0
      */
+    [Serializable]
     public class MibException : Exception
     {
 

@@ -28,19 +28,15 @@ using System.IO;
 
 namespace MibbleSharp
 {
-    /**
-     * A MIB search directory cache. This class attempts to map MIB names
-     * to files for a single directory. It keeps two internal caches; one
-     * based on the file name similarity with MIB names, and one based on
-     * the content of the first few lines in each file. Each of these
-     * caches are created upon request and the content cache is normally
-     * used only as a secondary alternative due to the performance
-     * penalty of its creation.
-     *
-     * @author   Per Cederberg, <per at percederberg dot net>
-     * @version  2.9
-     * @since    2.9
-     */
+    /// <summary>
+    /// A MIB search directory cache. This class attempts to map MIB names
+    /// to files for a single directory.It keeps two internal caches; one
+    /// based on the file name similarity with MIB names, and one based on
+    /// the content of the first few lines in each file.Each of these
+    /// caches are created upon request and the content cache is normally
+    /// used only as a secondary alternative due to the performance
+    /// penalty of its creation.
+    /// </summary>
     class MibDirectoryCache
     {
 
@@ -197,17 +193,21 @@ namespace MibbleSharp
             try
             {
                 using (FileStream fs = File.Open(file, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
-                using (BufferedStream bs = new BufferedStream(fs))
-                using (StreamReader sr = new StreamReader(bs))
                 {
-                    string line;
-                    while ((line = sr.ReadLine()) != null)
+                    using (BufferedStream bs = new BufferedStream(fs))
                     {
-                        line = line.Trim();
-                        if (!line.Equals("") && !line.StartsWith("--"))
+                        using (StreamReader sr = new StreamReader(bs))
                         {
-                            Match m = NAME.Match(line);
-                            return m.Success ? m.Value : null;
+                            string line;
+                            while ((line = sr.ReadLine()) != null)
+                            {
+                                line = line.Trim();
+                                if (!line.Equals("") && !line.StartsWith("--"))
+                                {
+                                    Match m = NAME.Match(line);
+                                    return m.Success ? m.Value : null;
+                                }
+                            }
                         }
                     }
                 }

@@ -26,6 +26,7 @@ namespace PerCederberg.Grammatica.Runtime {
      * @version  1.5
      * @since    1.1
      */
+    [Serializable]
     public class ParserLogException : Exception {
 
         /**

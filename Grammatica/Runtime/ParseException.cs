@@ -25,6 +25,7 @@ namespace PerCederberg.Grammatica.Runtime {
      * @author   Per Cederberg
      * @version  1.5
      */
+    [Serializable]
     public class ParseException : Exception {
 
         /**

@@ -34,6 +34,7 @@ namespace MibbleSharp
      * @version  2.3
      * @since    2.0
      */
+    [Serializable]
     public class MibLoaderException : Exception
     {
 

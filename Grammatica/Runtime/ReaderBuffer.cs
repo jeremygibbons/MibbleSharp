@@ -309,9 +309,9 @@ namespace PerCederberg.Grammatica.Runtime {
                         input = null;
                     }
                 }
-            } catch (IOException e) {
+            } catch (IOException) {
                 input = null;
-                throw e;
+                throw;
             }
         }
 
