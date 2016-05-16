@@ -561,7 +561,7 @@ namespace MibbleSharp.Value
                 }
                 else
                 {
-                    log.addWarning(location, msg);
+                    log.AddWarning(location, msg);
                 }
             }
             if (parent.symbol != null)

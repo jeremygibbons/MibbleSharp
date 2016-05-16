@@ -101,7 +101,7 @@ namespace MibbleSharp
                 }
                 catch (MibException e)
                 {
-                    log.addError(e.getLocation(), e.Message);
+                    log.AddError(e.Location, e.Message);
                     type = null;
                 }
             }
@@ -112,12 +112,12 @@ namespace MibbleSharp
                 }
                 catch (MibException e)
                 {
-                    log.addError(e.getLocation(), e.Message);
+                    log.AddError(e.Location, e.Message);
                     value = null;
                 }
             }
         if (type != null && value != null && !type.IsCompatible(value)) {
-                log.addError(getLocation(),
+                log.AddError(getLocation(),
                              "value is not compatible with type");
             }
         if (value is ObjectIdentifierValue) {

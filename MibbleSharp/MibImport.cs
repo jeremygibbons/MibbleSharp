@@ -171,7 +171,7 @@ namespace MibbleSharp
      *
      * @return the MIB symbol, or null if not found
      */
-    public MibSymbol findSymbol(string name, bool expanded)
+    public MibSymbol FindSymbol(string name, bool expanded)
     {
         if (mib == null)
         {

@@ -56,6 +56,6 @@ namespace MibbleSharp
         *
         * @since 2.4
         */
-        MibSymbol findSymbol(string name, bool expanded);
+        MibSymbol FindSymbol(string name, bool expanded);
     }
 }

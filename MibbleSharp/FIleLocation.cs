@@ -21,96 +21,89 @@
 // C# conversion Copyright (c) 2016 Jeremy Gibbons. All rights reserved
 //
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 namespace MibbleSharp
 {
+    /// <summary>
+    /// A file location. This class contains a reference to an exact
+    /// location (line, column) inside a text file.
+    /// </summary>
     public class FileLocation
     {
-        /**
-        * The file name.
-        */
         private string file;
 
-        /**
-         * The line number.
-         */
         private int line;
 
-        /**
-         * The column number.
-         */
         private int column;
 
-        /**
-         * Creates a new file location without an exact line or column
-         * reference.
-         *
-         * @param file           the file name
-         */
+        /// <summary>
+        /// Create a File Location without specifying any particular position.
+        /// </summary>
+        /// <param name="file">The filename for this File Location</param>
         public FileLocation(string file) : this(file, -1, -1)
         {
-            
+
         }
 
-        /**
-         * Creates a new file location.
-         *
-         * @param file           the file name
-         * @param line           the line number
-         * @param column         the column number
-         */
+        /// <summary>
+        /// Create a File Location with precise location in the file.
+        /// </summary>
+        /// <remarks>
+        /// Location validity is not checked at this time,
+        /// except for negative line and column values
+        /// </remarks>
+        /// <param name="file">Filename for location. Existance is not checked</param>
+        /// <param name="line">Line number of location. Negative values are reset to -1</param>
+        /// <param name="column">Column number of location. Negative values are reset to -1</param>
         public FileLocation(string file, int line, int column)
         {
             this.file = file;
-            this.line = line;
-            this.column = column;
+            this.line = line < -1 ? -1 : line;
+            this.column = column < -1 ? -1 : column;
         }
 
-        /**
-         * Returns the file name.
-         *
-         * @return the file name
-         */
-        public string File()
+        /// <summary>
+        /// The File Location's filename
+        /// </summary>
+        public string File
         {
-            return file;
+            get
+            {
+                return file;
+            }
         }
 
-        /**
-         * Returns the line number.
-         *
-         * @return the line number
-         */
-        public int LineNumber()
+        /// <summary>
+        /// The File Location's line number
+        /// </summary>
+        public int LineNumber
         {
-            return line;
+            get
+            {
+                return line;
+            }
         }
 
-        /**
-         * Returns the column number.
-         *
-         * @return the column number
-         */
-        public int ColumnNumber()
+        /// <summary>
+        /// The File Location's column Number
+        /// </summary>
+        public int ColumnNumber
         {
-            return column;
+            get
+            {
+                return column;
+            }
         }
 
-        /**
-         * Reads the specified line from the file. If the file couldn't
-         * be opened or read correctly, null will be returned. The line
-         * will NOT contain the terminating '\n' character. This method
-         * takes special care to only count the linefeed (LF, 0x0A)
-         * character as a valid newline.
-         *
-         * @return the line read, or
-         *         null if not found
-         */
+        ///
+        /// <summary>
+        /// Reads the specified line from the file. If the file couldn't
+        /// be opened or read correctly, null will be returned. The line
+        /// will NOT contain the terminating '\n' character. This method
+        /// takes special care to only count the linefeed (LF, 0x0A)
+        /// character as a valid newline.
+        ///</summary>
+        /// <returns>the line read, or null if not found</returns>
+        ///
         public string ReadLine()
         {
             string str = null;
@@ -136,6 +129,14 @@ namespace MibbleSharp
                 str = sr.ReadLine();
             }
             return str;
+        }
+
+        /// <summary>
+        /// Get string representation of the FileLocation
+        /// </summary>
+        public override string ToString()
+        {
+            return "File: " + file + ", Line: " + line + ", Column: " + column;
         }
     }
 }

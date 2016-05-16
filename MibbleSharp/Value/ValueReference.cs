@@ -166,15 +166,15 @@ namespace MibbleSharp.Value
             MibSymbol sym;
             string message;
 
-            sym = context.findSymbol(name, false);
+            sym = context.FindSymbol(name, false);
             if (sym == null)
             {
-                sym = context.findSymbol(name, true);
+                sym = context.FindSymbol(name, true);
                 if (sym != null && log != null)
                 {
                     message = "missing import for '" + name + "', using " +
                               "definition from " + sym.getMib().getName();
-                    log.addWarning(location, message);
+                    log.AddWarning(location, message);
                 }
             }
             return sym;

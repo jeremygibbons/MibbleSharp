@@ -274,7 +274,7 @@ namespace MibbleSharp
             MibSymbol symbol;
             MibValue value;
 
-            symbol = context.findSymbol(DefaultContext.ISO, false);
+            symbol = context.FindSymbol(DefaultContext.ISO, false);
             value = ((MibValueSymbol)symbol).getValue();
             return (ObjectIdentifierValue)value;
         }
@@ -422,7 +422,7 @@ namespace MibbleSharp
             sourceQueue.Add(src);
 
             log = loadQueue();
-            if (log.errorCount() > 0)
+            if (log.ErrorCount > 0)
             {
                 throw new MibLoaderException(log);
             }
@@ -620,7 +620,7 @@ namespace MibbleSharp
             }
 
             // Handle errors
-            if (log.errorCount() > 0)
+            if (log.ErrorCount > 0)
             {
                 foreach (var mib in processed)
                 {
@@ -867,13 +867,13 @@ namespace MibbleSharp
                     {
                         msg = "parser creation error in ASN.1 parser: " +
                               e.Message;
-                        log.addInternalError(file, msg);
+                        log.AddInternalError(file, msg);
                         analyzer.Reset();
                         throw new MibLoaderException(log);
                     }
                     catch (ParserLogException e)
                     {
-                        log.addAll(file, e);
+                        log.AddAll(file, e);
                         analyzer.Reset();
                         throw new MibLoaderException(log);
                     }

@@ -80,7 +80,7 @@ namespace MibbleSharp.Type
         value = value.Initialize(log, type);
         if (location != null && !IsCompatible(type)) {
             message = "Value constraint not compatible with this type";
-            log.addWarning(location, message);
+            log.AddWarning(location, message);
         }
         location = null;
     }

@@ -28,104 +28,106 @@ using MibbleSharp.Value;
 
 namespace MibbleSharp
 {
-    /**
-     * An SNMP MIB module. This class contains all the information
-     * from a single MIB module, including all defined types and values.
-     * Note that a single MIB file may contain several such modules,
-     * although that is not very common. MIB files are loaded through a
-     * {@link MibLoader MIB loader}.
-     *
-     * @author   Per Cederberg, <per at percederberg dot net>
-     * @version  2.7
-     * @since    2.0
-     *
-     * @see <a href="http://www.ietf.org/rfc/rfc3411.txt">RFC 3411 - An
-     *      Architecture for Describing SNMP Management Frameworks</a>
-     */
+    /// <summary>
+    /// An SNMP MIB module. This class contains all the information
+    /// from a single MIB module, including all defined types and values.
+    /// Note that a single MIB file may contain several such modules,
+    /// although that is not very common. MIB files are loaded through a
+    /// MibLoader.
+    /// </summary>
+    /// <seealso href="http://www.ietf.org/rfc/rfc3411.txt">
+    /// RFC 3411 - An Architecture for Describing SNMP Management Frameworks
+    /// </seealso>
     public class Mib : MibContext
     {
-
-        /**
-         * The MIB file.
-         */
         private string file;
 
-        /**
-         * The loader used for this MIB.
-         */
+        ///
+        /// The loader used for this MIB.
+        ///
         private MibLoader loader;
 
-        /**
-         * The loader log used for loading this MIB.
-         */
+        ///
+        /// The loader log used for loading this MIB.
+        ///
         private MibLoaderLog log;
 
-        /**
-         * The explicitly loaded flag. This flag is set when a MIB is
-         * loaded by a direct call to the MibLoader, in contrast to when
-         * it is loaded as the result of an import.
-         */
+        ///
+        /// <summary>
+        /// The explicitly loaded flag. This flag is set when a MIB is
+        /// loaded by a direct call to the MibLoader, in contrast to when
+        /// it is loaded as the result of an import.
+        /// </summary>
+        ///
         private bool loaded = false;
 
-        /**
-         * The MIB name.
-         */
+        ///
+        /// The MIB name.
+        ///
         private string name = null;
 
-        /**
-         * The SMI version.
-         */
+        ///
+        /// The SMI version.
+        ///
         private int smiVersion = 1;
 
-        /**
-         * The MIB file header comment.
-         */
+        ///
+        /// The MIB file header comment.
+        ///
         private string headerComment = null;
 
-        /**
-         * The MIB file footer comment.
-         */
+        ///
+        /// The MIB file footer comment.
+        ///
         private string footerComment = null;
 
-        /**
-         * The references to imported MIB files.
-         */
+        ///
+        /// <summary>
+        /// The references to imported MIB files.
+        /// </summary>
+        ///
         private IList<MibImport> imports = new List<MibImport>();
 
-        /**
-         * The MIB symbol list. This list contains the MIB symbol objects
-         * in the order they were added (i.e. present in the file).
-         */
+        ///
+        /// <summary>
+        /// The MIB symbol list. This list contains the MIB symbol objects
+        /// in the order they were added (i.e. present in the file).
+        /// </summary>
+        ///
         private IList<MibSymbol> symbolList = new List<MibSymbol>();
 
-        /**
-         * The MIB symbol name map. This maps the symbol names to their
-         * respective MIB symbol objects.
-         */
+        ///
+        /// <summary>
+        /// The MIB symbol name map. This maps the symbol names to their
+        /// respective MIB symbol objects.
+        /// </summary>
+        ///
         private Dictionary<string, MibSymbol> symbolNameMap = new Dictionary<string, MibSymbol>();
 
-        /**
-         * The MIB symbol value map. This maps the symbol values to their
-         * respective MIB symbol objects. Only the value symbols with
-         * either a number or an object identifier value is present in
-         * this map.
-         */
+        /// 
+        /// <summary>
+        /// The MIB symbol value map. This maps the symbol values to their
+        /// respective MIB symbol objects. Only the value symbols with
+        /// either a number or an object identifier value is present in
+        /// this map.
+        /// </summary>
+        ///
         private Dictionary<string, MibValueSymbol> symbolValueMap = new Dictionary<string, MibValueSymbol>();
 
-        /**
-         * Creates a new MIB module. This will NOT read the actual MIB
-         * file, but only creates an empty container. The symbols are
-         * then added during the first analysis pass (of two), leaving
-         * symbols in the MIB possibly containing unresolved references.
-         * A separate call to initialize() must be made once all
-         * referenced MIB modules have also been loaded.
-         *
-         * @param file           the MIB file name
-         * @param loader         the MIB loader to use for imports
-         * @param log            the MIB log to use for errors
-         *
-         * @see #initialize()
-         */
+        /// 
+        /// <summary>
+        /// Creates a new MIB module. This will NOT read the actual MIB
+        /// file, but only creates an empty container. The symbols are
+        /// then added during the first analysis pass (of two), leaving
+        /// symbols in the MIB possibly containing unresolved references.
+        /// A separate call to Initialize() must be made once all
+        /// referenced MIB modules have also been loaded.
+        /// </summary>
+        /// <param name="file">The MIB file name</param>
+        /// <param name="loader">The MIB loader to use for imports</param>
+        /// <param name="log">The MIB log to use for errors</param>
+        /// <see cref="Initialize"/>
+        /// 
         public Mib(string file, MibLoader loader, MibLoaderLog log)
         {
             this.file = file;
@@ -133,20 +135,21 @@ namespace MibbleSharp
             this.log = log;
         }
 
-        /**
-         * Initializes the MIB file. This will resolve all imported MIB
-         * file references. Note that this method shouldn't be called
-         * until all referenced MIB files (and their respective
-         * references) have been loaded.
-         *
-         * @throws MibLoaderException if the MIB file couldn't be
-         *             analyzed correctly
-         *
-         * @see #validate()
-         */
+        ///
+        /// <summary>
+        /// Initializes the MIB file. This will resolve all imported MIB
+        /// file references. Note that this method shouldn't be called
+        /// until all referenced MIB files (and their respective
+        /// references) have been loaded.
+        /// </summary>
+        /// <exception cref="MibLoaderException">
+        /// If the MIB file couldn't be analyzed correctly
+        /// </exception>
+        /// <see cref="validate"/>
+        /// 
         public void Initialize()
         {
-            int errors = log.errorCount();
+            int errors = log.ErrorCount;
 
             // Resolve imported MIB files
             foreach (MibImport imp in imports)
@@ -157,12 +160,12 @@ namespace MibbleSharp
                 }
                 catch (MibException e)
                 {
-                    log.addError(e.getLocation(), e.Message);
+                    log.AddError(e.Location, e.Message);
                 }
             }
 
             // Check for errors
-            if (errors != log.errorCount())
+            if (errors != log.ErrorCount)
             {
                 throw new MibLoaderException(log);
             }
@@ -183,7 +186,7 @@ namespace MibbleSharp
         public void validate()
         {
 
-            int errors = log.errorCount();
+            int errors = log.ErrorCount;
 
             // Validate all symbols
             foreach (MibSymbol symbol in symbolList)
@@ -194,7 +197,7 @@ namespace MibbleSharp
                 }
                 catch (MibException e)
                 {
-                    log.addError(e.getLocation(), e.Message);
+                    log.AddError(e.Location, e.Message);
                 }
 
                 MibValueSymbol value = symbol as MibValueSymbol;
@@ -205,7 +208,7 @@ namespace MibbleSharp
             }
 
             // Check for errors
-            if (errors != log.errorCount())
+            if (errors != log.ErrorCount)
             {
                 throw new MibLoaderException(log);
             }
@@ -664,7 +667,7 @@ namespace MibbleSharp
          *
          * @since 2.4
          */
-        public MibSymbol findSymbol(string name, bool expanded)
+        public MibSymbol FindSymbol(string name, bool expanded)
         {
             return getSymbol(name);
         }

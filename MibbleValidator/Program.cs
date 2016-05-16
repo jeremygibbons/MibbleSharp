@@ -119,9 +119,9 @@ namespace MibbleValidator
                         }
                     }
                     Console.Out.WriteLine("[OK]");
-                    if (mib.getLog().warningCount() > 0)
+                    if (mib.getLog().WarningCount > 0)
                     {
-                        mib.getLog().printTo(Console.Out);
+                        mib.getLog().PrintTo(Console.Out);
                         warnings++;
                     }
                 }
@@ -140,7 +140,7 @@ namespace MibbleValidator
                 catch (MibLoaderException e)
                 {
                     Console.Out.WriteLine("[FAILED]");
-                    e.getLog().printTo(Console.Out);
+                    e.getLog().PrintTo(Console.Out);
                     errors++;
                 }
                 i++;

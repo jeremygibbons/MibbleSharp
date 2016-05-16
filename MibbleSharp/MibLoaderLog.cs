@@ -63,14 +63,15 @@ namespace MibbleSharp
             // No initialization needed
         }
 
-        /**
-         * Returns the number of errors in the log.
-         *
-         * @return the number of errors in the log
-         */
-        public int errorCount()
+        /// <summary>
+        /// The number of errors in the log
+        /// </summary>
+        public int ErrorCount
         {
-            return errors;
+            get
+            {
+                return errors;
+            }
         }
 
         /**
@@ -78,9 +79,12 @@ namespace MibbleSharp
          *
          * @return the number of warnings in the log
          */
-        public int warningCount()
+        public int WarningCount
         {
-            return warnings;
+            get
+            {
+                return warnings;
+            }
         }
 
         /**
@@ -88,13 +92,13 @@ namespace MibbleSharp
          *
          * @param entry          the log entry to add
          */
-        public void add(LogEntry entry)
+        public void Add(LogEntry entry)
         {
-            if (entry.isError())
+            if (entry.IsError)
             {
                 errors++;
             }
-            if (entry.isWarning())
+            if (entry.IsWarning)
             {
                 warnings++;
             }
@@ -109,9 +113,9 @@ namespace MibbleSharp
          * @param location       the file location
          * @param message        the error message
          */
-        public void addInternalError(FileLocation location, string message)
+        public void AddInternalError(FileLocation location, string message)
         {
-            add(new LogEntry(LogEntry.INTERNAL_ERROR, location, message));
+            Add(new LogEntry(LogEntry.INTERNAL_ERROR, location, message));
         }
 
         /**
@@ -122,9 +126,9 @@ namespace MibbleSharp
          * @param file           the file affected
          * @param message        the error message
          */
-        public void addInternalError(string file, string message)
+        public void AddInternalError(string file, string message)
         {
-            addInternalError(new FileLocation(file), message);
+            AddInternalError(new FileLocation(file), message);
         }
 
         /**
@@ -133,9 +137,9 @@ namespace MibbleSharp
          * @param location       the file location
          * @param message        the error message
          */
-        public void addError(FileLocation location, string message)
+        public void AddError(FileLocation location, string message)
         {
-            add(new LogEntry(LogEntry.ERROR, location, message));
+            Add(new LogEntry(LogEntry.ERROR, location, message));
         }
 
         /**
@@ -146,9 +150,9 @@ namespace MibbleSharp
          * @param column         the column number
          * @param message        the error message
          */
-        public void addError(string file, int line, int column, string message)
+        public void AddError(string file, int line, int column, string message)
         {
-            addError(new FileLocation(file, line, column), message);
+            AddError(new FileLocation(file, line, column), message);
         }
 
         /**
@@ -157,9 +161,9 @@ namespace MibbleSharp
          * @param location       the file location
          * @param message        the warning message
          */
-        public void addWarning(FileLocation location, string message)
+        public void AddWarning(FileLocation location, string message)
         {
-            add(new LogEntry(LogEntry.WARNING, location, message));
+            Add(new LogEntry(LogEntry.WARNING, location, message));
         }
 
         /**
@@ -170,9 +174,9 @@ namespace MibbleSharp
          * @param column         the column number
          * @param message        the warning message
          */
-        public void addWarning(string file, int line, int column, string message)
+        public void AddWarning(string file, int line, int column, string message)
         {
-            addWarning(new FileLocation(file, line, column), message);
+            AddWarning(new FileLocation(file, line, column), message);
         }
 
         /**
@@ -180,11 +184,11 @@ namespace MibbleSharp
          *
          * @param log            the MIB loader log
          */
-        public void addAll(MibLoaderLog log)
+        public void AddAll(MibLoaderLog log)
         {
             for (int i = 0; i < log.entries.Count; i++)
             {
-                add(log.entries[i]);
+                Add(log.entries[i]);
             }
         }
 
@@ -194,14 +198,14 @@ namespace MibbleSharp
          * @param file           the file affected
          * @param log            the parser log exception
          */
-        public void addAll(string file, ParserLogException log)
+        public void AddAll(string file, ParserLogException log)
         {
             ParseException e;
 
             for (int i = 0; i < log.GetErrorCount(); i++)
             {
                 e = log.GetError(i);
-                addError(file, e.Line, e.Column, e.ErrorMessage);
+                AddError(file, e.Line, e.Column, e.ErrorMessage);
             }
         }
 
@@ -215,9 +219,12 @@ namespace MibbleSharp
          *
          * @since 2.2
          */
-        public IEnumerator<LogEntry> Entries()
+        public IEnumerator<LogEntry> Entries
         {
-            return entries.GetEnumerator();
+            get
+            {
+                return entries.GetEnumerator();
+            }
         }
 
         /**
@@ -225,9 +232,9 @@ namespace MibbleSharp
          *
          * @param output         the output stream to use
          */
-        public void printTo(TextWriter output)
+        public void PrintTo(TextWriter output)
         {
-            printTo(output, 70);
+            PrintTo(output, 70);
         }
 
         /**
@@ -238,7 +245,7 @@ namespace MibbleSharp
          *
          * @since 2.2
          */
-        public void printTo(TextWriter output, int margin)
+        public void PrintTo(TextWriter output, int margin)
         {
             LogEntry entry;
             string str;
@@ -247,7 +254,7 @@ namespace MibbleSharp
             {
                 entry = entries[i];
                 StringBuilder buffer = new StringBuilder();
-                switch (entry.getType())
+                switch (entry.Type)
                 {
                     case LogEntry.ERROR:
                         buffer.Append("Error: ");
@@ -260,22 +267,22 @@ namespace MibbleSharp
                         break;
                 }
                 buffer.Append("in ");
-                buffer.Append(relativeFilename(entry.getFile()));
-                if (entry.getLineNumber() > 0)
+                buffer.Append(RelativeFilename(entry.File));
+                if (entry.LineNumber > 0)
                 {
                     buffer.Append(": line ");
-                    buffer.Append(entry.getLineNumber());
+                    buffer.Append(entry.LineNumber);
                 }
                 buffer.Append(":\n");
-                str = linebreakString(entry.getMessage(), "    ", margin);
+                str = LinebreakString(entry.Message, "    ", margin);
                 buffer.Append(str);
-                str = entry.readLine();
-                if (str != null && str.Length >= entry.getColumnNumber())
+                str = entry.ReadLine();
+                if (str != null && str.Length >= entry.ColumnNumber)
                 {
                     buffer.Append("\n\n");
                     buffer.Append(str);
                     buffer.Append("\n");
-                    for (int j = 1; j < entry.getColumnNumber(); j++)
+                    for (int j = 1; j < entry.ColumnNumber; j++)
                     {
                         if (str[j - 1] == '\t')
                         {
@@ -303,7 +310,7 @@ namespace MibbleSharp
          * @return the relative name if found, or
          *         the absolute name otherwise
          */
-        private string relativeFilename(string file)
+        private string RelativeFilename(string file)
         {
             string currentPath;
             string filePath;
@@ -351,7 +358,7 @@ namespace MibbleSharp
          *
          * @return the new formatted string
          */
-        private string linebreakString(string str, string prefix, int length)
+        private string LinebreakString(string str, string prefix, int length)
         {
             StringBuilder buffer = new StringBuilder();
             int pos;
@@ -430,7 +437,7 @@ namespace MibbleSharp
             public LogEntry(int type, FileLocation location, string message)
             {
                 this.type = type;
-                if (location == null || location.File() == null)
+                if (location == null || location.File == null)
                 {
                     this.location = new FileLocation("<unknown file>");
                 }
@@ -447,9 +454,12 @@ namespace MibbleSharp
              * @return true if this is an error log entry, or
              *         false otherwise
              */
-            public bool isError()
+            public bool IsError
             {
-                return type == INTERNAL_ERROR || type == ERROR;
+                get
+                {
+                    return type == INTERNAL_ERROR || type == ERROR;
+                }
             }
 
             /**
@@ -458,9 +468,12 @@ namespace MibbleSharp
              * @return true if this is a warning log entry, or
              *         false otherwise
              */
-            public bool isWarning()
+            public bool IsWarning
             {
-                return type == WARNING;
+                get
+                {
+                    return type == WARNING;
+                }
             }
 
             /**
@@ -472,9 +485,12 @@ namespace MibbleSharp
              * @see #ERROR
              * @see #WARNING
              */
-            public int getType()
+            public int Type
             {
-                return type;
+                get
+                {
+                    return type;
+                }
             }
 
             /**
@@ -482,9 +498,12 @@ namespace MibbleSharp
              *
              * @return the file affected
              */
-            public string getFile()
+            public string File
             {
-                return location.File();
+                get
+                {
+                    return location.File;
+                }
             }
 
             /**
@@ -492,9 +511,12 @@ namespace MibbleSharp
              *
              * @return the line number
              */
-            public int getLineNumber()
+            public int LineNumber
             {
-                return location.LineNumber();
+                get
+                {
+                    return location.LineNumber;
+                }
             }
 
             /**
@@ -502,9 +524,12 @@ namespace MibbleSharp
              *
              * @return the column number
              */
-            public int getColumnNumber()
+            public int ColumnNumber
             {
-                return location.ColumnNumber();
+                get
+                {
+                    return location.ColumnNumber;
+                }
             }
 
             /**
@@ -512,9 +537,12 @@ namespace MibbleSharp
              *
              * @return the log entry message
              */
-            public string getMessage()
+            public string Message
             {
-                return message;
+                get
+                {
+                    return message;
+                }
             }
 
             /**
@@ -525,7 +553,7 @@ namespace MibbleSharp
              * @return the line read, or
              *         null if not found
              */
-            public string readLine()
+            public string ReadLine()
             {
                 return location.ReadLine();
             }

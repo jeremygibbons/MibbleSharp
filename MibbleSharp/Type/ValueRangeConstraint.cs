@@ -117,7 +117,7 @@ namespace MibbleSharp.Type
             {
                 message = "Value range constraint not compatible with " +
                           "this type";
-                log.addWarning(location, message);
+                log.AddWarning(location, message);
             }
             location = null;
         }

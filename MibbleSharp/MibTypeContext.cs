@@ -72,7 +72,7 @@ namespace MibbleSharp
      *
      * @since 2.4
      */
-    public MibSymbol findSymbol(string name, bool expanded)
+    public MibSymbol FindSymbol(string name, bool expanded)
     {
         MibContext ctx = null;
 
@@ -90,12 +90,12 @@ namespace MibbleSharp
         }
         if (context is TypeReference) {
             context = ((TypeReference)context).getSymbol();
-            return findSymbol(name, expanded);
+            return FindSymbol(name, expanded);
         }
         if (context is MibContext) {
             ctx = (MibContext)context;
         }
-        return (ctx == null) ? null : ctx.findSymbol(name, expanded);
+        return (ctx == null) ? null : ctx.FindSymbol(name, expanded);
     }
 
     /**

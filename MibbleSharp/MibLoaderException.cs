@@ -64,7 +64,7 @@ namespace MibbleSharp
     public MibLoaderException(string file, string message)
     {
         log = new MibLoaderLog();
-        log.addError(file, -1, -1, message);
+        log.AddError(file, -1, -1, message);
     }
 
     /**
@@ -84,7 +84,7 @@ namespace MibbleSharp
      */
     public string getMessage()
     {
-        return "found " + log.errorCount() + " MIB loader errors";
+        return "found " + log.ErrorCount + " MIB loader errors";
     }
 }
 
