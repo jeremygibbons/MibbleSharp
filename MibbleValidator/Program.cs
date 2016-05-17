@@ -140,7 +140,7 @@ namespace MibbleValidator
                 catch (MibLoaderException e)
                 {
                     Console.Out.WriteLine("[FAILED]");
-                    e.getLog().PrintTo(Console.Out);
+                    e.Log.PrintTo(Console.Out);
                     errors++;
                 }
                 i++;

@@ -10,6 +10,8 @@
  * LICENSE.txt file for more details.
  *
  * Copyright (c) 2003-2015 Per Cederberg. All rights reserved.
+ * C# conversion and modifications Copyright (c) 2016 Jeremy Gibbons
+ * All rights reserved.
  */
 
 using System;

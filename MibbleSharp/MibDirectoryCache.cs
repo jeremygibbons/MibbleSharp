@@ -25,6 +25,7 @@ using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.IO;
+using System.Diagnostics.CodeAnalysis;
 
 namespace MibbleSharp
 {
@@ -40,43 +41,50 @@ namespace MibbleSharp
     class MibDirectoryCache
     {
 
-        /**
-         * The MIB name regular expression pattern.
-         */
+        /// 
+        /// <summary>
+        /// The regex pattern for a MIB name
+        /// </summary>
+        /// 
         private static readonly Regex NAME = new Regex(@"[a-zA-Z][a-zA-Z0-9-_]*");
 
-    /**
-     * The directory to search.
-     */
-    private string dir;
+        /// 
+        /// <summary>
+        /// The directory to search in
+        /// </summary>
+        /// 
+        private string dir;
 
-        /**
-         * The file name cache. This cache is indexed by upper-case MIB
-         * name and links to the directory file.
-         */
+        /// 
+        /// <summary>
+        /// The file name cache. This cache is indexed by upper-case MIB
+        /// name and links to the directory file.
+        /// </summary>
+        /// 
         private Dictionary<string, string> nameCache = null;
 
-        /**
-         * The content cache. This cache is indexed by the actual MIB
-         * name read from the file and links to the directory file.
-         */
+        /// 
+        /// <summary>
+        /// The content cache. This cache is indexed by the actual MIB
+        /// name read from the file and links to the directory file.
+        /// </summary>
+        /// 
         private Dictionary<string, string> contentCache = null;
 
-        /**
-         * Creates a new MIB search directory cache.
-         *
-         * @param dir            the directory to index
-         */
+        /// 
+        /// <summary>
+        /// Creates a new MIB search directory cache.
+        /// </summary>
+        /// <param name="dir">The directory to search in</param>
+        /// 
         public MibDirectoryCache(string dir)
         {
             this.dir = dir;
         }
 
-        /**
-         * Returns the directory indexed by this cache.
-         *
-         * @return the directory indexed by this cache
-         */
+        /// <summary>
+        /// The directory indexed by this cache
+        /// </summary>
         public string Dir
         {
             get
@@ -85,21 +93,20 @@ namespace MibbleSharp
             }
         }
 
-        /**
-         * Searches for a named MIB in the directory file name cache.
-         * Note that there are no guarantees that the returned file is
-         * indeed a MIB file.
-         *
-         * @param mibName        the MIB name
-         *
-         * @return the first matching MIB file,
-         *         null if no match was found
-         */
-        public string findByName(string mibName)
+        /// 
+        /// <summary>
+        /// Searches for a named MIB in the directory file name cache.
+        /// Note that there are no guarantees that the returned file is
+        /// indeed a MIB file.
+        /// </summary>
+        /// <param name="mibName">The MIB name to be searched for</param>
+        /// <returns>The filename, or null if not found</returns>
+        /// 
+        public string FindByName(string mibName)
         {
             if (nameCache == null)
             {
-                initNameCache();
+                InitNameCache();
             }
             string mibNameUpper = mibName.ToUpper();
             if(nameCache.ContainsKey(mibNameUpper))
@@ -107,10 +114,14 @@ namespace MibbleSharp
             return null;
         }
 
-        /**
-         * Initializes the name cache.
-         */
-        private void initNameCache()
+        /// 
+        /// <summary>
+        /// Initialize the name cache. Enumerates all files in directory dir.
+        /// If the name is compatible with a MIB file name, the file is added 
+        /// to the cache.
+        /// </summary>
+        /// 
+        private void InitNameCache()
         {
             IEnumerable<string> files = Directory.EnumerateFiles(dir);
             string name;
@@ -128,32 +139,36 @@ namespace MibbleSharp
             }
         }
 
-        /**
-         * Searches for a named MIB in the directory content cache. This
-         * cache is costly to initialize, but since it is based on the
-         * actual content of the first few lines in each file it is more
-         * accurate.
-         *
-         * @param mibName        the MIB name
-         *
-         * @return the first matching MIB file,
-         *         null if no match was found
-         */
-        public string findByContent(string mibName)
+        /// 
+        /// <summary>
+        /// Searches for a named MIB in the directory content cache. This
+        /// cache is costly to initialize, but since it is based on the
+        /// actual content of the first few lines in each file it is more
+        /// accurate.
+        /// </summary>
+        /// <param name="mibName">The name to be searched for</param>
+        /// <returns>
+        /// The first matching MIB file, null if no match was found
+        /// </returns>
+        /// 
+        public string FindByContent(string mibName)
         {
             if (contentCache == null)
             {
-                initContentCache();
+                InitContentCache();
             }
             if(contentCache.ContainsKey(mibName))
                 return contentCache[mibName];
             return null;
         }
 
-        /**
-         * Initializes the content cache.
-         */
-        private void initContentCache()
+        /// 
+        /// <summary>
+        /// Initialize the content cache. Enumerates the files in the directory
+        /// and calls ReadMibName on each one to attempt to read a MIB name
+        /// </summary>
+        /// 
+        private void InitContentCache()
         {
             IEnumerable<string> files = Directory.EnumerateFiles(dir);
             string name;
@@ -161,7 +176,7 @@ namespace MibbleSharp
             contentCache = new Dictionary<string, string>();
             foreach(string file in files)
             {
-                name = readMibName(file);
+                name = ReadMibName(file);
                 if (name != null)
                 {
                     contentCache[name] = file;
@@ -169,44 +184,37 @@ namespace MibbleSharp
             }
         }
 
-        /**
-         * Reads the initial lines of a supposed text file attempting to
-         * extract a MIB name.
-         *
-         * @param file           the file to read
-         *
-         * @return the MIB name found, or
-         *         null if no name was found
-         */
-        private string readMibName(string file)
+        /// 
+        /// <summary>
+        /// Reads the initial lines of a supposed text file attempting to
+        /// extract a MIB name.
+        /// </summary>
+        /// <param name="file">The presumed MIB file to be read</param>
+        /// <returns>the MIB name found, or null if no name was found</returns>
+        /// 
+        [SuppressMessage("Microsoft.Usage", "CA2202:Do not dispose objects multiple times",
+            Justification = "Correct IDisposable implementation will work with multiple calls")]
+        private string ReadMibName(string file)
         {
-            //BufferedReader  in = null;
-            //string str;
-            //Matcher m;
-
             if (File.Exists(file) == false)
             {
                 return null;
             }
 
-
             try
             {
                 using (FileStream fs = File.Open(file, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
                 {
-                    using (BufferedStream bs = new BufferedStream(fs))
+                    using (StreamReader sr = new StreamReader(fs))
                     {
-                        using (StreamReader sr = new StreamReader(bs))
+                        string line;
+                        while ((line = sr.ReadLine()) != null)
                         {
-                            string line;
-                            while ((line = sr.ReadLine()) != null)
+                            line = line.Trim();
+                            if (!line.Equals("") && !line.StartsWith("--"))
                             {
-                                line = line.Trim();
-                                if (!line.Equals("") && !line.StartsWith("--"))
-                                {
-                                    Match m = NAME.Match(line);
-                                    return m.Success ? m.Value : null;
-                                }
+                                Match m = NAME.Match(line);
+                                return m.Success ? m.Value : null;
                             }
                         }
                     }

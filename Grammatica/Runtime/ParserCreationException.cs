@@ -1,143 +1,169 @@
-/*
- * ParserCreationException.cs
- *
- * This program is free software: you can redistribute it and/or
- * modify it under the terms of the BSD license.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * LICENSE.txt file for more details.
- *
- * Copyright (c) 2003-2015 Per Cederberg. All rights reserved.
- */
+//
+// ParserCreationException.cs
+// 
+// This work is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published
+// by the Free Software Foundation; either version 2 of the License,
+// or (at your option) any later version.
+//
+// This work is distributed in the hope that it will be useful, but
+// WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+// General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
+// USA
+// 
+// Original Java code Copyright (c) 2003-2015 Per Cederberg. All
+// rights reserved.
+// C# conversion Copyright (c) 2016 Jeremy Gibbons. All rights reserved
+//
 
 using System;
-using System.Collections;
+using System.Collections.Generic;
 using System.Text;
+using System.Runtime.Serialization;
+using System.Security.Permissions;
 
 namespace PerCederberg.Grammatica.Runtime {
 
-    /**
-     * A parser creation exception. This exception is used for signalling
-     * an error in the token or production patterns, making it impossible
-     * to create a working parser or tokenizer.
-     *
-     * @author   Per Cederberg
-     * @version  1.5
-     */
+    /// 
+    /// <summary>
+    /// A parser creation exception. This exception is used for signalling
+    /// an error in the token or production patterns, making it impossible
+    /// to create a working parser or tokenizer.
+    /// </summary>
+    /// 
     [Serializable]
     public class ParserCreationException : Exception {
 
-        /**
-         * The error type enumeration.
-         */
+        ///
+        /// The error type enumeration.
+        ///
         public enum ErrorType {
 
-            /**
-             * The internal error type is only used to signal an
-             * error that is a result of a bug in the parser or
-             * tokenizer code.
-             */
+            ///
+            /// <summary>
+            /// The internal error type is only used to signal an
+            /// error that is a result of a bug in the parser or
+            /// tokenizer code.
+            /// </summary>
+            ///
             INTERNAL,
 
-            /**
-             * The invalid parser error type is used when the parser
-             * as such is invalid. This error is typically caused by
-             * using a parser without any patterns.
-             */
+            ////
+            /// <summary>
+            /// The invalid parser error type is used when the parser
+            /// as such is invalid. This error is typically caused by
+            /// using a parser without any patterns.
+            /// </summary>
+            ///
             INVALID_PARSER,
 
-            /**
-             * The invalid token error type is used when a token
-             * pattern is erroneous. This error is typically caused
-             * by an invalid pattern type or an erroneous regular
-             * expression.
-             */
+            ///
+            /// <summary>
+            /// The invalid token error type is used when a token
+            /// pattern is erroneous. This error is typically caused
+            /// by an invalid pattern type or an erroneous regular
+            /// expression.
+            /// </summary>
+            ///
             INVALID_TOKEN,
 
-            /**
-             * The invalid production error type is used when a
-             * production pattern is erroneous. This error is
-             * typically caused by referencing undeclared productions,
-             * or violating some other production pattern constraint.
-             */
+            ///
+            /// <summary>
+            /// The invalid production error type is used when a
+            /// production pattern is erroneous. This error is
+            /// typically caused by referencing undeclared productions,
+            /// or violating some other production pattern constraint.
+            /// </summary>
+            ///
             INVALID_PRODUCTION,
 
-            /**
-             * The infinite loop error type is used when an infinite
-             * loop has been detected in the grammar. One of the
-             * productions in the loop will be reported.
-             */
+            ///
+            /// <summary>
+            /// The infinite loop error type is used when an infinite
+            /// loop has been detected in the grammar. One of the
+            /// productions in the loop will be reported.
+            /// </summary>
+            ///
             INFINITE_LOOP,
 
-            /**
-             * The inherent ambiguity error type is used when the set
-             * of production patterns (i.e. the grammar) contains
-             * ambiguities that cannot be resolved.
-             */
+            ///
+            /// <summary>
+            /// The inherent ambiguity error type is used when the set
+            /// of production patterns (i.e. the grammar) contains
+            /// ambiguities that cannot be resolved.
+            /// </summary>
+            ///
             INHERENT_AMBIGUITY
         }
 
-        /**
-         * The error type.
-         */
         private ErrorType type;
 
-        /**
-         * The token or production pattern name. This variable is only
-         * set for some error types.
-         */
+        ///
+        /// <summary>
+        /// The token or production pattern name. This variable is only
+        /// set for some error types.
+        /// </summary>
+        ///
         private string name;
 
-        /**
-         * The additional error information string. This variable is only
-         * set for some error types.
-         */
+        ///
+        /// <summary>
+        /// The additional error information string. This variable is only
+        /// set for some error types.
+        /// </summary>
+        ///
         private string info;
 
-        /**
-         * The error details list. This variable is only set for some
-         * error types.
-         */
-        private ArrayList details;
+        ///
+        /// <summary>
+        /// The error details list. This variable is only set for some
+        /// error types.
+        /// </summary>
+        ///
+        private IList<string> details;
 
-        /**
-         * Creates a new parser creation exception.
-         *
-         * @param type           the parse error type
-         * @param info           the additional error information
-         */
-        public ParserCreationException(ErrorType type,
-                                       string info)
+        ///
+        /// <summary>
+        /// Creates a new parser creation exception.
+        /// </summary>
+        /// <param name="type">The parse error type</param>
+        /// <param name="info">The additional error information</param>
+        public ParserCreationException(ErrorType type, string info)
             : this(type, null, info) {
         }
 
-        /**
-         * Creates a new parser creation exception.
-         *
-         * @param type           the parse error type
-         * @param name           the token or production pattern name
-         * @param info           the additional error information
-         */
+        ///
+        /// <summary>
+        /// Creates a new parser creation exception.
+        /// </summary>
+        /// <param name="type">The parse error type</param>
+        /// <param name="name">The token or production pattern name</param>
+        /// <param name="info">The additional error information</param>
+        /// 
         public ParserCreationException(ErrorType type,
                                        string name,
                                        string info)
             : this(type, name, info, null) {
         }
 
-        /**
-         * Creates a new parser creation exception.
-         *
-         * @param type           the parse error type
-         * @param name           the token or production pattern name
-         * @param info           the additional error information
-         * @param details        the error details list
-         */
+        ///
+        /// <summary>
+        /// Creates a new parser creation exception.
+        /// </summary>
+        /// <param name="type">The parse error type</param>
+        /// <param name="name">The token or production pattern name</param>
+        /// <param name="info">The additional error information</param>
+        /// <param name="details">The details of the errors</param>
+        /// 
         public ParserCreationException(ErrorType type,
                                        string name,
                                        string info,
-                                       ArrayList details) {
+                                       IList<string> details) {
 
             this.type = type;
             this.name = name;
@@ -145,83 +171,62 @@ namespace PerCederberg.Grammatica.Runtime {
             this.details = details;
         }
 
-        /**
-         * The error type property (read-only).
-         *
-         * @since 1.5
-         */
+        /// 
+        /// <summary>
+        /// Deserialize a ParserCreationException
+        /// </summary>
+        /// <param name="info"></param>
+        /// <param name="context"></param>
+        /// 
+        [SecurityPermissionAttribute(SecurityAction.Demand, SerializationFormatter = true)]
+        public ParserCreationException(SerializationInfo info, StreamingContext context)
+            : base(info, context)
+        {
+            this.name = info.GetString("Name");
+            this.type = (ErrorType) info.GetInt32("Type");
+            this.info = info.GetString("Info");
+            this.details = (IList<string>) info.GetValue("Details", typeof(IList<string>));
+
+        }
+
+        /// 
+        /// <summary>
+        /// The specific ErrorType
+        /// </summary>
+        /// 
         public ErrorType Type {
             get {
                 return type;
             }
         }
 
-        /**
-         * Returns the error type.
-         *
-         * @return the error type
-         *
-         * @see #Type
-         *
-         * @deprecated Use the Type property instead.
-         */
-        public ErrorType GetErrorType() {
-            return Type;
-        }
-
-        /**
-         * The token or production name property (read-only).
-         *
-         * @since 1.5
-         */
+        /// 
+        /// <summary>
+        /// The token or production name
+        /// </summary>
+        /// 
         public string Name {
             get {
                 return name;
             }
         }
 
-        /**
-         * Returns the token or production name.
-         *
-         * @return the token or production name
-         *
-         * @see #Name
-         *
-         * @deprecated Use the Name property instead.
-         */
-        public string GetName() {
-            return Name;
-        }
-
-        /**
-         * The additional error information property (read-only).
-         *
-         * @since 1.5
-         */
+        /// 
+        /// <summary>
+        /// The additional error information property (read-only).
+        /// </summary>
+        /// 
         public string Info {
             get {
                 return info;
             }
         }
 
-        /**
-         * Returns the additional error information.
-         *
-         * @return the additional error information
-         *
-         * @see #Info
-         *
-         * @deprecated Use the Info property instead.
-         */
-        public string GetInfo() {
-            return Info;
-        }
-
-        /**
-         * The detailed error information property (read-only).
-         *
-         * @since 1.5
-         */
+        /// 
+        /// <summary>
+        /// The detailed error information property (read-only).
+        /// </summary>
+        /// 
         public string Details {
             get {
                 StringBuilder  buffer = new StringBuilder();
@@ -243,23 +248,13 @@ namespace PerCederberg.Grammatica.Runtime {
             }
         }
 
-        /**
-         * Returns the detailed error information as a string
-         *
-         * @return the detailed error information
-         *
-         * @see #Details
-         *
-         * @deprecated Use the Details property instead.
-         */
-        public string GetDetails() {
-            return Details;
-        }
 
-        /**
-         * The message property (read-only). This property contains
-         * the detailed exception error message.
-         */
+        /// 
+        /// <summary>
+        /// The message property (read-only). This property contains the
+        /// detailed exception error message.
+        /// </summary>
+        /// 
         public override string Message {
             get{
                 StringBuilder  buffer = new StringBuilder();
@@ -312,18 +307,17 @@ namespace PerCederberg.Grammatica.Runtime {
             }
         }
 
-        /**
-         * Returns the error message. This message will contain all the
-         * information available.
-         *
-         * @return the error message
-         *
-         * @see #Message
-         *
-         * @deprecated Use the Message property instead.
-         */
-        public string GetMessage() {
-            return Message;
+        /// 
+        /// <summary>
+        /// Serialize a ParserCreationException
+        /// </summary>
+        /// <param name="info"></param>
+        /// <param name="context"></param>
+        /// 
+        [SecurityPermissionAttribute(SecurityAction.Demand, SerializationFormatter = true)]
+        public override void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            base.GetObjectData(info, context);
         }
     }
 }

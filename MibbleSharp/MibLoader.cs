@@ -650,11 +650,11 @@ namespace MibbleSharp
 
             foreach (var dir in dirCaches)
             {
-                file = dir.findByName(name);
+                file = dir.FindByName(name);
                 if (file != null)
                     return new MibSource(file);
 
-                file = dir.findByContent(name);
+                file = dir.FindByContent(name);
                 if (file != null)
                     return new MibSource(file);
             }

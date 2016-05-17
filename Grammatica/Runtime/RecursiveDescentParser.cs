@@ -16,6 +16,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace PerCederberg.Grammatica.Runtime {
 
@@ -811,15 +812,11 @@ namespace PerCederberg.Grammatica.Runtime {
         private void ThrowAmbiguityException(string pattern,
                                              string location,
                                              LookAheadSet set) {
-
-            ArrayList  list = new ArrayList();
             int[]      initials;
 
             // Find next token descriptions
             initials = set.GetInitialTokens();
-            for (int i = 0; i < initials.Length; i++) {
-                list.Add(GetTokenDescription(initials[i]));
-            }
+            IList<string> list = initials.Select(i => GetTokenDescription(i)).ToList();
 
             // Create exception
             throw new ParserCreationException(

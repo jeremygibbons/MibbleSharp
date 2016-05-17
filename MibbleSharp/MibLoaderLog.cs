@@ -200,12 +200,9 @@ namespace MibbleSharp
          */
         public void AddAll(string file, ParserLogException log)
         {
-            ParseException e;
-
-            for (int i = 0; i < log.GetErrorCount(); i++)
+            foreach(var err in log.Errors)
             {
-                e = log.GetError(i);
-                AddError(file, e.Line, e.Column, e.ErrorMessage);
+                AddError(file, err.Line, err.Column, err.ErrorMessage);
             }
         }
 
