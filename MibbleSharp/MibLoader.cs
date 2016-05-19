@@ -853,8 +853,9 @@ namespace MibbleSharp
                     {
                         if (parser == null)
                         {
-                            parser = new Asn1Parser(input, analyzer);
-                            parser.GetTokenizer().UseTokenList = true;
+                            Asn1Tokenizer tokenizer = new Asn1Tokenizer(input);
+                            parser = new Asn1Parser(tokenizer, analyzer);
+                            parser.Tokenizer.UseTokenList = true;
                         }
                         else
                         {

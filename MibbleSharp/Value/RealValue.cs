@@ -78,30 +78,6 @@ namespace MibbleSharp.Value
             return new RealValue(value);
         }
 
-        /**
-         * Compares this object with the specified object for order. This
-         * method will attempt to compare by numerical value, but will
-         * use a string comparison as the default comparison operation.
-         *
-         * @param obj            the object to compare to
-         *
-         * @return less than zero if this object is less than the specified,
-         *         zero if the objects are equal, or
-         *         greater than zero otherwise
-         *
-         * @since 2.6
-         */
-        public int CompareTo(Object obj)
-        {
-            RealValue rv = obj as RealValue;
-
-            if (rv != null)
-            {
-                return compareToNumber(rv.value);
-            }
-
-            return ToString().CompareTo(obj.ToString());
-        }
 
         public override int CompareTo(MibValue m)
         {
@@ -137,7 +113,10 @@ namespace MibbleSharp.Value
          */
         public override bool Equals(Object obj)
         {
-            return CompareTo(obj) == 0;
+            MibValue mv = obj as MibValue;
+            if (mv == null)
+                return false;
+            return CompareTo(mv) == 0;
         }
 
         /**

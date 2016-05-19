@@ -91,29 +91,6 @@ namespace MibbleSharp.Value
             return new NumberValue(value);
         }
 
-        /**
-         * Compares this object with the specified object for order. This
-         * method will attempt to compare by numerical value, but will
-         * use a string comparison as the default comparison operation.
-         *
-         * @param obj            the object to compare to
-         *
-         * @return less than zero if this object is less than the specified,
-         *         zero if the objects are equal, or
-         *         greater than zero otherwise
-         *
-         * @since 2.6
-         */
-        public int CompareTo(Object obj)
-        {
-            NumberValue nv = obj as NumberValue;
-            if(nv != null)
-            {
-                return compareToNumber(nv.value);
-            }
-            
-            return ToString().CompareTo(obj.ToString());
-        }
 
         public override int CompareTo(MibValue m)
         {
@@ -153,7 +130,10 @@ namespace MibbleSharp.Value
          */
         public override bool Equals(Object obj)
         {
-            return CompareTo(obj) == 0;
+            NumberValue nv = obj as NumberValue;
+            if (nv == null)
+                return false;
+            return CompareTo(nv) == 0;
         }
 
         /**

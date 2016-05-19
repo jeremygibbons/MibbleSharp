@@ -37,7 +37,7 @@ namespace PerCederberg.Grammatica.Runtime {
         /**
          * The tokenizer to use.
          */
-        private Tokenizer tokenizer;
+        internal Tokenizer tokenizer;
 
         /**
          * The analyzer to use for callbacks.
@@ -82,19 +82,6 @@ namespace PerCederberg.Grammatica.Runtime {
          * Creates a new parser.
          *
          * @param input          the input stream to read from
-         *
-         * @throws ParserCreationException if the tokenizer couldn't be
-         *             initialized correctly
-         *
-         * @since 1.5
-         */
-        internal Parser(TextReader input) : this(input, null) {
-        }
-
-        /**
-         * Creates a new parser.
-         *
-         * @param input          the input stream to read from
          * @param analyzer       the analyzer callback to use
          *
          * @throws ParserCreationException if the tokenizer couldn't be
@@ -103,16 +90,8 @@ namespace PerCederberg.Grammatica.Runtime {
          * @since 1.5
          */
         internal Parser(TextReader input, Analyzer analyzer) {
-            this.tokenizer = NewTokenizer(input);
-            this.analyzer = (analyzer == null) ? NewAnalyzer() : analyzer;
-        }
-
-        /**
-         * Creates a new parser.
-         *
-         * @param tokenizer       the tokenizer to use
-         */
-        internal Parser(Tokenizer tokenizer) : this(tokenizer, null) {
+            this.tokenizer = new Tokenizer(input);
+            this.analyzer = analyzer;
         }
 
         /**
@@ -123,7 +102,7 @@ namespace PerCederberg.Grammatica.Runtime {
          */
         internal Parser(Tokenizer tokenizer, Analyzer analyzer) {
             this.tokenizer = tokenizer;
-            this.analyzer = (analyzer == null) ? NewAnalyzer() : analyzer;
+            this.analyzer = analyzer;
         }
 
         /**
@@ -146,20 +125,6 @@ namespace PerCederberg.Grammatica.Runtime {
         }
 
         /**
-         * Creates a new analyzer for this parser. Can be overridden by a
-         * subclass to provide a custom implementation.
-         *
-         * @return the analyzer created
-         *
-         * @since 1.5
-         */
-        protected virtual Analyzer NewAnalyzer() {
-            // TODO: This method should really be abstract, but it isn't in this
-            //       version due to backwards compatibility requirements.
-            return new Analyzer();
-        }
-
-        /**
          * The tokenizer property (read-only). This property contains
          * the tokenizer in use by this parser.
          *
@@ -168,6 +133,11 @@ namespace PerCederberg.Grammatica.Runtime {
         public Tokenizer Tokenizer {
             get {
                 return tokenizer;
+            }
+
+            set
+            {
+                tokenizer = value;
             }
         }
 
@@ -183,35 +153,6 @@ namespace PerCederberg.Grammatica.Runtime {
             }
         }
 
-        /**
-         * Returns the tokenizer in use by this parser.
-         *
-         * @return the tokenizer in use by this parser
-         *
-         * @since 1.4
-         *
-         * @see #Tokenizer
-         *
-         * @deprecated Use the Tokenizer property instead.
-         */
-        public Tokenizer GetTokenizer() {
-            return Tokenizer;
-        }
-
-        /**
-         * Returns the analyzer in use by this parser.
-         *
-         * @return the analyzer in use by this parser
-         *
-         * @since 1.4
-         *
-         * @see #Analyzer
-         *
-         * @deprecated Use the Analyzer property instead.
-         */
-        public Analyzer GetAnalyzer() {
-            return Analyzer;
-        }
 
         /**
          * Sets the parser initialized flag. Normally this flag is set by

@@ -86,23 +86,6 @@ namespace MibbleSharp.Value
         return new NullValue();
     }
 
-    /**
-     * Compares this object with the specified object for order. This
-     * method will only compare the string representations with each
-     * other.
-     *
-     * @param obj            the object to compare to
-     *
-     * @return less than zero if this object is less than the specified,
-     *         zero if the objects are equal, or
-     *         greater than zero otherwise
-     *
-     * @since 2.6
-     */
-    public int CompareTo(Object obj)
-    {
-        return ToString().CompareTo(obj.ToString());
-    }
 
     /**
      * Checks if this object equals another object. This method will

@@ -35,19 +35,6 @@ namespace PerCederberg.Grammatica.Runtime {
          * Creates a new parser.
          *
          * @param input          the input stream to read from
-         *
-         * @throws ParserCreationException if the tokenizer couldn't be
-         *             initialized correctly
-         *
-         * @since 1.5
-         */
-        public RecursiveDescentParser(TextReader input) : base(input) {
-        }
-
-        /**
-         * Creates a new parser.
-         *
-         * @param input          the input stream to read from
          * @param analyzer       the analyzer callback to use
          *
          * @throws ParserCreationException if the tokenizer couldn't be
@@ -57,15 +44,6 @@ namespace PerCederberg.Grammatica.Runtime {
          */
         public RecursiveDescentParser(TextReader input, Analyzer analyzer)
             : base(input, analyzer) {
-        }
-
-        /**
-         * Creates a new parser.
-         *
-         * @param tokenizer      the tokenizer to use
-         */
-        public RecursiveDescentParser(Tokenizer tokenizer)
-            : base(tokenizer) {
         }
 
         /**

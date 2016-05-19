@@ -50,21 +50,6 @@ namespace MibbleSharp.Asn1
         }
 
         /**
-         * <summary>Creates a new parser with a default analyzer.</summary>
-         *
-         * <param name='input'>the input stream to read from</param>
-         *
-         * <exception cref='ParserCreationException'>if the parser
-         * couldn't be initialized correctly</exception>
-         */
-        public Asn1Parser(TextReader input)
-            : base(input)
-        {
-
-            CreatePatterns();
-        }
-
-        /**
          * <summary>Creates a new parser.</summary>
          *
          * <param name='input'>the input stream to read from</param>
@@ -78,7 +63,18 @@ namespace MibbleSharp.Asn1
             : base(input, analyzer)
         {
 
+        }
+
+        public Asn1Parser(Asn1Tokenizer tokenizer, Asn1Analyzer analyzer)
+            : base(tokenizer, analyzer)
+        {
+
+        }
+
+        public override void Prepare()
+        {
             CreatePatterns();
+            base.Prepare();
         }
 
         /**
