@@ -60,7 +60,7 @@
     <Compile Include="Mib.cs" />
     <Compile Include="MibAnalyzer.cs" />
     <Compile Include="MibAnalyzerUtil.cs" />
-    <Compile Include="MibContext.cs" />
+    <Compile Include="IMibContext.cs" />
     <Compile Include="MibDirectoryCache.cs" />
     <Compile Include="MibException.cs" />
     <Compile Include="MibImport.cs" />

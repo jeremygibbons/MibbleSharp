@@ -37,7 +37,7 @@ namespace MibbleSharp.Snmp
      * @version  2.7
      * @since    2.0
      */
-    public class SnmpTextualConvention : SnmpType, MibContext
+    public class SnmpTextualConvention : SnmpType, IMibContext
     {
 
     /**
@@ -82,7 +82,7 @@ namespace MibbleSharp.Snmp
             return (SnmpTextualConvention)type;
         }
             sym = type.ReferenceSymbol;
-        return (sym == null) ? null : findReference(sym.getType());
+        return (sym == null) ? null : findReference(sym.Type);
     }
 
     /**
@@ -283,8 +283,8 @@ namespace MibbleSharp.Snmp
      */
     public MibSymbol FindSymbol(string name, bool expanded)
     {
-        if (syntax is MibContext) {
-            return ((MibContext)syntax).FindSymbol(name, expanded);
+        if (syntax is IMibContext) {
+            return ((IMibContext)syntax).FindSymbol(name, expanded);
         } else {
             return null;
         }

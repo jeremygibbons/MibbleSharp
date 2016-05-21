@@ -1,0 +1,12 @@
+<StyleCopSettings Version="105">
+  <GlobalSettings>
+    <CollectionProperty Name="RecognizedWords">
+      <Value>ccitt</Value>
+      <Value>iso</Value>
+      <Value>joint-iso-ccitt</Value>
+      <Value>Mib</Value>
+      <Value>Mibble</Value>
+      <Value>tokenizer</Value>
+    </CollectionProperty>
+  </GlobalSettings>
+</StyleCopSettings>

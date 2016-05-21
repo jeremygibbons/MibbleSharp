@@ -256,7 +256,7 @@ namespace MibbleSharp
          *
          * @return the default MIB context
          */
-        public MibContext getDefaultContext()
+        public IMibContext getDefaultContext()
         {
             return context;
         }
@@ -485,12 +485,12 @@ namespace MibbleSharp
             if (mibs.Contains(mib))
             {
 
-                var referers = mib.getImportingMibs();
+                var referers = mib.ImportingMibs;
                 if (referers.Count > 0)
                 {
                     message = "cannot be unloaded due to reference in " +
                               referers[0];
-                    throw new MibLoaderException(mib.getFile(), message);
+                    throw new MibLoaderException(mib.File, message);
                 }
                 mibs.Remove(mib);
                 mib.Clear();
@@ -611,7 +611,7 @@ namespace MibbleSharp
             {
                 try
                 {
-                    mib.validate();
+                    mib.Validate();
                 }
                 catch (MibLoaderException)
                 {

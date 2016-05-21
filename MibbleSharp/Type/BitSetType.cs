@@ -38,7 +38,7 @@ namespace MibbleSharp.Type
      * @version  2.7
      * @since    2.0
      */
-    public class BitSetType : MibType, MibContext
+    public class BitSetType : MibType, IMibContext
     {
 
         /**
@@ -127,7 +127,7 @@ namespace MibbleSharp.Type
         {
             string message;
 
-            setTag(true, MibTypeTag.BIT_STRING);
+            SetTag(true, MibTypeTag.BitString);
 
             if (constraint != null)
             {
@@ -139,7 +139,7 @@ namespace MibbleSharp.Type
                 if (!(sym.getValue() is NumberValue))
                 {
                     message = "value is not compatible with type";
-                    throw new MibException(sym.getLocation(), message);
+                    throw new MibException(sym.Location, message);
                 }
             }
           return this;
@@ -162,7 +162,7 @@ namespace MibbleSharp.Type
         {
             BitSetType type = new BitSetType(false, constraint, symbols);
 
-            type.setTag(true, getTag());
+            type.SetTag(true, Tag);
             return type;
         }
 
@@ -186,7 +186,7 @@ namespace MibbleSharp.Type
         {
             BitSetType type = new BitSetType(false, constraint, null);
 
-            type.setTag(true, getTag());
+            type.SetTag(true, Tag);
             return type;
         }
 
@@ -212,7 +212,7 @@ namespace MibbleSharp.Type
 
             type = new BitSetType(false, null, null);
             type.CreateValueConstraints(values);
-            type.setTag(false, getTag());
+            type.SetTag(false, Tag);
             return type;
         }
 
@@ -228,7 +228,7 @@ namespace MibbleSharp.Type
 
             foreach(MibValueSymbol sym in values)
             {
-                symbols[sym.getName()] = sym;
+                symbols[sym.Name] = sym;
                 // TODO: check value constraint compability
                 c = new ValueConstraint(null, sym.getValue());
                 if (constraint == null)
@@ -398,7 +398,7 @@ namespace MibbleSharp.Type
             if (symbols.Count > 0)
             {
                 builder.Append(" { ");
-                String.Join(", ", symbols.Values.Select(sym => sym.getName() + "(" + sym.getValue() + ")"));
+                String.Join(", ", symbols.Values.Select(sym => sym.Name + "(" + sym.getValue() + ")"));
                 builder.Append(" }");
             }
             else if (constraint != null)

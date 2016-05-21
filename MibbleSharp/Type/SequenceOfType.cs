@@ -107,7 +107,7 @@ namespace MibbleSharp.Type
          */
         public override MibType Initialize(MibSymbol symbol, MibLoaderLog log)
         {
-            setTag(true, MibTypeTag.SEQUENCE);
+            SetTag(true, MibTypeTag.Sequence);
             baseType = baseType.Initialize(symbol, log);
             if (baseType != null && constraint != null)
             {
@@ -133,7 +133,7 @@ namespace MibbleSharp.Type
         {
             SequenceOfType type = new SequenceOfType(false, baseType, constraint);
 
-            type.setTag(true, getTag());
+            type.SetTag(true, Tag);
             return type;
         }
 
@@ -157,7 +157,7 @@ namespace MibbleSharp.Type
         {
             SequenceOfType type = new SequenceOfType(false, baseType, constraint);
 
-            type.setTag(true, getTag());
+            type.SetTag(true, Tag);
             return type;
         }
 

@@ -119,9 +119,9 @@ namespace MibbleValidator
                         }
                     }
                     Console.Out.WriteLine("[OK]");
-                    if (mib.getLog().WarningCount > 0)
+                    if (mib.Log.WarningCount > 0)
                     {
-                        mib.getLog().PrintTo(Console.Out);
+                        mib.Log.PrintTo(Console.Out);
                         warnings++;
                     }
                 }

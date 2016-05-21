@@ -337,7 +337,7 @@ namespace MibbleSharp.Value
         {
             if (name == null)
             {
-                name = symbol.getName();
+                name = symbol.Name;
             }
             this.symbol = symbol;
         }
@@ -351,7 +351,7 @@ namespace MibbleSharp.Value
          */
         private Mib getMib()
         {
-            return symbol == null ? null : symbol.getMib();
+            return symbol == null ? null : symbol.Mib;
         }
 
         /**
@@ -680,7 +680,7 @@ namespace MibbleSharp.Value
                 if (oivref.getSymbol() == null) {
                     builder.Append(oivref.toAsn1String());
                 } else {
-                    builder.Append(oivref.getSymbol().getName());
+                    builder.Append(oivref.getSymbol().Name);
                 }
                 builder.Append(" ");
             }

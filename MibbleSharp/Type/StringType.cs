@@ -95,11 +95,12 @@ namespace MibbleSharp.Type
          */
         public override MibType Initialize(MibSymbol symbol, MibLoaderLog log)
         {
-            setTag(true, MibTypeTag.OCTET_STRING);
+            SetTag(true, MibTypeTag.OctetString);
             if (constraint != null)
             {
                 constraint.Initialize(this, log);
             }
+
             return this;
         }
 
@@ -120,7 +121,7 @@ namespace MibbleSharp.Type
         {
             StringType type = new StringType(false, constraint);
 
-            type.setTag(true, getTag());
+            type.SetTag(true, Tag);
             return type;
         }
 
@@ -144,7 +145,7 @@ namespace MibbleSharp.Type
         {
             StringType type = new StringType(false, constraint);
 
-            type.setTag(true, getTag());
+            type.SetTag(true, Tag);
             return type;
         }
 

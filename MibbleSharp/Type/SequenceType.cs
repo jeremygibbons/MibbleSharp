@@ -85,7 +85,7 @@ namespace MibbleSharp.Type
          */
         public override MibType Initialize(MibSymbol symbol, MibLoaderLog log)
         {
-            setTag(true, MibTypeTag.SEQUENCE);
+            SetTag(true, MibTypeTag.Sequence);
             elements.Select(e => e.Initialize(symbol, log));
             return this;
         }
@@ -107,7 +107,7 @@ namespace MibbleSharp.Type
         {
             SequenceType type = new SequenceType(false, elements);
 
-            type.setTag(true, getTag());
+            type.SetTag(true, Tag);
             return type;
         }
 

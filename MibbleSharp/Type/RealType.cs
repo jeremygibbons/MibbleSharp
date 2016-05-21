@@ -78,7 +78,7 @@ namespace MibbleSharp.Type
          */
         public override MibType Initialize(MibSymbol symbol, MibLoaderLog log)
         {
-            setTag(true, MibTypeTag.REAL);
+            SetTag(true, MibTypeTag.Real);
             return this;
         }
 
@@ -99,7 +99,7 @@ namespace MibbleSharp.Type
         {
             RealType type = new RealType(false);
 
-            type.setTag(true, getTag());
+            type.SetTag(true, Tag);
             return type;
         }
 

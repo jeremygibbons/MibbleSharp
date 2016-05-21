@@ -176,7 +176,7 @@ namespace MibbleSharp.Snmp
 
             if (!(symbol is MibValueSymbol))
             {
-                throw new MibException(symbol.getLocation(),
+                throw new MibException(symbol.Location,
                                        "only values can have the " +
                                        Name + " type");
             }
@@ -259,13 +259,13 @@ namespace MibbleSharp.Snmp
                                   int pos)
         {
 
-            Mib mib = symbol.getMib();
+            Mib mib = symbol.Mib;
             MibSymbol elementSymbol;
             string name;
             MibType type;
             ObjectIdentifierValue value;
 
-            elementSymbol = mib.getSymbol(element.Name);
+            elementSymbol = mib.GetSymbol(element.Name);
             if (elementSymbol == null)
             {
                 if (element.Name != null)
@@ -276,13 +276,13 @@ namespace MibbleSharp.Snmp
                 {
                     name = pos.ToString();
                 }
-                log.AddWarning(symbol.getLocation(),
+                log.AddWarning(symbol.Location,
                                "sequence element " + name + " is undefined " +
                                "in MIB, a default symbol will be created");
                 name = element.Name;
                 if (name == null)
                 {
-                    name = symbol.getName() + "." + pos;
+                    name = symbol.Name + "." + pos;
                 }
                 type = new SnmpObjectType(element.getType(),
                                           null,
@@ -293,11 +293,11 @@ namespace MibbleSharp.Snmp
                                           new List<SnmpIndex>(),
                                           null);
                 value = (ObjectIdentifierValue)symbol.getValue();
-                value = new ObjectIdentifierValue(symbol.getLocation(),
+                value = new ObjectIdentifierValue(symbol.Location,
                                                   value,
                                                   element.Name,
                                                   pos);
-                elementSymbol = new MibValueSymbol(symbol.getLocation(),
+                elementSymbol = new MibValueSymbol(symbol.Location,
                                                    mib,
                                                    name,
                                                    type,
@@ -314,7 +314,7 @@ namespace MibbleSharp.Snmp
                 {
                     name = pos.ToString();
                 }
-                throw new MibException(symbol.getLocation(),
+                throw new MibException(symbol.Location,
                                        "sequence element " + name +
                                        " does not refer to a value, but " +
                                        "to a type");

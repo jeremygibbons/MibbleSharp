@@ -38,7 +38,7 @@ namespace MibbleSharp.Type
      * @version  2.8
      * @since    2.0
      */
-    public class TypeReference : MibType, MibContext
+    public class TypeReference : MibType, IMibContext
     {
 
         /**
@@ -49,7 +49,7 @@ namespace MibbleSharp.Type
         /**
          * The reference context.
          */
-        private MibContext context;
+        private IMibContext context;
 
         /**
          * The referenced type.
@@ -84,14 +84,14 @@ namespace MibbleSharp.Type
          * @param name           the reference name
          */
         public TypeReference(FileLocation location,
-                             MibContext context,
+                             IMibContext context,
                              string name)
                 : base("ReferenceToType(" + name + ")", false)
         {
 
             this.location = location;
             this.context = context;
-            this.name = name;
+            this.Name = name;
         }
 
         /**
@@ -103,7 +103,7 @@ namespace MibbleSharp.Type
          * @param constraint     the additional type constraint
          */
         public TypeReference(FileLocation location,
-                             MibContext context,
+                             IMibContext context,
                              string name,
                              Constraint constraint)
             : this(location, context, name)
@@ -120,7 +120,7 @@ namespace MibbleSharp.Type
          * @param values         the additional defined symbols
          */
         public TypeReference(FileLocation location,
-                             MibContext context,
+                             IMibContext context,
                              string name,
                              IList<MibValueSymbol> values)
             : this(location, context, name)
@@ -160,7 +160,7 @@ namespace MibbleSharp.Type
                 type = InitializeReference(symbol, log, (MibTypeSymbol)sym);
                 if (type == null)
                 {
-                    message = "referenced symbol '" + sym.getName() +
+                    message = "referenced symbol '" + sym.Name +
                               "' contains undefined type";
                     throw new MibException(location, message);
                 }
@@ -168,12 +168,12 @@ namespace MibbleSharp.Type
             }
             else if (sym == null)
             {
-                message = "undefined symbol '" + name + "'";
+                message = "undefined symbol '" + this.Name + "'";
                 throw new MibException(location, message);
             }
             else
             {
-                message = "referenced symbol '" + name + "' is not a type";
+                message = "referenced symbol '" + this.Name + "' is not a type";
                 throw new MibException(location, message);
             }
         }
@@ -199,7 +199,7 @@ namespace MibbleSharp.Type
                                             MibTypeSymbol tref)
         {
 
-            MibType type = tref.getType();
+            MibType type = tref.Type;
 
             if (type != null)
             {
@@ -251,12 +251,12 @@ namespace MibbleSharp.Type
             }
             else if (tag.Next == null)
             {
-                type.setTag(implicitTag, tag);
+                type.SetTag(implicitTag, tag);
             }
             else
             {
                 initializeTypeTag(type, tag.Next);
-                type.setTag(false, tag);
+                type.SetTag(false, tag);
             }
         }
 
@@ -292,14 +292,14 @@ namespace MibbleSharp.Type
             MibSymbol sym;
             string message;
 
-            sym = context.FindSymbol(name, false);
+            sym = context.FindSymbol(this.Name, false);
             if (sym == null)
             {
-                sym = context.FindSymbol(name, true);
+                sym = context.FindSymbol(this.Name, true);
                 if (sym != null && log != null)
                 {
-                    message = "missing import for '" + name + "', using " +
-                              "definition from " + sym.getMib().getName();
+                    message = "missing import for '" + this.Name + "', using " +
+                              "definition from " + sym.Mib.Name;
                     log.AddWarning(location, message);
                 }
             }
@@ -341,9 +341,9 @@ namespace MibbleSharp.Type
          */
         public MibSymbol FindSymbol(string name, bool expanded)
         {
-            if (type is MibContext)
+            if (type is IMibContext)
             {
-                return ((MibContext)type).FindSymbol(name, expanded);
+                return ((IMibContext)type).FindSymbol(name, expanded);
             }
             else
             {
@@ -360,7 +360,7 @@ namespace MibbleSharp.Type
          *
          * @since 2.2
          */
-        public override void setTag(bool implicitly, MibTypeTag tag)
+        public override void SetTag(bool implicitly, MibTypeTag tag)
         {
             if (this.tag == null)
             {

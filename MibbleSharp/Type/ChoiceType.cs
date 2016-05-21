@@ -108,7 +108,7 @@ namespace MibbleSharp.Type
     {
         ChoiceType type = new ChoiceType(false, elements);
 
-        type.setTag(true, getTag());
+        type.SetTag(true, Tag);
         return type;
     }
 

@@ -49,7 +49,7 @@ namespace MibbleSharp.Type
      */
     public ElementType(string name, MibType type) : base("", false)
         {
-        this.name = name;
+        this.Name = name;
         this.type = type;
     }
 
@@ -117,9 +117,9 @@ namespace MibbleSharp.Type
         StringBuilder builder = new StringBuilder();
 
         builder.Append(base.ToString());
-        if (name != null)
+        if (this.Name != null)
         {
-            builder.Append(name);
+            builder.Append(this.Name);
             builder.Append(" ");
         }
         builder.Append(type.ToString());

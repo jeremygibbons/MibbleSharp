@@ -36,7 +36,7 @@ namespace MibbleSharp.Type
      * @version  2.7
      * @since    2.0
      */
-    public class IntegerType : MibType, MibContext
+    public class IntegerType : MibType, IMibContext
     {
 
         /**
@@ -122,7 +122,7 @@ namespace MibbleSharp.Type
          */
         public override MibType Initialize(MibSymbol symbol, MibLoaderLog log)
         {
-            setTag(true, MibTypeTag.INTEGER);
+            SetTag(true, MibTypeTag.Integer);
 
             if (constraint != null)
             {
@@ -134,7 +134,7 @@ namespace MibbleSharp.Type
                 if (!IsCompatibleType(sym.getValue()))
                 {
                     string message = "value is not compatible with type";
-                    throw new MibException(sym.getLocation(), message);
+                    throw new MibException(sym.Location, message);
                 }
             }
 
@@ -158,7 +158,7 @@ namespace MibbleSharp.Type
         {
             IntegerType type = new IntegerType(false, constraint, symbols);
 
-            type.setTag(true, getTag());
+            type.SetTag(true, Tag);
             return type;
         }
 
@@ -182,7 +182,7 @@ namespace MibbleSharp.Type
         {
             IntegerType type = new IntegerType(false, constraint, null);
 
-            type.setTag(true, getTag());
+            type.SetTag(true, Tag);
             return type;
         }
 
@@ -208,7 +208,7 @@ namespace MibbleSharp.Type
 
             type = new IntegerType(false, null, null);
             type.CreateValueConstraints(values);
-            type.setTag(true, getTag());
+            type.SetTag(true, Tag);
             return type;
         }
 
@@ -223,7 +223,7 @@ namespace MibbleSharp.Type
             ValueConstraint c;
             foreach (MibValueSymbol sym in values)
             {
-                symbols[sym.getName()] = sym;
+                symbols[sym.Name] = sym;
                 // TODO: check value constraint compability
                 c = new ValueConstraint(null, sym.getValue());
                 if (constraint == null)
@@ -385,7 +385,7 @@ namespace MibbleSharp.Type
             if (symbols.Count > 0)
             {
                 builder.Append(" { ");
-                String.Join(", ", symbols.Values.Select(sym => sym.getName() + "(" + sym.getValue() + ")"));
+                String.Join(", ", symbols.Values.Select(sym => sym.Name + "(" + sym.getValue() + ")"));
                 builder.Append(" }");
             }
             else if (constraint != null)

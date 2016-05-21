@@ -88,7 +88,7 @@ namespace MibbleSharp
             StringBuilder builder = new StringBuilder();
 
             builder.Append("MACRO ");
-            builder.Append(getName());
+            builder.Append(this.Name);
             return builder.ToString();
         }
     }

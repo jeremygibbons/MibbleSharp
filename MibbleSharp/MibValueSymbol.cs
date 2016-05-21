@@ -117,7 +117,7 @@ namespace MibbleSharp
                 }
             }
         if (type != null && value != null && !type.IsCompatible(value)) {
-                log.AddError(getLocation(),
+                log.AddError(Location,
                              "value is not compatible with type");
             }
         if (value is ObjectIdentifierValue) {
@@ -384,7 +384,7 @@ namespace MibbleSharp
             StringBuilder buffer = new StringBuilder();
 
             buffer.Append("VALUE ");
-            buffer.Append(getName());
+            buffer.Append(Name);
             buffer.Append(" ");
             buffer.Append(getType());
             buffer.Append("\n    ::= ");

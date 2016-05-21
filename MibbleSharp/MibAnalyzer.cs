@@ -79,7 +79,7 @@ namespace MibbleSharp
          * The base MIB symbol context. This context will be extended
          * when parsing the import list.
          */
-        private MibContext baseContext = null;
+        private IMibContext baseContext = null;
 
         /**
          * The MIB context stack. This stack is modified during the
@@ -88,7 +88,7 @@ namespace MibbleSharp
          *
          * @see #getContext()
          */
-        private IList<MibContext> contextStack = new List<MibContext>();
+        private IList<IMibContext> contextStack = new List<IMibContext>();
 
         /**
          * The implicit tags flag.
@@ -238,11 +238,11 @@ namespace MibbleSharp
          */
         public override Node ExitStart(Production node)
         {
-            string comment = MibAnalyzerUtil.getCommentsFooter(node);
+            string comment = MibAnalyzerUtil.GetCommentsFooter(node);
 
             if (currentMib != null)
             {
-                currentMib.setFooterComment(comment);
+                currentMib.FooterComment = comment;
             }
             return null;
         }
@@ -273,8 +273,8 @@ namespace MibbleSharp
         public override Node ExitModuleDefinition(Production node)
         {
 
-            currentMib.setName(GetStringValue(GetChildAt(node, 0), 0));
-            currentMib.setHeaderComment(MibAnalyzerUtil.GetComments(node));
+            currentMib.Name = GetStringValue(GetChildAt(node, 0), 0);
+            currentMib.HeaderComment = MibAnalyzerUtil.GetComments(node);
             mibs.Add(currentMib);
             return node;
         }
@@ -349,7 +349,7 @@ namespace MibbleSharp
         {
             ArrayList imports = GetChildValues(node);
             MibImport imp;
-            MibContext current = loader.getDefaultContext();
+            IMibContext current = loader.getDefaultContext();
             bool addMissingSmi = true;
 
             for (int i = 0; i < imports.Count; i++)
@@ -370,7 +370,7 @@ namespace MibbleSharp
                 //       warnings for each symbol used).
                 imp = new MibImport(loader, getLocation(node), "RFC1155-SMI", new List<MibSymbol>());
                 loader.scheduleLoad(imp.Name);
-                currentMib.addImport(imp);
+                currentMib.AddImport(imp);
                 imports.Add(imp);
             }
             for (int i = imports.Count - 1; i >= 0; i--)
@@ -417,7 +417,7 @@ namespace MibbleSharp
             loader.scheduleLoad(module);
 
             // Add reference to MIB and node
-            currentMib.addImport(imp);
+            currentMib.AddImport(imp);
             node.AddValue(imp);
             return node;
         }
@@ -467,7 +467,7 @@ namespace MibbleSharp
 
             // Check macro name
             name = GetStringValue(GetChildAt(node, 0), 0);
-            if (currentMib.getSymbol(name) != null)
+            if (currentMib.GetSymbol(name) != null)
             {
                 throw new ParseException(
                     ParseException.ErrorType.ANALYSIS,
@@ -517,7 +517,7 @@ namespace MibbleSharp
 
             // Check type name
             name = GetStringValue(GetChildAt(node, 0), 0);
-            if (currentMib.getSymbol(name) != null)
+            if (currentMib.GetSymbol(name) != null)
             {
                 throw new ParseException(
                     ParseException.ErrorType.ANALYSIS,
@@ -568,7 +568,7 @@ namespace MibbleSharp
         public override Node ExitDefinedType(Production node)
         {
 
-            MibContext local = getContext();
+            IMibContext local = getContext();
             string name = null;
             Object value = null;
             FileLocation loc = getLocation(node);
@@ -581,7 +581,7 @@ namespace MibbleSharp
                 {
                     case Asn1Constants.MODULE_REFERENCE:
                         name = GetStringValue(child, 0);
-                        local = currentMib.getImport(name);
+                        local = currentMib.GetImport(name);
                         if (local == null)
                         {
                             throw new ParseException(
@@ -942,7 +942,7 @@ namespace MibbleSharp
             }
             child = GetChildAt(node, node.GetChildCount() - 1);
             type = (MibType)GetValue(child, 0);
-            type.setTag(implicitly, tag);
+            type.SetTag(implicitly, tag);
             node.AddValue(type);
             return node;
         }
@@ -958,7 +958,7 @@ namespace MibbleSharp
         public override Node ExitTag(Production node)
         {
             System.Collections.ArrayList values = GetChildValues(node);
-            int category = MibTypeTag.CONTEXT_SPECIFIC_CATEGORY;
+            int category = MibTypeTag.ContextSpecificCategory;
             int value;
 
             if (values.Count == 1)
@@ -990,19 +990,19 @@ namespace MibbleSharp
 
             if (child.GetId() == (int)Asn1Constants.UNIVERSAL)
             {
-                category = MibTypeTag.UNIVERSAL_CATEGORY;
+                category = MibTypeTag.UniversalCategory;
             }
             else if (child.GetId() == (int)Asn1Constants.APPLICATION)
             {
-                category = MibTypeTag.APPLICATION_CATEGORY;
+                category = MibTypeTag.ApplicationCategory;
             }
             else if (child.GetId() == (int)Asn1Constants.PRIVATE)
             {
-                category = MibTypeTag.PRIVATE_CATEGORY;
+                category = MibTypeTag.PrivateCategory;
             }
             else
             {
-                category = MibTypeTag.CONTEXT_SPECIFIC_CATEGORY;
+                category = MibTypeTag.ContextSpecificCategory;
             }
             node.AddValue(category);
             return node;
@@ -1476,7 +1476,7 @@ namespace MibbleSharp
 
             // Check value name
             name = GetStringValue(GetChildAt(node, 0), 0);
-            if (currentMib.getSymbol(name) != null)
+            if (currentMib.GetSymbol(name) != null)
             {
                 throw new ParseException(
                     ParseException.ErrorType.ANALYSIS,
@@ -1530,7 +1530,7 @@ namespace MibbleSharp
         {
 
             ValueReference vref;
-            MibContext local = getContext();
+            IMibContext local = getContext();
             string name;
             Node child;
 
@@ -1539,7 +1539,7 @@ namespace MibbleSharp
             if (child.GetId() == (int)Asn1Constants.MODULE_REFERENCE)
             {
                 name = GetStringValue(child, 0);
-                local = currentMib.getImport(name);
+                local = currentMib.GetImport(name);
                 if (local == null)
                 {
                     throw new ParseException(
@@ -1831,7 +1831,7 @@ namespace MibbleSharp
                     {
                         parent = new ValueReference(getLocation(node),
                                                     getContext(),
-                                                    DefaultContext.JOINT_ISO_CCITT);
+                                                    DefaultContext.JOINTISOCCITT);
                     }
                     else if (parent is ObjectIdentifierValue)
                     {
@@ -2016,7 +2016,7 @@ namespace MibbleSharp
             string desc;
             System.Collections.ArrayList revisions = new System.Collections.ArrayList();
 
-            currentMib.SetSmiVersion(2);
+            currentMib.SmiVersion = 2;
             update = GetStringValue(GetChildAt(node, 1), 0);
             org = GetStringValue(GetChildAt(node, 2), 0);
             contact = GetStringValue(GetChildAt(node, 3), 0);
@@ -2049,7 +2049,7 @@ namespace MibbleSharp
             string desc;
             string sref;
 
-            currentMib.SetSmiVersion(2);
+            currentMib.SmiVersion = 2;
             status = (SnmpStatus)GetValue(GetChildAt(node, 1), 0);
             desc = GetStringValue(GetChildAt(node, 2), 0);
             if (node.GetChildCount() <= 3)
@@ -2080,9 +2080,9 @@ namespace MibbleSharp
             if (child.GetId() == (int)Asn1Constants.SNMP_SYNTAX_PART)
             {
                 type = (MibType)GetValue(child, 0);
-                if (type is MibContext)
+                if (type is IMibContext)
                 {
-                    pushContextExtension((MibContext)type);
+                    pushContextExtension((IMibContext)type);
                 }
             }
             node.AddChild(child);
@@ -2119,7 +2119,7 @@ namespace MibbleSharp
                 {
                     case Asn1Constants.SNMP_SYNTAX_PART:
                         syntax = (MibType)GetValue(child, 0);
-                        if (syntax is MibContext)
+                        if (syntax is IMibContext)
                         {
                             popContext();
                         }
@@ -2192,7 +2192,7 @@ namespace MibbleSharp
             string sref = null;
             Node child;
 
-            currentMib.SetSmiVersion(2);
+            currentMib.SmiVersion = 2;
             for (int i = 0; i < node.GetChildCount(); i++)
             {
                 child = node.GetChildAt(i);
@@ -2279,7 +2279,7 @@ namespace MibbleSharp
             MibType syntax = null;
             Node child;
 
-            currentMib.SetSmiVersion(2);
+            currentMib.SmiVersion = 2;
             for (int i = 0; i < node.GetChildCount(); i++)
             {
                 child = node.GetChildAt(i);
@@ -2328,7 +2328,7 @@ namespace MibbleSharp
             string desc;
             string sref;
 
-            currentMib.SetSmiVersion(2);
+            currentMib.SmiVersion = 2;
             objects = (System.Collections.ArrayList)GetValue(GetChildAt(node, 1), 0);
             status = (SnmpStatus)GetValue(GetChildAt(node, 2), 0);
             desc = GetStringValue(GetChildAt(node, 3), 0);
@@ -2361,7 +2361,7 @@ namespace MibbleSharp
             string desc;
             string sref;
 
-            currentMib.SetSmiVersion(2);
+            currentMib.SmiVersion = 2;
             notifications = GetChildAt(node, 1).Values;
             status = (SnmpStatus)GetValue(GetChildAt(node, 2), 0);
             desc = GetStringValue(GetChildAt(node, 3), 0);
@@ -2398,7 +2398,7 @@ namespace MibbleSharp
             System.Collections.ArrayList modules = new System.Collections.ArrayList();
             Node child;
 
-            currentMib.SetSmiVersion(2);
+            currentMib.SmiVersion = 2;
             for (int i = 0; i < node.GetChildCount(); i++)
             {
                 child = node.GetChildAt(i);
@@ -2444,7 +2444,7 @@ namespace MibbleSharp
             System.Collections.ArrayList modules = new System.Collections.ArrayList();
             Node child;
 
-            currentMib.SetSmiVersion(2);
+            currentMib.SmiVersion = 2;
             for (int i = 0; i < node.GetChildCount(); i++)
             {
                 child = node.GetChildAt(i);
@@ -2657,7 +2657,7 @@ namespace MibbleSharp
             child = GetChildAt(node, 0);
             if (child.GetId() != (int)Asn1Constants.ACCESS)
             {
-                currentMib.SetSmiVersion(2);
+                currentMib.SmiVersion = 2;
             }
             child = GetChildAt(node, 1);
             name = GetStringValue(child, 0);
@@ -2938,7 +2938,7 @@ namespace MibbleSharp
 
             // Create module reference and context
             imp = new MibImport(loader, getLocation(node), module, null);
-            currentMib.addImport(imp);
+            currentMib.AddImport(imp);
             pushContextExtension(imp);
 
             // Return results
@@ -3123,7 +3123,7 @@ namespace MibbleSharp
         {
 
             MibType type;
-            MibContext context;
+            IMibContext context;
 
             if (child.GetId() == (int)Asn1Constants.VALUE)
             {
@@ -3133,9 +3133,9 @@ namespace MibbleSharp
             else if (child.GetId() == (int)Asn1Constants.SNMP_SYNTAX_PART)
             {
                 type = (MibType)GetValue(child, 0);
-                if (type is MibContext)
+                if (type is IMibContext)
                 {
-                    pushContextExtension((MibContext)type);
+                    pushContextExtension((IMibContext)type);
                 }
             }
             node.AddChild(child);
@@ -3173,7 +3173,7 @@ namespace MibbleSharp
                         break;
                     case Asn1Constants.SNMP_SYNTAX_PART:
                         syntax = (MibType)GetValue(child, 0);
-                        if (syntax is MibContext)
+                        if (syntax is IMibContext)
                         {
                             popContext();
                         }
@@ -3240,9 +3240,9 @@ namespace MibbleSharp
          *
          * @return the top context on the context stack
          */
-        private MibContext getContext()
+        private IMibContext getContext()
         {
-            return (MibContext)contextStack[contextStack.Count - 1];
+            return (IMibContext)contextStack[contextStack.Count - 1];
         }
 
         /**
@@ -3250,7 +3250,7 @@ namespace MibbleSharp
          *
          * @param context        the context to add
          */
-        private void pushContext(MibContext context)
+        private void pushContext(IMibContext context)
         {
             contextStack.Add(context);
         }
@@ -3262,7 +3262,7 @@ namespace MibbleSharp
          *
          * @param context        the context extension to add
          */
-        private void pushContextExtension(MibContext context)
+        private void pushContextExtension(IMibContext context)
         {
             pushContext(new CompoundContext(context, getContext()));
         }

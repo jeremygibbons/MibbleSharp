@@ -48,7 +48,7 @@ namespace MibbleSharp.Value
         /**
          * The reference context.
          */
-        private MibContext context;
+        private IMibContext context;
 
         /**
          * The referenced name.
@@ -63,7 +63,7 @@ namespace MibbleSharp.Value
          * @param name           the reference name
          */
         public ValueReference(FileLocation location,
-                              MibContext context,
+                              IMibContext context,
                               string name)
                 : base("ReferenceToValue(" + name + ")")
         {
@@ -118,7 +118,7 @@ namespace MibbleSharp.Value
                 }
                 if (!(value is ObjectIdentifierValue))
                 {
-                    value.setReferenceSymbol((MibValueSymbol)sym);
+                    value.ReferenceSymbol = (MibValueSymbol)sym;
                 }
                 return value;
             }
@@ -173,7 +173,7 @@ namespace MibbleSharp.Value
                 if (sym != null && log != null)
                 {
                     message = "missing import for '" + name + "', using " +
-                              "definition from " + sym.getMib().getName();
+                              "definition from " + sym.Mib.Name;
                     log.AddWarning(location, message);
                 }
             }

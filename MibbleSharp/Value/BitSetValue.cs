@@ -283,7 +283,7 @@ namespace MibbleSharp.Value
             {
                 if (s.getValue().Equals(bit))
                 {
-                    return s.getName();
+                    return s.Name;
                 }
             }
             return bit.ToString();

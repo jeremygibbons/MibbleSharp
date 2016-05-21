@@ -100,7 +100,7 @@ namespace MibbleSharp.Snmp
         {
             if (!(symbol is MibValueSymbol))
             {
-                throw new MibException(symbol.getLocation(),
+                throw new MibException(symbol.Location,
                                        "only values can have the " +
                                        Name + " type");
             }

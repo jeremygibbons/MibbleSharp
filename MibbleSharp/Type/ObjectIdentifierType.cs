@@ -72,7 +72,7 @@ namespace MibbleSharp.Type
          */
         public override MibType Initialize(MibSymbol symbol, MibLoaderLog log)
         {
-            setTag(true, MibTypeTag.OBJECT_IDENTIFIER);
+            SetTag(true, MibTypeTag.ObjectIdentifier);
             return this;
         }
 
@@ -93,7 +93,7 @@ namespace MibbleSharp.Type
         {
             ObjectIdentifierType type = new ObjectIdentifierType(false);
 
-            type.setTag(true, getTag());
+            type.SetTag(true, Tag);
             return type;
         }
 

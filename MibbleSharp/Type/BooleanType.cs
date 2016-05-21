@@ -72,7 +72,7 @@ namespace MibbleSharp.Type
          */
         public override MibType Initialize(MibSymbol symbol, MibLoaderLog log)
         {
-            setTag(true, MibTypeTag.BOOLEAN);
+            SetTag(true, MibTypeTag.Boolean);
             return this;
         }
 
@@ -93,7 +93,7 @@ namespace MibbleSharp.Type
         {
             BooleanType type = new BooleanType(false);
 
-            type.setTag(true, getTag());
+            type.SetTag(true, Tag);
             return type;
         }
 
