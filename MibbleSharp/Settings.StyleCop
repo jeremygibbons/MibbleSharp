@@ -6,6 +6,7 @@
       <Value>joint-iso-ccitt</Value>
       <Value>Mib</Value>
       <Value>Mibble</Value>
+      <Value>semantical</Value>
       <Value>tokenizer</Value>
     </CollectionProperty>
   </GlobalSettings>
