@@ -120,7 +120,7 @@ namespace MibbleSharp
         {
             string message;
 
-            this.mib = this.loader.getMib(this.name);
+            this.mib = this.loader.GetMib(this.name);
             if (this.mib == null)
             {
                 message = "couldn't find referenced MIB '" + this.name + "'";

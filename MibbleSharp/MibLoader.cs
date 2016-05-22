@@ -32,7 +32,7 @@ namespace MibbleSharp
     /// <summary>
     /// <para>
     /// A MIB loader. This class contains a search path for locating MIB
-    /// files, and also holds a refererence to previously loaded MIB files
+    /// files, and also holds a reference to previously loaded MIB files
     /// to avoid loading the same file multiple times. The MIB search path
     /// consists of directories with MIB files that can be imported into
     /// other MIBs. The search path directories can either be normal file
@@ -59,8 +59,6 @@ namespace MibbleSharp
     /// </summary>
     public class MibLoader
     {
-
-
         /// <summary>
         /// The MIB file directory caches. This is also a list of the MIB
         /// file search path, as each directory on the path has its own
@@ -76,7 +74,6 @@ namespace MibbleSharp
         /// </summary>
         private IList<Mib> mibs = new List<Mib>();
 
-
         /// <summary>
         /// The queue of MIB files to load. This queue contains
         /// MibSource objects.
@@ -88,33 +85,84 @@ namespace MibbleSharp
         /// MIB module names.
         /// </summary>
         private IList<string> nameQueue = new List<string>();
-        
+
+        /// <summary>
         /// The default MIB context.
-        
+        /// </summary>
         private DefaultContext context = new DefaultContext();
 
-        
-        /// Creates a new MIB loader.
-        
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MibLoader"/> class.
+        /// </summary>
         public MibLoader()
         {
-            addDir("mibs/iana");
-            addDir("mibs/ietf");
+            this.AddDir("mibs/iana");
+            this.AddDir("mibs/ietf");
         }
 
-        
+        /// <summary>
+        /// Gets all the directories in the MIB search path. If a tree
+        /// of directories has been added, all the individual directories
+        /// will be returned by this method.
+        /// </summary>
+        public IList<string> Dirs
+        {
+            get
+            {
+                return this.dirCaches.Select(d => d.Dir).ToList();
+            }
+        }
+
+        /// <summary>
+        /// Gets the default MIB context. This context contains the
+        /// symbols that are predefined for all MIB:s (such as 'iso').
+        /// </summary>
+        public IMibContext DefaultContext
+        {
+            get
+            {
+                return this.context;
+            }
+        }
+
+        /// <summary>Gets the root object identifier value (OID). This OID is
+        /// the "iso" symbol.
+        /// </summary>
+        public ObjectIdentifierValue RootOid
+        {
+            get
+            {
+                MibSymbol symbol;
+                MibValue value;
+
+                symbol = this.context.FindSymbol(MibbleSharp.DefaultContext.ISO, false);
+                value = ((MibValueSymbol)symbol).Value;
+                return (ObjectIdentifierValue)value;
+            }
+        }
+
+        /// <summary>
+        /// Gets all previously loaded MIB files. If no MIB files have
+        /// been loaded an empty array will be returned.
+        /// </summary>
+        public IEnumerable<Mib> AllMibs
+        {
+            get
+            {
+                return this.mibs;
+            }
+        }
+
+        /// <summary>
         /// Checks if a directory is in the MIB search path. If a file is
         /// specified instead of a directory, this method checks if the
         /// parent directory is in the MIB search path.
-
-        /// @param dir            the directory or file to check
-
-        /// @return true if the directory is in the MIB search path, or
-        ///         false otherwise
-
-        /// @since 2.9
-        
-        public bool hasDir(string dir)
+        /// </summary>
+        /// <param name="dir">The directory or file to check</param>
+        /// <returns>
+        /// True if the directory is in the MIB search path, false if not
+        /// </returns>
+        public bool HasDir(string dir)
         {
             if (dir == null)
             {
@@ -122,317 +170,206 @@ namespace MibbleSharp
             }
             else if (File.Exists(dir))
             {
-                //it's a file, so get it's directory
+                // It's a file, so get its containing directory
                 dir = Directory.GetParent(dir).FullName;
             }
 
-            foreach (MibDirectoryCache cache in dirCaches)
+            foreach (MibDirectoryCache cache in this.dirCaches)
             {
                 if (cache.Dir.Equals(dir))
                 {
                     return true;
                 }
             }
+
             return false;
         }
 
-        
-        /// Returns all the directories in the MIB search path. If a tree
-        /// of directories has been added, all the individual directories
-        /// will be returned by this method.
-
-        /// @return the directories in the MIB search path
-
-        /// @since 2.9
-        
-        public IList<string> getDirs()
-        {
-            return dirCaches.Select(d => d.Dir).ToList();
-        }
-
-        
+        /// <summary>
         /// Adds a directory to the MIB search path. If the directory
         /// specified is null, the current working directory will be added.
-
-        /// @param dir            the directory to add
-        
-        public void addDir(string dir)
+        /// </summary>
+        /// <param name="dir">The directory to add</param>
+        public void AddDir(string dir)
         {
             if (dir == null)
             {
                 dir = Directory.GetCurrentDirectory();
             }
-            if (!hasDir(dir) && Directory.Exists(dir))
+
+            if (!this.HasDir(dir) && Directory.Exists(dir))
             {
-                dirCaches.Add(new MibDirectoryCache(dir));
+                this.dirCaches.Add(new MibDirectoryCache(dir));
             }
         }
 
-        
+        /// <summary>
         /// Adds directories to the MIB search path.
-
-        /// @param dirs           the directories to add
-        
-        public void addDirs(IEnumerable<string> dirs)
+        /// </summary>
+        /// <param name="dirs">The directories to add</param>
+        public void AddDirs(IEnumerable<string> dirs)
         {
             foreach (string d in dirs)
             {
-                addDir(d);
+                this.AddDir(d);
             }
         }
 
-        
+        /// <summary>
         /// Adds a directory and all subdirectories to the MIB search path.
         /// If the directory specified is null, the current working
         /// directory (and subdirectories) will be added.
-
-        /// @param dir            the directory to add
-        
-        public void addAllDirs(string dir)
+        /// </summary>
+        /// <param name="dir">The directory to add</param>
+        public void AddAllDirs(string dir)
         {
             if (dir == null)
             {
                 dir = Directory.GetCurrentDirectory();
             }
-            addDir(dir);
+
+            this.AddDir(dir);
+
             IEnumerable<string> subDirs = Directory.EnumerateDirectories(dir);
             foreach (string subDir in subDirs)
             {
-                addAllDirs(subDir);
+                this.AddAllDirs(subDir);
             }
-
         }
 
-        
+        /// <summary>
         /// Removes a directory from the MIB search path.
-
-        /// @param dir            the directory to remove
-        
-        public void removeDir(string dir)
+        /// </summary>
+        /// <param name="dir">The directory to remove</param>
+        public void RemoveDir(string dir)
         {
-            MibDirectoryCache cache;
-
-            for (int i = 0; i < dirCaches.Count; i++)
+            foreach (var cache in this.dirCaches)
             {
-                cache = dirCaches[i];
                 if (cache.Dir.Equals(dir))
                 {
-                    dirCaches.Remove(cache);
+                    this.dirCaches.Remove(cache);
                 }
             }
         }
 
-        
+        /// <summary>
         /// Removes all directories from the MIB search path.
-        
-        public void removeAllDirs()
+        /// </summary>
+        public void RemoveAllDirs()
         {
-            dirCaches.Clear();
+            this.dirCaches.Clear();
         }
 
-
-        
-        /// Resets this loader. This means that all references to previuos
+        /// <summary><para>
+        /// Resets this loader. This means that all references to previous
         /// MIB files will be removed, forcing a reload of any imported
-        /// MIB.<p>
-
+        /// MIB.</para>
+        /// <para>
         /// Note that this is not the same operation as unloadAll, since
         /// the MIB files previously loaded will be unaffected by this
         /// this method (i.e. they remain possible to use). If the purpose
         /// is to free all memory used by the loaded MIB files, use the
-        /// unloadAll() method instead.
-
-        /// @see #unloadAll()
-        
-        public void reset()
+        /// unloadAll() method instead.</para>
+        /// </summary>
+        /// <see cref="UnloadAll"/>
+        public void Reset()
         {
-            mibs.Clear();
-            sourceQueue.Clear();
-            nameQueue.Clear();
-            context = new DefaultContext();
+            this.mibs.Clear();
+            this.sourceQueue.Clear();
+            this.nameQueue.Clear();
+            this.context = new DefaultContext();
         }
 
-        
-        /// Returns the default MIB context. This context contains the
-        /// symbols that are predefined for all MIB:s (such as 'iso').
-
-        /// @return the default MIB context
-        
-        public IMibContext getDefaultContext()
-        {
-            return context;
-        }
-
-        
-        /// Returns the root object identifier value (OID). This OID is
-        /// the "iso" symbol.
-
-        /// @return the root object identifier value
-
-        /// @since 2.7
-        
-        public ObjectIdentifierValue getRootOid()
-        {
-            MibSymbol symbol;
-            MibValue value;
-
-            symbol = context.FindSymbol(DefaultContext.ISO, false);
-            value = ((MibValueSymbol)symbol).Value;
-            return (ObjectIdentifierValue)value;
-        }
-
-        
+        /// <summary>
         /// Returns a previously loaded MIB file. If the MIB file hasn't
         /// been loaded, null will be returned. The MIB is identified by
         /// it's MIB name (i.e. the module name).
-
-        /// @param name           the MIB (module) name
-
-        /// @return the MIB module if found, or
-        ///         null otherwise
-        
-        public Mib getMib(string name)
+        /// </summary>
+        /// <param name="name">The MIB (module) name</param>
+        /// <returns>The MIB module if found, null if not</returns>
+        public Mib GetMib(string name)
         {
-            foreach (Mib mib in mibs)
-            {
-                if (mib.Equals(name))
-                {
-                    return mib;
-                }
-            }
-            return null;
+            return this.mibs.Where(m => m.Equals(name)).FirstOrDefault();
         }
 
-        
-        /// Returns all previously loaded MIB files. If no MIB files have
-        /// been loaded an empty array will be returned.
-
-        /// @return an array with all loaded MIB files
-
-        /// @since 2.2
-        
-        public IEnumerable<Mib> getAllMibs()
-        {
-            return mibs;
-        }
-
-        
-        /// Loads a MIB file with the specified base name. The file is
+        /// <summary>Loads a MIB file with the specified base name. The file is
         /// searched for in the MIB search path. The MIB is identified by
         /// it's MIB name (i.e. the module name). This method will also
         /// load all imported MIB:s if not previously loaded by this
         /// loader. If a MIB with the same name has already been loaded, it
         /// will be returned directly instead of reloading it.
-
-        /// @param name           the MIB name (filename without extension)
-
-        /// @return the MIB module loaded
-
-        /// @throws IOException if the MIB file couldn't be found in the
-        ///             MIB search path
-        /// @throws MibLoaderException if the MIB file couldn't be loaded
-        ///             correctly
-        
+        /// </summary>
+        /// <param name="name">The MIB name (filename without extension)</param>
+        /// <returns>The MIB module that was loaded</returns>
+        /// <exception cref="IOException">
+        /// If the MIB file couldn't be found in the MIB search path
+        /// </exception>
+        /// <exception cref="MibLoaderException">
+        /// If the MIB file couldn't be loaded correctly
+        /// </exception>
         public Mib Load(string name)
         {
             MibSource src;
             Mib mib;
 
-            mib = getMib(name);
+            mib = this.GetMib(name);
             if (mib == null)
             {
-                src = locate(name);
+                src = this.Locate(name);
                 if (src == null)
                 {
-                    throw new FileNotFoundException("couldn't locate MIB: '" +
-                                                    name + "'");
+                    throw new FileNotFoundException(
+                        "couldn't locate MIB: '" +
+                        name + "'");
                 }
-                mib = load(src);
+
+                mib = this.Load(src);
             }
             else
             {
                 mib.Loaded = true;
             }
+
             return mib;
         }
 
-
-
-        
+        /// <summary>
         /// Loads a MIB file from the specified URL. This method will also
         /// load all imported MIB:s if not previously loaded by this
         /// loader. Note that if the URL data contains several MIB modules,
         /// this method will only return the first one (although all are
         /// loaded).
-
-        /// @param url            the URL containing the MIB
-
-        /// @return the first MIB module loaded
-
-        /// @throws IOException if the MIB URL couldn't be read
-        /// @throws MibLoaderException if the MIB file couldn't be loaded
-        ///             correctly
-
-        /// @since 2.3
-        
-        public Mib load(Uri url)
+        /// </summary>
+        /// <param name="url">the URL containing the MIB</param>
+        /// <returns>The first MIB module loaded</returns>
+        /// <exception cref="IOException">
+        /// If the MIB URL couldn't be read
+        /// </exception>
+        /// <exception cref="MibLoaderException">
+        /// If the MIB file couldn't be loaded correctly
+        /// </exception>
+        public Mib Load(Uri url)
         {
-            return load(new MibSource(url));
+            return this.Load(new MibSource(url));
         }
 
-        
+        /// <summary>
         /// Loads a MIB file from the specified input reader. This method
         /// will also load all imported MIB:s if not previously loaded by
         /// this loader. Note that if the input data contains several MIB
         /// modules, this method will only return the first one (although
         /// all are loaded).
-
-        /// @param input          the input stream containing the MIB
-
-        /// @return the first MIB module loaded
-
-        /// @throws IOException if the input stream couldn't be read
-        /// @throws MibLoaderException if the MIB file couldn't be loaded
-        ///             correctly
-
-        /// @since 2.3
-        
-        public Mib load(StreamReader input)
+        /// </summary>
+        /// <param name="input">The input stream containing the MIB</param>
+        /// <returns>The first MIB module loaded</returns>
+        /// <exception cref="IOException">If the input stream couldn't be read</exception>
+        /// <exception cref="MibLoaderException">If the MIB file couldn't be loaded correctly</exception>
+        public Mib Load(StreamReader input)
         {
-            return load(new MibSource(input));
+            return this.Load(new MibSource(input));
         }
 
-        
-        /// Loads a MIB. This method will also load all imported MIB:s if
-        /// not previously loaded by this loader. Note that if the source
-        /// contains several MIB modules, this method will only return the
-        /// first one (although all are loaded).
-
-        /// @param src            the MIB source
-
-        /// @return the first MIB module loaded
-
-        /// @throws IOException if the MIB couldn't be found
-        /// @throws MibLoaderException if the MIB couldn't be loaded
-        ///             correctly
-        
-        private Mib load(MibSource src)
-        {
-            MibLoaderLog log;
-
-            sourceQueue.Clear();
-            sourceQueue.Add(src);
-
-            log = loadQueue();
-            if (log.ErrorCount > 0)
-            {
-                throw new MibLoaderException(log);
-            }
-
-            return mibs.Last();
-        }
-
-        
+        /// <summary>
         /// Unloads a MIB. This method will remove the loader reference to
         /// a previously loaded MIB if no other MIBs are depending on it.
         /// This method attempts to free the memory used by the MIB, as it
@@ -440,29 +377,26 @@ namespace MibbleSharp
         /// structures (thereby allowing the garbage collector to recover
         /// the memory used if no other references exist). Other MIB:s
         /// should be unaffected by this operation.
-
-        /// @param name           the MIB name
-
-        /// @throws MibLoaderException if the MIB couldn't be unloaded
-        ///             due to dependencies from other loaded MIBs
-
-        /// @see #reset
-
-        /// @since 2.3
-        
-        public void unload(string name)
+        /// </summary>
+        /// <param name="name">The MIB name</param>
+        /// <exception cref="MibLoaderException">
+        /// If the MIB couldn't be unloaded due to dependencies from 
+        /// other loaded MIBs
+        /// </exception>
+        /// <see cref="Reset"/>
+        public void Unload(string name)
         {
-            foreach (Mib mib in mibs)
+            foreach (Mib mib in this.mibs)
             {
                 if (mib.Equals(name))
                 {
-                    unload(mib);
+                    this.Unload(mib);
                     return;
                 }
             }
         }
 
-        
+        /// <summary>
         /// Unloads a MIB. This method will remove the loader reference to
         /// a previously loaded MIB if no other MIBs are depending on it.
         /// This method attempts to free the memory used by the MIB, as it
@@ -470,131 +404,128 @@ namespace MibbleSharp
         /// structures (thereby allowing the garbage collector to recover
         /// the memory used if no other references exist). Other MIB:s
         /// should be unaffected by this operation.
-
-        /// @param mib            the MIB
-
-        /// @throws MibLoaderException if the MIB couldn't be unloaded
-        ///             due to dependencies from other loaded MIBs
-
-        /// @see #reset
-
-        /// @since 2.3
-        
-        public void unload(Mib mib)
+        /// </summary>
+        /// <param name="mib">The MIB to be unloaded</param>
+        /// <exception cref="MibLoaderException">
+        /// If the MIB couldn't be unloaded due to dependencies from 
+        /// other loaded MIBs
+        /// </exception>
+        /// <see cref="Reset"/>
+        public void Unload(Mib mib)
         {
-            string message;
-
-            if (mibs.Contains(mib))
+            if (this.mibs.Contains(mib))
             {
-
                 var referers = mib.ImportingMibs;
                 if (referers.Count > 0)
                 {
-                    message = "cannot be unloaded due to reference in " +
+                    string message = "cannot be unloaded due to reference in " +
                               referers[0];
                     throw new MibLoaderException(mib.File, message);
                 }
-                mibs.Remove(mib);
+
+                this.mibs.Remove(mib);
                 mib.Clear();
             }
         }
 
-        
+        /// <summary><para>
         /// Unloads all MIBs loaded by this loaded (since the last reset).
         /// This method attempts to free all the memory used by the MIBs,
         /// as it clears both the loader and internal MIB references to
         /// the data structures (thereby allowing the garbage collector to
         /// recover the memory used if no other references exist). Note
         /// that no previous MIBs returned by this loader should be
-        /// accessed after this method has been called.<p>
-
+        /// accessed after this method has been called.</para>
+        /// <para>
         /// In order to just reset the MIB loader to force re-loading of
         /// MIB files, use the reset() method instead which will leave the
-        /// MIBs unaffected.
-
-        /// @see #reset()
-        /// @since 2.9
-        /// 
-        
-        public void unloadAll()
+        /// MIBs unaffected.</para>
+        /// </summary>
+        /// <see cref="Reset"/>
+        public void UnloadAll()
         {
-            foreach (Mib mib in mibs)
+            foreach (Mib mib in this.mibs)
+            {
                 mib.Clear();
+            }
 
-            reset();
+            this.Reset();
         }
 
-        
+        /// <summary>
         /// Schedules the loading of a MIB file. The file is added to the
         /// queue of MIB files to be loaded, unless it is already loaded
         /// or in the queue. The MIB file search is postponed until the
         /// MIB is to be loaded, avoiding loading if the MIB name was
         /// defined in another MIB file in the queue.
-
-        /// @param name           the MIB name (filename without extension)
-        
-        public void scheduleLoad(string name)
+        /// </summary>
+        /// <param name="name">The MIB name (filename without extension)</param>
+        public void ScheduleLoad(string name)
         {
-            if (getMib(name) == null && !nameQueue.Contains(name))
+            if (this.GetMib(name) == null && !this.nameQueue.Contains(name))
             {
-                nameQueue.Add(name);
+                this.nameQueue.Add(name);
             }
         }
 
-        
+        /// <summary>
         /// Loads all MIB files in the loader queue. New entries may be
         /// added to the queue while loading a MIB, as a result of
         /// importing other MIB files. This method will either load all
         /// MIB files in the queue or none (if errors were encountered).
-
-        /// @return the loader log for the whole queue
-
-        /// @throws IOException if the MIB file in the queue couldn't be
-        ///             found
-        
-        private MibLoaderLog loadQueue()
+        /// </summary>
+        /// <returns>The loader log for the whole queue</returns>
+        /// <exception cref="MibLoaderException">
+        /// If the MIB file in the queue couldn't be
+        /// found
+        /// </exception>
+        private MibLoaderLog LoadQueue()
         {
             MibLoaderLog log = new MibLoaderLog();
             IList<Mib> processed = new List<Mib>();
 
             IList<Mib> list;
 
-            foreach (var msrc in sourceQueue)
+            foreach (var msrc in this.sourceQueue)
             {
-                if (getMib(msrc.getFile()) == null)
+                if (this.GetMib(msrc.File) == null)
                 {
-                    list = msrc.parseMib(this, log);
+                    list = msrc.ParseMib(this, log);
                     foreach (var mib in list)
                     {
                         mib.Loaded = true;
                     }
-                    mibs = mibs.Concat(list).ToList();
+
+                    this.mibs = this.mibs.Concat(list).ToList();
                     processed = processed.Concat(list).ToList();
                 }
             }
-            sourceQueue.Clear();
 
-            foreach (var name in nameQueue)
+            this.sourceQueue.Clear();
+
+            foreach (var name in this.nameQueue)
             {
-                MibSource src = locate(name);
+                MibSource src = this.Locate(name);
                 if (src == null)
-                    continue;
-
-                if (getMib(src.getFile()) == null)
                 {
-                    list = src.parseMib(this, log);
+                    continue;
+                }
+
+                if (this.GetMib(src.File) == null)
+                {
+                    list = src.ParseMib(this, log);
                     foreach (var mib in list)
                     {
                         mib.Loaded = false;
                     }
-                    mibs = mibs.Concat(list).ToList();
+
+                    this.mibs = this.mibs.Concat(list).ToList();
                     processed = processed.Concat(list).ToList();
                 }
             }
-            nameQueue.Clear();
 
-
-
+            this.nameQueue.Clear();
+            
             // Initialize all parsed MIB files in reverse order
             foreach (var mib in processed.Reverse())
             {
@@ -626,169 +557,204 @@ namespace MibbleSharp
             {
                 foreach (var mib in processed)
                 {
-                    mibs.Remove(mib);
+                    this.mibs.Remove(mib);
                 }
             }
 
             return log;
         }
 
-        
+        /// <summary>
         /// Searches for a MIB in the search path. The name specified
         /// should be the MIB name. If a matching file name isn't found in
         /// the directory search path, the contents in the base resource
         /// path are also tested. Finally, if no MIB file has been found,
         /// the files in the search path will be opened regardless of file
         /// name to perform a small heuristic test for the MIB in question.
-
-        /// @param name           the MIB name
-
-        /// @return the MIB found, or
-        ///         null if no MIB was found
-        
-        private MibSource locate(string name)
+        /// </summary>
+        /// <param name="name">The MIB name</param>
+        /// <returns>The MIB found, or null if none was found</returns>
+        private MibSource Locate(string name)
         {
             string file;
 
-            foreach (var dir in dirCaches)
+            foreach (var dir in this.dirCaches)
             {
                 file = dir.FindByName(name);
                 if (file != null)
+                {
                     return new MibSource(file);
+                }
 
                 file = dir.FindByContent(name);
+
                 if (file != null)
+                {
                     return new MibSource(file);
+                }
             }
 
             return null;
         }
 
-        
+        /// <summary>
+        /// Loads a MIB. This method will also load all imported MIB:s if
+        /// not previously loaded by this loader. Note that if the source
+        /// contains several MIB modules, this method will only return the
+        /// first one (although all are loaded).
+        /// </summary>
+        /// <param name="src">The MIB source</param>
+        /// <returns>The first MIB Module loaded</returns>
+        /// <exception cref="IOException">If the MIB couldn't be found</exception>
+        /// <exception cref="MibLoaderException">
+        /// If the MIB file couldn't be loaded correctly
+        /// </exception>
+        private Mib Load(MibSource src)
+        {
+            MibLoaderLog log;
+
+            this.sourceQueue.Clear();
+            this.sourceQueue.Add(src);
+
+            log = this.LoadQueue();
+            if (log.ErrorCount > 0)
+            {
+                throw new MibLoaderException(log);
+            }
+
+            return this.mibs.Last();
+        }
+
+        /// <summary>
         /// A MIB input source. This class encapsulates the two different
         /// ways of locating a MIB file, either through a file or a URL.
-        
+        /// </summary>
         private class MibSource
         {
-
-            
+            /// <summary>
             /// The singleton ASN.1 parser used by all MIB sources.
-            
+            /// </summary>
             private static Asn1Parser parser = null;
 
-            
+            /// <summary>
             /// The MIB file. This variable is only set if the MIB is read
             /// from file, or if the MIB name is known.
-            
+            /// </summary>
             private string file = null;
 
-            
+            /// <summary>
             /// The MIB URL location. This variable is only set if the MIB
             /// is read from a URL.
-            
+            /// </summary>
             private Uri url = null;
 
-            
+            /// <summary>
             /// The MIB reader. This variable is only set if the MIB
             /// is read from an input stream.
-            
+            /// </summary>
             private System.IO.TextReader input = null;
 
-            
-            /// Creates a new MIB input source. The MIB will be read from
-            /// the specified file.
-    
-            /// @param file           the file to read from
-            
+            /// <summary>
+            /// Initializes a new instance of the <see cref="MibSource"/> class.
+            /// The MIB will be read from the specified file.
+            /// </summary>
+            /// <param name="file">The file to read from</param>
             public MibSource(string file)
             {
                 this.file = file;
             }
 
-            
-            /// Creates a new MIB input source. The MIB will be read from
-            /// the specified URL.
-    
-            /// @param url            the URL to read from
-            
+            /// <summary>
+            /// Initializes a new instance of the <see cref="MibSource"/> class.
+            /// The MIB will be read from the specified URL.
+            /// </summary>
+            /// <param name="url">The URL to read from</param>
             public MibSource(Uri url)
             {
                 this.url = url;
             }
 
-            
-            /// Creates a new MIB input source. The MIB will be read from
-            /// the specified URL. This method also create a default file
-            /// from the specified MIB name in order to improve possible
-            /// error messages.
-    
-            /// @param name           the MIB name
-            /// @param url            the URL to read from
-            
+            /// <summary>
+            /// Initializes a new instance of the <see cref="MibSource"/> class.
+            /// The MIB will be read from the specified URL. This method
+            /// also create a default file from the specified MIB name in 
+            /// order to improve possible error messages.
+            /// </summary>
+            /// <param name="name">The MIB name</param>
+            /// <param name="url">The URL to read from</param>
             public MibSource(string name, Uri url) : this(url)
             {
                 this.file = name;
             }
 
-            
-            /// Creates a new MIB input source. The MIB will be read from
-            /// the specified input reader. The input reader will be closed
-            /// after reading the MIB.
-    
-            /// @param input          the input stream to read from
-            
+            /// <summary>
+            /// Initializes a new instance of the <see cref="MibSource"/> class.
+            /// The MIB will be read from the specified input reader. The 
+            /// input reader will be closed after reading the MIB.
+            /// </summary>
+            /// <param name="input">The input stream to read from</param>
             public MibSource(TextReader input)
             {
                 this.input = input;
             }
 
-            
+            /// <summary>
+            /// Gets  the MIB file. If the MIB is loaded from URL this
+            /// file does not actually exist, but is used for providing a
+            /// unique reference to the MIB.
+            /// </summary>
+            /// <returns>The MIB file</returns>
+            public string File
+            {
+                get
+                {
+                    return this.file;
+                }
+            }
+
+            /// <summary>
             /// Checks if this object is equal to another. This method
             /// will only return true for another mib source object with
             /// the same input source.
-    
-            /// @param obj            the object to compare with
-    
-            /// @return true if the object is equal to this, or
-            ///         false otherwise
-            
-            public override bool Equals(Object obj)
+            /// </summary>
+            /// <param name="obj">The object to compare with</param>
+            /// <returns>True if the objects are equal, false if not</returns>
+            public override bool Equals(object obj)
             {
                 MibSource src = obj as MibSource;
 
                 if (src == null)
+                {
                     return false;
-
-                if (url != null)
-                {
-                    return url.Equals(src.url);
                 }
-                else if (file != null)
+
+                if (this.url != null)
                 {
-                    return file.Equals(src.file);
+                    return this.url.Equals(src.url);
+                }
+                else if (this.file != null)
+                {
+                    return this.file.Equals(src.file);
                 }
 
                 return false;
             }
 
-            
+            /// <summary>
             /// Returns the hash code value for the object. This method is
-            /// reimplemented to fulfil the contract of returning the same
+            /// re-implemented to fulfill the contract of returning the same
             /// hash code for objects that are considered equal.
-    
-            /// @return the hash code value for the object
-    
-            /// @since 2.6
-            
+            /// </summary>
+            /// <returns>The hash code value for the object</returns>
             public override int GetHashCode()
             {
-                if (url != null)
+                if (this.url != null)
                 {
-                    return url.GetHashCode();
+                    return this.url.GetHashCode();
                 }
-                else if (file != null)
+                else if (this.file != null)
                 {
-                    return file.GetHashCode();
+                    return this.file.GetHashCode();
                 }
                 else
                 {
@@ -796,73 +762,61 @@ namespace MibbleSharp
                 }
             }
 
-            
-            /// Returns the MIB file. If the MIB is loaded from URL this
-            /// file does not actually exist, but is used for providing a
-            /// unique reference to the MIB.
-    
-            /// @return the MIB file
-            
-            public string getFile()
-            {
-                return file;
-            }
-
-            
+            /// <summary>
             /// Parses the MIB input source and returns the MIB modules
             /// found. This method will read the MIB either from file, URL
             /// or input stream.
-    
-            /// @param loader         the MIB loader to use for imports
-            /// @param log            the MIB log to use for errors
-    
-            /// @return the list of MIB modules created
-    
-            /// @throws IOException if the MIB couldn't be found
-            /// @throws MibLoaderException if the MIB couldn't be parsed
-            ///             or analyzed correctly
-            
-            public IList<Mib> parseMib(MibLoader loader, MibLoaderLog log)
+            /// </summary>
+            /// <param name="loader">The MIB loader to use for imports</param>
+            /// <param name="log">The MIB log to use for errors</param>
+            /// <returns>The list of MIB modules created</returns>
+            /// <exception cref="IOException">If the MIB couldn't be found</exception>
+            /// <exception cref="MibLoaderException">
+            /// If the MIB couldn't be parsed correctly
+            /// </exception>
+            public IList<Mib> ParseMib(MibLoader loader, MibLoaderLog log)
             {
-
                 MibAnalyzer analyzer;
                 string msg;
-                string result = "";
+                string result = string.Empty;
+
                 // Open input stream
-                if (input != null)
+                if (this.input != null)
                 {
-                    result = input.ReadToEnd();
+                    result = this.input.ReadToEnd();
                 }
-                else if (url != null)
+                else if (this.url != null)
                 {
                     using (var client = new System.Net.WebClient())
                     {
-                        result = client.DownloadString(url);
+                        result = client.DownloadString(this.url);
                     }
                 }
                 else
                 {
-                    using (TextReader reader = File.OpenText(file))
+                    using (TextReader reader = System.IO.File.OpenText(this.file))
                     {
                         result = reader.ReadToEnd();
                     }
                 }
-                using (input = new StringReader(result))
+
+                using (this.input = new StringReader(result))
                 {
                     // Parse input stream
-                    analyzer = new MibAnalyzer(file, loader, log);
+                    analyzer = new MibAnalyzer(this.file, loader, log);
                     try
                     {
                         if (parser == null)
                         {
-                            Asn1Tokenizer tokenizer = new Asn1Tokenizer(input);
+                            Asn1Tokenizer tokenizer = new Asn1Tokenizer(this.input);
                             parser = new Asn1Parser(tokenizer, analyzer);
                             parser.Tokenizer.UseTokenList = true;
                         }
                         else
                         {
-                            parser.Reset(input, analyzer);
+                            parser.Reset(this.input, analyzer);
                         }
+
                         parser.Parse();
                         return analyzer.Mibs.ToList();
                     }
@@ -870,13 +824,13 @@ namespace MibbleSharp
                     {
                         msg = "parser creation error in ASN.1 parser: " +
                               e.Message;
-                        log.AddInternalError(file, msg);
+                        log.AddInternalError(this.file, msg);
                         analyzer.Reset();
                         throw new MibLoaderException(log);
                     }
                     catch (ParserLogException e)
                     {
-                        log.AddAll(file, e);
+                        log.AddAll(this.file, e);
                         analyzer.Reset();
                         throw new MibLoaderException(log);
                     }

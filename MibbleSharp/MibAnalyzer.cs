@@ -245,7 +245,7 @@ namespace MibbleSharp
         public override void EnterModuleDefinition(Production node)
         {
             this.currentMib = new Mib(this.file, this.loader, this.log);
-            this.baseContext = this.loader.getDefaultContext();
+            this.baseContext = this.loader.DefaultContext;
             this.baseContext = new CompoundContext(this.currentMib, this.baseContext);
             this.PushContext(this.baseContext);
         }
@@ -328,7 +328,7 @@ namespace MibbleSharp
         {
             ArrayList imports = this.GetChildValues(node);
             MibImport imp;
-            IMibContext current = this.loader.getDefaultContext();
+            IMibContext current = this.loader.DefaultContext;
             bool addMissingSmi = true;
 
             foreach (var import in imports)
@@ -349,7 +349,7 @@ namespace MibbleSharp
                 //       import, but without any named symbols (triggering
                 //       warnings for each symbol used).
                 imp = new MibImport(this.loader, this.GetLocation(node), "RFC1155-SMI", new List<MibSymbol>());
-                this.loader.scheduleLoad(imp.Name);
+                this.loader.ScheduleLoad(imp.Name);
                 this.currentMib.AddImport(imp);
                 imports.Add(imp);
             }
@@ -395,7 +395,7 @@ namespace MibbleSharp
             imp = new MibImport(this.loader, this.GetLocation(child), module, new List<MibSymbol>());
 
             // Schedule MIB loading
-            this.loader.scheduleLoad(module);
+            this.loader.ScheduleLoad(module);
 
             // Add reference to MIB and node
             this.currentMib.AddImport(imp);
@@ -2563,7 +2563,7 @@ namespace MibbleSharp
 
             // Load referenced module
             module = this.GetStringValue(this.GetChildAt(node, 0), 0);
-            this.loader.scheduleLoad(module);
+            this.loader.ScheduleLoad(module);
 
             // Create module reference and context
             imp = new MibImport(this.loader, this.GetLocation(node), module, null);

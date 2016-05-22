@@ -99,23 +99,23 @@ namespace MibbleValidator
                 Console.Out.Flush();
                 try
                 {
-                    loader.unloadAll();
+                    loader.UnloadAll();
                     if (src is Uri)
                     {
-                        loader.removeAllDirs();
-                        mib = loader.load((Uri)src);
+                        loader.RemoveAllDirs();
+                        mib = loader.Load((Uri)src);
                     }
                     else
                     {
                         file = (string)src;
-                        if (!loader.hasDir(Directory.GetParent(file).FullName))
+                        if (!loader.HasDir(Directory.GetParent(file).FullName))
                         {
-                            loader.removeAllDirs();
-                            loader.addDir(Directory.GetParent(file).FullName);
+                            loader.RemoveAllDirs();
+                            loader.AddDir(Directory.GetParent(file).FullName);
                         }
                         using (StreamReader sr = new StreamReader(file))
                         {
-                            mib = loader.load(sr);
+                            mib = loader.Load(sr);
                         }
                     }
                     Console.Out.WriteLine("[OK]");
