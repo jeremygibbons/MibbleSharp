@@ -72,7 +72,7 @@ namespace MibbleSharp
 
             if (this.context is MibValueSymbol)
             {
-                this.context = ((MibValueSymbol)this.context).getType();
+                this.context = ((MibValueSymbol)this.context).Type;
             }
 
             if (this.context is SnmpObjectType)

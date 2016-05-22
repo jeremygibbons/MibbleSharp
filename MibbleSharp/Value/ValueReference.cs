@@ -99,7 +99,7 @@ namespace MibbleSharp.Value
             sym = getSymbol(log);
             if (sym is MibValueSymbol)
             {
-                value = ((MibValueSymbol)sym).getValue();
+                value = ((MibValueSymbol)sym).Value;
                 if (value != null)
                 {
                     value = value.Initialize(log, type);

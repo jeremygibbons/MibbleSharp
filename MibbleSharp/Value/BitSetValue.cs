@@ -281,7 +281,7 @@ namespace MibbleSharp.Value
         {
             foreach (MibValueSymbol s in values)
             {
-                if (s.getValue().Equals(bit))
+                if (s.Value.Equals(bit))
                 {
                     return s.Name;
                 }

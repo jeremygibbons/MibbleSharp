@@ -275,7 +275,7 @@ namespace MibbleSharp
             MibValue value;
 
             symbol = context.FindSymbol(DefaultContext.ISO, false);
-            value = ((MibValueSymbol)symbol).getValue();
+            value = ((MibValueSymbol)symbol).Value;
             return (ObjectIdentifierValue)value;
         }
 

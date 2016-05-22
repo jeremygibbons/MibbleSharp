@@ -292,7 +292,7 @@ namespace MibbleSharp.Snmp
                                           null,
                                           new List<SnmpIndex>(),
                                           null);
-                value = (ObjectIdentifierValue)symbol.getValue();
+                value = (ObjectIdentifierValue)symbol.Value;
                 value = new ObjectIdentifierValue(symbol.Location,
                                                   value,
                                                   element.Name,

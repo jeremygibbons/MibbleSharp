@@ -1548,7 +1548,7 @@ namespace MibbleSharp
             for (int i = 0; i < components.Count; i++)
             {
                 number = (NamedNumber)components[i];
-                if (number.hasNumber())
+                if (number.HasNumber)
                 {
                     bits.Set((int)number.Number, true);
                 }
@@ -1587,7 +1587,7 @@ namespace MibbleSharp
             for (int i = 0; i < components.Count; i++)
             {
                 number = (NamedNumber)components[i];
-                if (number.hasNumber())
+                if (number.HasNumber)
                 {
                     value = number.IntValue;
                     if (parent == null && value == 0)

@@ -147,7 +147,7 @@ namespace MibbleSharp
             }
             else
             {
-                return this.reference.getValue().IsReferenceTo(name);
+                return this.reference.Value.IsReferenceTo(name);
             }
         }
 
@@ -177,7 +177,7 @@ namespace MibbleSharp
             }
             else
             {
-                return this.reference.getValue().IsReferenceTo(module, name);
+                return this.reference.Value.IsReferenceTo(module, name);
             }
         }
 

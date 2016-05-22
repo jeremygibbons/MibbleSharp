@@ -1,187 +1,176 @@
-﻿//
-// NamedNumber.cs
-// 
-// This work is free software; you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published
-// by the Free Software Foundation; either version 2 of the License,
-// or (at your option) any later version.
-//
-// This work is distributed in the hope that it will be useful, but
-// WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
-// General Public License for more details.
-// 
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
-// USA
-// 
-// Original Java code Copyright (c) 2004-2016 Per Cederberg. All
-// rights reserved.
-// C# conversion Copyright (c) 2016 Jeremy Gibbons. All rights reserved
-//
-
-using System.Numerics;
-using MibbleSharp.Value;
+﻿// <copyright file="NamedNumber.cs" company="None">
+//    <para>
+//    This work is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published
+//    by the Free Software Foundation; either version 2 of the License,
+//    or (at your option) any later version.</para>
+//    <para>
+//    This work is distributed in the hope that it will be useful, but
+//    WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+//    General Public License for more details.</para>
+//    <para>
+//    You should have received a copy of the GNU General Public License
+//    along with this program; if not, write to the Free Software
+//    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
+//    USA</para>
+//    Original Java code Copyright (c) 2004-2016 Per Cederberg. All
+//    rights reserved.
+//    C# conversion Copyright (c) 2016 Jeremy Gibbons. All rights reserved
+// </copyright>
 
 namespace MibbleSharp
 {
-    /**
-    * A named number. This class is used for storing intermediate values
-    * during the parsing.
-    *
-    * @author   Per Cederberg, <per at percederberg dot net>
-    * @version  2.0
-    * @since    2.0
-    */
+    using System.Numerics;
+    using MibbleSharp.Value;
 
-    class NamedNumber
+    /// <summary>
+    /// A named number. This class is used for storing intermediate values
+    /// during the parsing.
+    /// </summary>
+    public class NamedNumber
     {
-        /**
-         * The value name.
-         */
+        /// <summary>
+        /// The value name
+        /// </summary>
         private string name = null;
 
-        /**
-         * The numeric value.
-         */
+        /// <summary>
+        /// The numeric value
+        /// </summary>
         private BigInteger? number = null;
 
-        /**
-         * The value reference.
-         */
+        /// <summary>
+        /// The value reference
+        /// </summary>
         private ValueReference reference = null;
 
-        /**
-         * Creates a new named number.
-         *
-         * @param number         the numeric value
-         */
+        /// <summary>
+        /// Initializes a new instance of the <see cref="NamedNumber"/> class.
+        /// </summary>
+        /// <param name="number">The numeric value</param>
         public NamedNumber(BigInteger number) : this(null, number)
         {
-
         }
 
-        /**
-         * Creates a new named number.
-         *
-         * @param name           the value name
-         * @param number         the numeric value
-         */
+        /// <summary>
+        /// Initializes a new instance of the <see cref="NamedNumber"/> class.
+        /// </summary>
+        /// <param name="name">The value name</param>
+        /// <param name="number">The numeric value</param>
         public NamedNumber(string name, BigInteger number)
         {
             this.name = name;
             this.number = number;
         }
 
-        /**
-         * Creates a new named number.
-         *
-         * @param reference      the value reference
-         */
+        /// <summary>
+        /// Initializes a new instance of the <see cref="NamedNumber"/> class.
+        /// </summary>
+        /// <param name="reference">A reference to the represented value</param>
         public NamedNumber(ValueReference reference) : this(null, reference)
-        {
-          
+        { 
         }
 
-        /**
-         * Creates a new named number.
-         *
-         * @param name           the value name
-         * @param reference      the value reference
-         */
+        /// <summary>
+        /// Initializes a new instance of the <see cref="NamedNumber"/> class.
+        /// </summary>
+        /// <param name="name">The named number's name</param>
+        /// <param name="reference">A reference to the value</param>
         public NamedNumber(string name, ValueReference reference)
         {
             this.name = name;
             this.reference = reference;
         }
 
-        /**
-         * Checks if this named number has a name component.
-         *
-         * @return true if this named number has a name component, or
-         *         false otherwise
-         */
-        public bool hasName()
+        /// <summary>
+        /// Gets a value indicating whether this named number has a name component
+        /// </summary>
+        public bool HasName
         {
-            return name != null;
+            get
+            {
+                return this.name != null;
+            }
         }
 
-        /**
-         * Checks if this named number has a number component.
-         *
-         * @return true if this named number has a number component, or
-         *         false otherwise
-         */
-        public bool hasNumber()
+        /// <summary>
+        /// Gets a value indicating whether this named number has a number component
+        /// </summary>
+        public bool HasNumber
         {
-            return number != null;
+            get
+            {
+                return this.number != null;
+            }
         }
 
-        /**
-         * Checks if this named number has a value reference.
-         *
-         * @return true if this named number has a value reference, or
-         *         false otherwise
-         */
+        /// <summary>
+        /// Gets a value indicating whether this named number has a value reference
+        /// </summary>
         public bool HasReference
         {
             get
             {
-                return reference != null;
+                return this.reference != null;
             }
         }
 
-        /**
-         * Returns the value name.
-         *
-         * @return the value name
-         */
+        /// <summary>
+        /// Gets the name of this value
+        /// </summary>
         public string Name
         {
             get
             {
-                return name;
+                return this.name;
             }
         }
 
-        /**
-         * Returns the numeric value.
-         *
-         * @return the numeric value
-         */
+        /// <summary>
+        /// Gets the value of this number
+        /// </summary>
         public BigInteger Number
         {
             get
             {
-                if (number == null)
+                if (this.number == null)
+                {
                     return 0;
-                return (BigInteger) number;
+                }
+                    
+                return (BigInteger)this.number;
             }
         }
 
+        /// <summary>
+        /// Gets an integer value of the number
+        /// </summary>
+        /// <exception cref="System.OverflowException">
+        /// If the number is larger than can fit in an <c>Int32</c>
+        /// </exception>
         public int IntValue
         {
             get
             {
-                if (number > int.MaxValue)
+                if (this.number > int.MaxValue)
+                {
                     throw new System.OverflowException();
-                return (int)number;
+                }
+                    
+                return (int)this.number;
             }
         }
 
-        /**
-         * Returns the value reference.
-         *
-         * @return the value reference
-         */
+        /// <summary>
+        /// Gets the value reference
+        /// </summary>
         public ValueReference Reference
         {
             get
             {
-                return reference;
+                return this.reference;
             }
         }
     }
 }
-

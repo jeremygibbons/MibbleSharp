@@ -125,7 +125,7 @@ namespace MibbleSharp.Snmp
             if (BaseSymbol != null)
             {
                 // TODO: use utility function to retrieve correct base type here
-                type = BaseSymbol.getType();
+                type = BaseSymbol.Type;
                 if (type is SnmpTextualConvention)
                 {
                     type = ((SnmpTextualConvention)type).getSyntax();

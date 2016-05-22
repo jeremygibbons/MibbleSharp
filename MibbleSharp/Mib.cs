@@ -340,9 +340,9 @@ namespace MibbleSharp
                 }
 
                 MibValueSymbol value = symbol as MibValueSymbol;
-                if (value != null && (value.getValue() is NumberValue || value.getValue() is ObjectIdentifierValue))
+                if (value != null && (value.Value is NumberValue || value.Value is ObjectIdentifierValue))
                 {
-                    this.symbolValueMap.Add(value.getValue().ToString(), value);
+                    this.symbolValueMap.Add(value.Value.ToString(), value);
                 }
             }
 
@@ -547,7 +547,7 @@ namespace MibbleSharp
                 }
             }
 
-            while (root != null && (parent = root.getParent()) != null)
+            while (root != null && (parent = root.Parent) != null)
             {
                 if (!root.Mib.Equals(parent.Mib))
                 {

@@ -131,7 +131,7 @@ namespace MibbleSharp.Type
             foreach(MibValueSymbol sym in symbols.Values)
             {
                 sym.Initialize(log);
-                if (!IsCompatibleType(sym.getValue()))
+                if (!IsCompatibleType(sym.Value))
                 {
                     string message = "value is not compatible with type";
                     throw new MibException(sym.Location, message);
@@ -225,7 +225,7 @@ namespace MibbleSharp.Type
             {
                 symbols[sym.Name] = sym;
                 // TODO: check value constraint compability
-                c = new ValueConstraint(null, sym.getValue());
+                c = new ValueConstraint(null, sym.Value);
                 if (constraint == null)
                 {
                     constraint = c;
@@ -385,7 +385,7 @@ namespace MibbleSharp.Type
             if (symbols.Count > 0)
             {
                 builder.Append(" { ");
-                String.Join(", ", symbols.Values.Select(sym => sym.Name + "(" + sym.getValue() + ")"));
+                String.Join(", ", symbols.Values.Select(sym => sym.Name + "(" + sym.Value+ ")"));
                 builder.Append(" }");
             }
             else if (constraint != null)
