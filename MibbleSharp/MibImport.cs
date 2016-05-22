@@ -1,84 +1,113 @@
-﻿//
-// MibImport.cs
-// 
-// This work is free software; you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published
-// by the Free Software Foundation; either version 2 of the License,
-// or (at your option) any later version.
-//
-// This work is distributed in the hope that it will be useful, but
-// WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
-// General Public License for more details.
-// 
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
-// USA
-// 
-// Original Java code Copyright (c) 2004-2016 Per Cederberg. All
-// rights reserved.
-// C# conversion Copyright (c) 2016 Jeremy Gibbons. All rights reserved
-//
-
-using System.Collections.Generic;
+﻿// <copyright file="MibImport.cs" company="None">
+//    <para>
+//    This work is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published
+//    by the Free Software Foundation; either version 2 of the License,
+//    or (at your option) any later version.</para>
+//    <para>
+//    This work is distributed in the hope that it will be useful, but
+//    WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+//    General Public License for more details.</para>
+//    <para>
+//    You should have received a copy of the GNU General Public License
+//    along with this program; if not, write to the Free Software
+//    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
+//    USA</para>
+//    Original Java code Copyright (c) 2004-2016 Per Cederberg. All
+//    rights reserved.
+//    C# conversion Copyright (c) 2016 Jeremy Gibbons. All rights reserved
+// </copyright>
 
 namespace MibbleSharp
 {
+    using System.Collections.Generic;
+
     /// <summary>
-    /// A MIB import list. This class contains a referenc to another MIB
+    /// A MIB import list. This class contains a reference to another MIB
     /// and a number of symbols in it.
     /// </summary>
     public class MibImport : IMibContext
     {
-
-        ///
-        /// The MIB loader being used.
-        ///
+        /// <summary>The MIB loader being used.</summary>
         private MibLoader loader;
 
-        ///
-        /// The referenced MIB.
-        ///
+        /// <summary>The referenced MIB.</summary>
         private Mib mib = null;
 
-        ///
-        /// The import location.
-        ///
+        /// <summary>The import location.</summary>
         private FileLocation location;
 
-        ///
-        /// The imported MIB name.
-        ///
+        /// <summary>The imported MIB name.</summary>
         private string name;
 
-        ///
-        /// The imported MIB symbol names.
-        ///
+        /// <summary>The imported MIB symbol names.</summary>
         private IList<MibSymbol> symbols;
 
-        /// 
         /// <summary>
-        /// Creates a new MIB import.
+        /// Initializes a new instance of the <see cref="MibImport"/> class.
         /// </summary>
         /// <param name="loader">The MIB Loader to be used</param>
         /// <param name="location">The import location</param>
         /// <param name="name">The imported MIB's name</param>
         /// <param name="symbols">The imported MIB symbol names</param>
-        /// 
-        public MibImport(MibLoader loader,
-              FileLocation location,
-              string name,
-              IList<MibSymbol> symbols)
+        public MibImport(
+            MibLoader loader,
+            FileLocation location,
+            string name,
+            IList<MibSymbol> symbols)
         {
-
             this.loader = loader;
             this.location = location;
             this.name = name;
             this.symbols = symbols;
         }
 
-        /// 
+        /// <summary>
+        /// Gets the imported MIB name.
+        /// </summary>
+        public string Name
+        {
+            get
+            {
+                return this.name;
+            }
+        }
+
+        /// <summary>
+        /// Gets the imported MIB.
+        /// </summary>
+        public Mib Mib
+        {
+            get
+            {
+                return this.mib;
+            }
+        }
+
+        /// <summary>
+        /// Gets all symbol names in this MIB import declaration.
+        /// </summary>
+        public IList<MibSymbol> SymbolNames
+        {
+            get
+            {
+                return this.symbols;
+            }
+        }
+
+        /// <summary>
+        /// Gets a value indicating whether the MibImport has any symbols
+        /// </summary>
+        /// <returns>True if there is a symbol list, false if not</returns>
+        public bool HasSymbols
+        {
+            get
+            {
+                return this.symbols != null;
+            }
+        }
+
         /// <summary>
         /// Initializes the MIB import. This will resolve all referenced
         /// symbols.This method will be called by the MIB loader.
@@ -87,68 +116,31 @@ namespace MibbleSharp
         /// <exception cref="MibException">if an error was encountered during the
         /// initialization
         /// </exception>
-        /// 
         public void Initialize(MibLoaderLog log)
         {
             string message;
 
-            mib = loader.getMib(name);
-            if (mib == null)
+            this.mib = this.loader.getMib(this.name);
+            if (this.mib == null)
             {
-                message = "couldn't find referenced MIB '" + name + "'";
-                throw new MibException(location, message);
+                message = "couldn't find referenced MIB '" + this.name + "'";
+                throw new MibException(this.location, message);
             }
-            if (symbols != null)
+
+            if (this.symbols != null)
             {
-                foreach(var s in symbols)
+                foreach (var s in this.symbols)
                 {
-                    if(mib.GetSymbol(s.ToString()) == null)
+                    if (this.mib.GetSymbol(s.ToString()) == null)
                     {
                         message = "couldn't find imported symbol '" +
-                                  s + "' in MIB '" + name + "'";
-                        throw new MibException(location, message);
+                                  s + "' in MIB '" + this.name + "'";
+                        throw new MibException(this.location, message);
                     }
                 }
             }
         }
-
-        /// <summary>
-        /// Checks if this import has a symbol list.
-        /// </summary>
-        /// <returns>True if there is a symbol list, false if not</returns>
-        public bool HasSymbols()
-        {
-            return symbols != null;
-        }
-
-        /// <summary>
-        /// The imported MIB name.
-        /// </summary>
-        public string Name { get { return name; } }
-
-        /// <summary>
-        /// The imported MIB.
-        /// </summary>
-        public Mib Mib
-        {
-            get
-            {
-                return mib;
-            }
-        }
-
-        /// <summary>
-        /// Returns all symbol names in this MIB import declaration.
-        /// </summary>
-        /// <returns></returns>
-        public IList<MibSymbol> SymbolNames
-        {
-            get
-            {
-                return symbols;
-            }
-        }
-
+        
         /// <summary>
         /// Searches for a named MIB symbol. This method may search outside
         /// the normal (or strict) scope, thereby allowing a form of
@@ -163,25 +155,24 @@ namespace MibbleSharp
         /// </remarks>
         /// <param name="name">The symbol name</param>
         /// <param name="expanded">The expanded scope flag</param>
-        /// <returns></returns>
+        /// <returns>The symbol if found, null if not</returns>
         public MibSymbol FindSymbol(string name, bool expanded)
         {
-            if (mib == null)
+            if (this.mib == null)
             {
                 return null;
             }
 
-            return mib.GetSymbol(name);
+            return this.mib.GetSymbol(name);
         }
 
         /// <summary>
         /// Returns a string representation of this object.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>A string representation of this object.</returns>
         public override string ToString()
         {
-            return name;
+            return this.name;
         }
     }
-
 }
