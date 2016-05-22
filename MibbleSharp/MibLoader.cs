@@ -862,7 +862,7 @@ namespace MibbleSharp
                             parser.Reset(input, analyzer);
                         }
                         parser.Parse();
-                        return analyzer.getMibs().ToList();
+                        return analyzer.Mibs.ToList();
                     }
                     catch (ParserCreationException e)
                     {
