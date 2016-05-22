@@ -40,7 +40,6 @@ namespace MibbleSharp.Value
         /// </summary>
         private NullValue() : base("NULL")
         {
-            
         }
 
         /// <summary>
@@ -59,72 +58,66 @@ namespace MibbleSharp.Value
             return this;
         }
 
-        /**
-        * Creates a value reference to this value. The value reference
-        * is normally an identical value. Only certain values support
-        * being referenced, and the default implementation of this
-        * method throws an exception.<p>
-        *
-        * <strong>NOTE:</strong> This is an internal method that should
-        * only be called by the MIB loader.
-        *
-        * @return the MIB value reference
-        *
-        * @since 2.2
-        */
+        /// <summary>
+        /// Creates a value reference to this value. The value reference
+        /// is normally an identical value. Only certain values support
+        /// being referenced, and the default implementation of this
+        /// method throws an exception.
+        /// NOTE: This is an internal method that should
+        /// only be called by the MIB loader.
+        /// </summary>
+        /// <returns>The NULL value</returns>
         public override MibValue CreateReference()
         {
-            return NULL;
+            return NullValue.NULL;
         }
-
-        /**
-        * Checks if this object equals another object. This method will
-        * compare the string representations for equality.
-        *
-        * @param obj            the object to compare with
-        *
-        * @return true if the objects are equal, or
-        *         false otherwise
-        *
-        * @since 2.6
-        */
-        public override bool Equals(Object obj)
+        
+        /// <summary>
+        /// Checks if this object equals another object. This method will
+        /// compare the string representations for equality.
+        /// </summary>
+        /// <param name="obj">The object to compare to</param>
+        /// <returns>True if the objects are equal, false if not</returns>
+        public override bool Equals(object obj)
         {
             return this.ToString().Equals(obj.ToString());
         }
 
-        /**
-        * Returns a hash code for this object.
-        *
-        * @return a hash code for this object
-        *
-        * @since 2.6
-        */
+        /// <summary>
+        /// Returns a hash code for this object.
+        /// </summary>
+        /// <returns>A hash code for this object.</returns>
         public override int GetHashCode()
         {
             return this.ToString().GetHashCode();
         }
 
-        /**
-        * Returns a Java null representation of this value.
-        *
-        * @return a Java null representation of this value
-        */
-        public Object ToObject()
+        /// <summary>
+        /// Returns a Java null representation of this value.
+        /// </summary>
+        /// <returns>A Java null representation of this value.</returns>
+        public object ToObject()
         {
             return null;
         }
 
-        /**
-        * Returns a string representation of this value.
-        *
-        * @return a string representation of this value
-        */
+        /// <summary>
+        /// Returns a string representation of this value.
+        /// </summary>
+        /// <returns>A string representation of this value.</returns>
         public override string ToString()
         {
             return "NULL";
         }
 
+        /// <summary>
+        /// Compares the value to another MibValue
+        /// </summary>
+        /// <param name="other">The MibValue to compare against</param>
+        /// <returns>
+        /// 0 if the objects are equal, a positive or negative integer 
+        /// if they are different
+        /// </returns>
         public override int CompareTo(MibValue other)
         {
             throw new NotImplementedException();
