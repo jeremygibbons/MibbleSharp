@@ -286,7 +286,7 @@ namespace MibbleSharp.Snmp
                 }
                 type = new SnmpObjectType(element.getType(),
                                           null,
-                                          SnmpAccess.READ_ONLY,
+                                          SnmpAccess.ReadOnly,
                                           SnmpStatus.CURRENT,
                                           "AUTOMATICALLY CREATED SYMBOL",
                                           null,

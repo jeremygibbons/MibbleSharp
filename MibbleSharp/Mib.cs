@@ -273,8 +273,9 @@ namespace MibbleSharp
         {
             get
             {
-                return this.loader.AllMibs                .Where(m => m != this && m.GetImport(this.name) != null)
-                .ToList();
+                return this.loader.AllMibs
+                    .Where(m => m != this && m.GetImport(this.name) != null)
+                    .ToList();
             }
         }
 

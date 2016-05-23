@@ -1,145 +1,130 @@
-﻿//
-// SnmpAccess.cs
-// 
-// This work is free software; you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published
-// by the Free Software Foundation; either version 2 of the License,
-// or (at your option) any later version.
-//
-// This work is distributed in the hope that it will be useful, but
-// WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
-// General Public License for more details.
-// 
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
-// USA
-// 
-// Original Java code Copyright (c) 2004-2016 Per Cederberg. All
-// rights reserved.
-// C# conversion Copyright (c) 2016 Jeremy Gibbons. All rights reserved
-//
-
+﻿// <copyright file="SnmpAccess.cs" company="None">
+//    <para>
+//    This work is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published
+//    by the Free Software Foundation; either version 2 of the License,
+//    or (at your option) any later version.</para>
+//    <para>
+//    This work is distributed in the hope that it will be useful, but
+//    WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+//    General Public License for more details.</para>
+//    <para>
+//    You should have received a copy of the GNU General Public License
+//    along with this program; if not, write to the Free Software
+//    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
+//    USA</para>
+//    Original Java code Copyright (c) 2004-2016 Per Cederberg. All
+//    rights reserved.
+//    C# conversion Copyright (c) 2016 Jeremy Gibbons. All rights reserved
+// </copyright>
 
 namespace MibbleSharp.Snmp
 {
-    /**
-     * An SNMP access mode value. This class is used to encapsulate the
-     * access value constants used in several SNMP macro types. Note that
-     * due to the support for both SMIv1 and SMIv2 not all of the
-     * constants defined in this class can be present in all files.
-     * Please see the comments for each individual constant regarding the
-     * support for different SNMP versions.
-     *
-     * @author   Per Cederberg, <per at percederberg dot net>
-     * @version  2.5
-     * @since    2.0
-     */
+    /// <summary>
+    /// An SNMP access mode value. This class is used to encapsulate the
+    /// access value constants used in several SNMP macro types. Note that
+    /// due to the support for both SMIv1 and SMIv2 not all of the
+    /// constants defined in this class can be present in all files.
+    /// Please see the comments for each individual constant regarding the
+    /// support for different SNMP versions.
+    /// </summary>
     public class SnmpAccess
     {
+        /// <summary>
+        /// The not implemented SNMP access mode. This mode is only used
+        /// in SMIv2 variation declarations inside an agent capabilities
+        /// declaration.
+        /// </summary>
+        public static readonly SnmpAccess NotImplemented = 
+            new SnmpAccess("not-implemented");
 
-        /**
-         * The not implemented SNMP access mode. This mode is only used
-         * in SMIv2 variation declarations inside an agent capabilities
-         * declaration.
-         */
-        public static readonly SnmpAccess NOT_IMPLEMENTED =
-        new SnmpAccess("not-implemented");
+        /// <summary>
+        /// The not accessible SNMP access mode.
+        /// </summary>
+        public static readonly SnmpAccess NotAccessible =
+            new SnmpAccess("not-accessible");
 
-        /**
-         * The not accesible SNMP access mode.
-         */
-        public static readonly SnmpAccess NOT_ACCESSIBLE =
-        new SnmpAccess("not-accessible");
+        /// <summary>
+        /// The accessible for notify SNMP access mode. This mode is only
+        /// used in SMIv2.
+        /// </summary>
+        public static readonly SnmpAccess AccessibleForNotify =
+            new SnmpAccess("accessible-for-notify");
 
-        /**
-         * The accesible for notify SNMP access mode. This mode is only
-         * used in SMIv2.
-         */
-        public static readonly SnmpAccess ACCESSIBLE_FOR_NOTIFY =
-        new SnmpAccess("accessible-for-notify");
+        /// <summary>
+        /// The read-only SNMP access mode.
+        /// </summary>
+        public static readonly SnmpAccess ReadOnly =
+            new SnmpAccess("read-only");
 
-        /**
-         * The read-only SNMP access mode.
-         */
-        public static readonly SnmpAccess READ_ONLY =
-        new SnmpAccess("read-only");
+        /// <summary>
+        /// The read-write SNMP access mode.
+        /// </summary>
+        public static readonly SnmpAccess ReadWrite =
+            new SnmpAccess("read-write");
 
-        /**
-         * The read-write SNMP access mode.
-         */
-        public static readonly SnmpAccess READ_WRITE =
-        new SnmpAccess("read-write");
+        /// <summary>
+        /// The read-create SNMP access mode. This mode is only used in
+        /// SMIv2.
+        /// </summary>
+        public static readonly SnmpAccess ReadCreate =
+            new SnmpAccess("read-create");
 
-        /**
-         * The read-create SNMP access mode. This mode is only used in
-         * SMIv2.
-         */
-        public static readonly SnmpAccess READ_CREATE =
-        new SnmpAccess("read-create");
+        /// <summary>
+        /// The write-only SNMP access mode. This mode is only used in
+        /// SMIv1.
+        /// </summary>
+        public static readonly SnmpAccess WriteOnly =
+            new SnmpAccess("write-only");
 
-        /**
-         * The write-only SNMP access mode. This mode is only used in
-         * SMIv1.
-         */
-        public static readonly SnmpAccess WRITE_ONLY =
-        new SnmpAccess("write-only");
-
-        /**
-         * The access mode description.
-         */
+        /// <summary>
+        /// The access mode description.
+        /// </summary>
         private string description;
-
-        /**
-         * Creates a new SNMP access mode.
-         *
-         * @param description    the access mode description
-         */
+        
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SnmpAccess"/> class.
+        /// </summary>
+        /// <param name="description">The access mode description</param>
         private SnmpAccess(string description)
         {
             this.description = description;
         }
 
-        /**
-         * Checks if this access mode allows reading the value.
-         *
-         * @return true if reading is allowed, or
-         *         false otherwise
-         *
-         * @since 2.5
-         */
-        public bool canRead()
+        /// <summary>
+        /// Gets a value indicating whether reading is allowed
+        /// </summary>
+        public bool CanRead
         {
-            return this == READ_ONLY
-                || this == READ_WRITE
-                || this == READ_CREATE;
+            get
+            {
+                return this == SnmpAccess.ReadOnly
+                    || this == SnmpAccess.ReadWrite
+                    || this == SnmpAccess.ReadCreate;
+            }
         }
 
-        /**
-         * Checks if this access mode allows writing the value.
-         *
-         * @return true if writing is allowed, or
-         *         false otherwise
-         *
-         * @since 2.5
-         */
-        public bool canWrite()
+        /// <summary>
+        /// Gets a value indicating whether writing is allowed
+        /// </summary>
+        public bool CanWrite
         {
-            return this == READ_WRITE
-                || this == READ_CREATE
-                || this == WRITE_ONLY;
+            get
+            {
+                return this == SnmpAccess.ReadWrite
+                    || this == SnmpAccess.ReadCreate
+                    || this == SnmpAccess.WriteOnly;
+            }
         }
 
-        /**
-         * Returns a string representation of this object.
-         *
-         * @return a string representation of this object
-         */
+        /// <summary>
+        /// Returns a string representation of the <c>SnmpAccess</c> object
+        /// </summary>
+        /// <returns>A string representation of the <c>SnmpAccess</c> object</returns>
         public override string ToString()
         {
-            return description;
+            return this.description;
         }
     }
-
 }

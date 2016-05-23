@@ -2342,35 +2342,35 @@ namespace MibbleSharp
             name = this.GetStringValue(child, 0);
             if (name.Equals("read-only"))
             {
-                node.AddValue(SnmpAccess.READ_ONLY);
+                node.AddValue(SnmpAccess.ReadOnly);
             }
             else if (name.Equals("read-write"))
             {
-                node.AddValue(SnmpAccess.READ_WRITE);
+                node.AddValue(SnmpAccess.ReadWrite);
             }
             else if (name.Equals("read-create"))
             {
-                node.AddValue(SnmpAccess.READ_CREATE);
+                node.AddValue(SnmpAccess.ReadCreate);
             }
             else if (name.Equals("write-only"))
             {
-                node.AddValue(SnmpAccess.WRITE_ONLY);
+                node.AddValue(SnmpAccess.WriteOnly);
             }
             else if (name.Equals("not-implemented"))
             {
-                node.AddValue(SnmpAccess.NOT_IMPLEMENTED);
+                node.AddValue(SnmpAccess.NotImplemented);
             }
             else if (name.Equals("not-accessible"))
             {
-                node.AddValue(SnmpAccess.NOT_ACCESSIBLE);
+                node.AddValue(SnmpAccess.NotAccessible);
             }
             else if (name.Equals("accessible-for-notify"))
             {
-                node.AddValue(SnmpAccess.ACCESSIBLE_FOR_NOTIFY);
+                node.AddValue(SnmpAccess.AccessibleForNotify);
             }
             else
             {
-                node.AddValue(SnmpAccess.READ_WRITE);
+                node.AddValue(SnmpAccess.ReadWrite);
                 throw new ParseException(
                     ParseException.ErrorType.ANALYSIS,
                     "unrecognized access value: '" + name + "'",
