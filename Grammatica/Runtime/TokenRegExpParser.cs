@@ -102,7 +102,7 @@ namespace PerCederberg.Grammatica.Runtime {
             this.end = ParseExpr(start);
             if (pos < pattern.Length) {
                 throw new RegExpException(
-                    RegExpException.ErrorType.UNEXPECTED_CHARACTER,
+                    RegExpException.ErrorType.UnexpectedCharacter,
                     pos,
                     pattern);
             }
@@ -283,7 +283,7 @@ namespace PerCederberg.Grammatica.Runtime {
             case '+':
             case '|':
                 throw new RegExpException(
-                    RegExpException.ErrorType.UNEXPECTED_CHARACTER,
+                    RegExpException.ErrorType.UnexpectedCharacter,
                     pos,
                     pattern);
             default:
@@ -335,14 +335,14 @@ namespace PerCederberg.Grammatica.Runtime {
                 ReadChar('}');
                 if (max == 0 || (max > 0 && min > max)) {
                     throw new RegExpException(
-                        RegExpException.ErrorType.INVALID_REPEAT_COUNT,
+                        RegExpException.ErrorType.InvalidRepeatCount,
                         firstPos,
                         pattern);
                 }
                 break;
             default:
                 throw new RegExpException(
-                    RegExpException.ErrorType.UNEXPECTED_CHARACTER,
+                    RegExpException.ErrorType.UnexpectedCharacter,
                     pos - 1,
                     pattern);
             }
@@ -350,12 +350,12 @@ namespace PerCederberg.Grammatica.Runtime {
             // Read possessive or reluctant modifiers
             if (PeekChar(0) == '?') {
                 throw new RegExpException(
-                    RegExpException.ErrorType.UNSUPPORTED_SPECIAL_CHARACTER,
+                    RegExpException.ErrorType.UnsupportedSpecialCharacter,
                     pos,
                     pattern);
             } else if (PeekChar(0) == '+') {
                 throw new RegExpException(
-                    RegExpException.ErrorType.UNSUPPORTED_SPECIAL_CHARACTER,
+                    RegExpException.ErrorType.UnsupportedSpecialCharacter,
                     pos,
                     pattern);
             }
@@ -383,7 +383,7 @@ namespace PerCederberg.Grammatica.Runtime {
                 return end;
             } else {
                 throw new RegExpException(
-                    RegExpException.ErrorType.INVALID_REPEAT_COUNT,
+                    RegExpException.ErrorType.InvalidRepeatCount,
                     firstPos,
                     pattern);
             }
@@ -457,7 +457,7 @@ namespace PerCederberg.Grammatica.Runtime {
             case '^':
             case '$':
                 throw new RegExpException(
-                    RegExpException.ErrorType.UNSUPPORTED_SPECIAL_CHARACTER,
+                    RegExpException.ErrorType.UnsupportedSpecialCharacter,
                     pos,
                     pattern);
             default:
@@ -531,7 +531,7 @@ namespace PerCederberg.Grammatica.Runtime {
                 c = ReadChar();
                 if (c < '0' || c > '3') {
                     throw new RegExpException(
-                        RegExpException.ErrorType.UNSUPPORTED_ESCAPE_CHARACTER,
+                        RegExpException.ErrorType.UnsupportedEscapeCharacter,
                         pos - 3,
                         pattern);
                 }
@@ -554,7 +554,7 @@ namespace PerCederberg.Grammatica.Runtime {
                     return (char) value;
                 } catch (FormatException) {
                     throw new RegExpException(
-                        RegExpException.ErrorType.UNSUPPORTED_ESCAPE_CHARACTER,
+                        RegExpException.ErrorType.UnsupportedEscapeCharacter,
                         pos - str.Length - 2,
                         pattern);
                 }
@@ -568,7 +568,7 @@ namespace PerCederberg.Grammatica.Runtime {
                     return (char) value;
                 } catch (FormatException) {
                     throw new RegExpException(
-                        RegExpException.ErrorType.UNSUPPORTED_ESCAPE_CHARACTER,
+                        RegExpException.ErrorType.UnsupportedEscapeCharacter,
                         pos - str.Length - 2,
                         pattern);
                 }
@@ -587,7 +587,7 @@ namespace PerCederberg.Grammatica.Runtime {
             default:
                 if (('A' <= c && c <= 'Z') || ('a' <= c && c <= 'z')) {
                     throw new RegExpException(
-                        RegExpException.ErrorType.UNSUPPORTED_ESCAPE_CHARACTER,
+                        RegExpException.ErrorType.UnsupportedEscapeCharacter,
                         pos - 2,
                         pattern);
                 }
@@ -616,7 +616,7 @@ namespace PerCederberg.Grammatica.Runtime {
             }
             if (buf.Length <= 0) {
                 throw new RegExpException(
-                    RegExpException.ErrorType.UNEXPECTED_CHARACTER,
+                    RegExpException.ErrorType.UnexpectedCharacter,
                     pos,
                     pattern);
             }
@@ -637,7 +637,7 @@ namespace PerCederberg.Grammatica.Runtime {
 
             if (c < 0) {
                 throw new RegExpException(
-                    RegExpException.ErrorType.UNTERMINATED_PATTERN,
+                    RegExpException.ErrorType.UnterminatedPattern,
                     pos,
                     pattern);
             } else {
@@ -661,7 +661,7 @@ namespace PerCederberg.Grammatica.Runtime {
         private char ReadChar(char c) {
             if (c != ReadChar()) {
                 throw new RegExpException(
-                    RegExpException.ErrorType.UNEXPECTED_CHARACTER,
+                    RegExpException.ErrorType.UnexpectedCharacter,
                     pos - 1,
                     pattern);
             }
