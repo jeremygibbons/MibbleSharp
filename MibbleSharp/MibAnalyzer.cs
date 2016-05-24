@@ -2606,7 +2606,7 @@ namespace MibbleSharp
             value = (MibValue)this.GetValue(this.GetChildAt(node, 1), 0);
             desc = this.GetStringValue(this.GetChildAt(node, 2), 0);
             comp = new SnmpCompliance(true, value, null, null, null, desc);
-            comp.setComment(MibAnalyzerUtil.GetComments(node));
+            comp.Comment = MibAnalyzerUtil.GetComments(node);
             node.AddValue(comp);
             return node;
         }
@@ -2651,7 +2651,7 @@ namespace MibbleSharp
             }
 
             comp = new SnmpCompliance(false, value, syntax, write, access, desc);
-            comp.setComment(MibAnalyzerUtil.GetComments(node));
+            comp.Comment = MibAnalyzerUtil.GetComments(node);
             node.AddValue(comp);
             return node;
         }
