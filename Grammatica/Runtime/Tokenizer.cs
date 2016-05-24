@@ -688,7 +688,7 @@ namespace PerCederberg.Grammatica.Runtime {
             } else {
                 matcher.Reset(buffer);
             }
-            return matcher.MatchFromBeginning() ? matcher.Length() : 0;
+            return matcher.MatchFromBeginning() ? matcher.Length: 0;
         }
     }
 

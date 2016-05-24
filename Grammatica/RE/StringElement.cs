@@ -102,7 +102,7 @@ namespace PerCederberg.Grammatica.Runtime.RE {
                     m.SetReadEndOfString();
                     return -1;
                 }
-                if (m.IsCaseInsensitive()) {
+                if (m.IsCaseInsensitive) {
                     c = (int) Char.ToLower((char) c);
                 }
                 if (c != (int) value[i]) {
