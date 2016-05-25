@@ -59,7 +59,7 @@ namespace MibbleSharp.Type
         /**
          * The additional type constraints.
          */
-        private Constraint constraint = null;
+        private IConstraint constraint = null;
 
         /**
          * The additional defined symbols.
@@ -105,7 +105,7 @@ namespace MibbleSharp.Type
         public TypeReference(FileLocation location,
                              IMibContext context,
                              string name,
-                             Constraint constraint)
+                             IConstraint constraint)
             : this(location, context, name)
         {
             this.constraint = constraint;

@@ -42,7 +42,7 @@ namespace MibbleSharp.Type
         /**
          * The additional type constraint.
          */
-        private Constraint constraint = null;
+        private IConstraint constraint = null;
 
         /**
          * The additional defined symbols.
@@ -62,7 +62,7 @@ namespace MibbleSharp.Type
          *
          * @param constraint     the additional type constraint
          */
-        public IntegerType(Constraint constraint) : this(true, constraint, null)
+        public IntegerType(IConstraint constraint) : this(true, constraint, null)
         {
 
         }
@@ -85,7 +85,7 @@ namespace MibbleSharp.Type
          * @param symbols        the defined symbols, or null
          */
         private IntegerType(bool primitive,
-                            Constraint constraint,
+                            IConstraint constraint,
                             IDictionary<string, MibValueSymbol> symbols)
                 : base("INTEGER", primitive)
         {
@@ -178,7 +178,7 @@ namespace MibbleSharp.Type
          *
          * @since 2.2
          */
-        public override MibType CreateReference(Constraint constraint)
+        public override MibType CreateReference(IConstraint constraint)
         {
             IntegerType type = new IntegerType(false, constraint, null);
 
@@ -307,7 +307,7 @@ namespace MibbleSharp.Type
          *
          * @since 2.2
          */
-        public Constraint getConstraint()
+        public IConstraint getConstraint()
         {
             return constraint;
         }

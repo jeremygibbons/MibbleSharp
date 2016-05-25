@@ -45,7 +45,7 @@ namespace MibbleSharp.Type
         /**
          * The additional type constraint.
          */
-        private Constraint constraint = null;
+        private IConstraint constraint = null;
 
         /**
          * Creates a new sequence of a MIB type.
@@ -63,7 +63,7 @@ namespace MibbleSharp.Type
          * @param base           the sequence element type
          * @param constraint     the sequence constraint
          */
-        public SequenceOfType(MibType baseType, Constraint constraint) : this(true, baseType, constraint)
+        public SequenceOfType(MibType baseType, IConstraint constraint) : this(true, baseType, constraint)
         {
 
         }
@@ -77,7 +77,7 @@ namespace MibbleSharp.Type
          */
         private SequenceOfType(bool primitive,
                                MibType baseType,
-                               Constraint constraint)
+                               IConstraint constraint)
                 : base("SEQUENCE", primitive)
         {
 
@@ -153,7 +153,7 @@ namespace MibbleSharp.Type
          *
          * @since 2.2
          */
-        public override MibType CreateReference(Constraint constraint)
+        public override MibType CreateReference(IConstraint constraint)
         {
             SequenceOfType type = new SequenceOfType(false, baseType, constraint);
 
@@ -198,7 +198,7 @@ namespace MibbleSharp.Type
          *
          * @since 2.2
          */
-        public Constraint GetConstraint()
+        public IConstraint GetConstraint()
         {
             return constraint;
         }

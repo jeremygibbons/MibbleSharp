@@ -39,7 +39,7 @@ namespace MibbleSharp.Type
         /**
          * The additional type constraint.
          */
-        private Constraint constraint = null;
+        private IConstraint constraint = null;
 
         /**
          * Creates a new string MIB type.
@@ -54,7 +54,7 @@ namespace MibbleSharp.Type
          *
          * @param constraint     the additional type constraint
          */
-        public StringType(Constraint constraint) : this(true, constraint)
+        public StringType(IConstraint constraint) : this(true, constraint)
         {
 
         }
@@ -65,7 +65,7 @@ namespace MibbleSharp.Type
          * @param primitive      the primitive type flag
          * @param constraint     the type constraint, or null
          */
-        private StringType(bool primitive, Constraint constraint)
+        private StringType(bool primitive, IConstraint constraint)
                 : base("OCTET STRING", primitive)
         {
 
@@ -141,7 +141,7 @@ namespace MibbleSharp.Type
          *
          * @since 2.2
          */
-        public override MibType CreateReference(Constraint constraint)
+        public override MibType CreateReference(IConstraint constraint)
         {
             StringType type = new StringType(false, constraint);
 
@@ -199,7 +199,7 @@ namespace MibbleSharp.Type
          *
          * @since 2.2
          */
-        public Constraint getConstraint()
+        public IConstraint getConstraint()
         {
             return constraint;
         }

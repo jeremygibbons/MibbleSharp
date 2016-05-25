@@ -559,9 +559,9 @@ namespace MibbleSharp
                 }
             }
 
-            if (value is Constraint)
+            if (value is IConstraint)
             {
-                value = new TypeReference(loc, local, name, (Constraint)value);
+                value = new TypeReference(loc, local, name, (IConstraint)value);
             }
             else if (value is ArrayList)
             {
@@ -637,7 +637,7 @@ namespace MibbleSharp
                 }
                 else
                 {
-                    type = new IntegerType((Constraint)obj);
+                    type = new IntegerType((IConstraint)obj);
                 }
             }
 
@@ -669,7 +669,7 @@ namespace MibbleSharp
             }
             else
             {
-                type = new StringType((Constraint)values[0]);
+                type = new StringType((IConstraint)values[0]);
             }
 
             node.AddValue(type);
@@ -700,7 +700,7 @@ namespace MibbleSharp
                 }
                 else
                 {
-                    type = new BitSetType((Constraint)obj);
+                    type = new BitSetType((IConstraint)obj);
                 }
             }
 
@@ -734,7 +734,7 @@ namespace MibbleSharp
         public override Node ExitSequenceOfType(Production node)
         {
             MibType type;
-            Constraint c = null;
+            IConstraint c = null;
             Node child;
 
             child = this.GetChildAt(node, node.GetChildCount() - 1);
@@ -742,7 +742,7 @@ namespace MibbleSharp
             if (node.GetChildCount() == 4)
             {
                 child = this.GetChildAt(node, 1);
-                c = (Constraint)this.GetValue(child, 0);
+                c = (IConstraint)this.GetValue(child, 0);
             }
 
             node.AddValue(new SequenceOfType(type, c));
@@ -1070,14 +1070,14 @@ namespace MibbleSharp
         /// <returns>The node to add to the parse tree</returns>
         public override Node ExitConstraintList(Production node)
         {
-            Constraint result = null;
+            IConstraint result = null;
             System.Collections.ArrayList values;
-            Constraint c;
+            IConstraint c;
 
             values = this.GetChildValues(node);
             for (int i = values.Count - 1; i >= 0; i--)
             {
-                c = (Constraint)values[i];
+                c = (IConstraint)values[i];
                 if (result == null)
                 {
                     result = c;
@@ -1245,9 +1245,9 @@ namespace MibbleSharp
         /// <exception cref="ParseException"> if the node analysis discovered errors</exception>
         public override Node ExitSizeConstraint(Production node)
         {
-            Constraint c;
+            IConstraint c;
 
-            c = (Constraint)this.GetValue(this.GetChildAt(node, 1), 0);
+            c = (IConstraint)this.GetValue(this.GetChildAt(node, 1), 0);
             node.AddValue(new SizeConstraint(this.GetLocation(node), c));
             return node;
         }

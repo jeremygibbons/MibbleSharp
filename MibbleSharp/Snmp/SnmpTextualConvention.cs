@@ -175,7 +175,7 @@ namespace MibbleSharp.Snmp
      *
      * @since 2.2
      */
-    public override MibType CreateReference(Constraint constraint)
+    public override MibType CreateReference(IConstraint constraint)
     {
 
         return syntax.CreateReference(constraint);

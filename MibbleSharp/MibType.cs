@@ -247,7 +247,7 @@ namespace MibbleSharp
         /// <exception cref="NotSupportedException">
         /// Thrown if the top level virtual method is ever called
         /// </exception>
-        public virtual MibType CreateReference(Constraint constraint)
+        public virtual MibType CreateReference(IConstraint constraint)
         {
             string msg = this.name + " type cannot be referenced with constraints";
             throw new NotSupportedException(msg);

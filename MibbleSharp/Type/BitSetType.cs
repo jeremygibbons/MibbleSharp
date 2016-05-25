@@ -44,7 +44,7 @@ namespace MibbleSharp.Type
         /**
          * The additional type constraint.
          */
-        private Constraint constraint = null;
+        private IConstraint constraint = null;
 
         /**
          * The additional defined symbols.
@@ -64,7 +64,7 @@ namespace MibbleSharp.Type
          *
          * @param constraint     the additional type constraint
          */
-        public BitSetType(Constraint constraint) : this(true, constraint, null)
+        public BitSetType(IConstraint constraint) : this(true, constraint, null)
         {
 
         }
@@ -88,7 +88,7 @@ namespace MibbleSharp.Type
          * @param symbols        the defined symbols, or null
          */
         private BitSetType(bool primitive,
-                           Constraint constraint,
+                           IConstraint constraint,
                            Dictionary<string, MibValueSymbol> symbols)
                 : base("BITS", primitive)
         {
@@ -182,7 +182,7 @@ namespace MibbleSharp.Type
          *
          * @since 2.2
          */
-        public override MibType CreateReference(Constraint constraint)
+        public override MibType CreateReference(IConstraint constraint)
         {
             BitSetType type = new BitSetType(false, constraint, null);
 
@@ -319,7 +319,7 @@ namespace MibbleSharp.Type
          *
          * @since 2.2
          */
-        public Constraint GetConstraint()
+        public IConstraint GetConstraint()
         {
             return constraint;
         }

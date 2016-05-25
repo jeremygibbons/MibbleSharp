@@ -36,18 +36,18 @@ namespace MibbleSharp.Type
      * @version  2.6
      * @since    2.0
      */
-    public class CompoundConstraint : Constraint
+    public class CompoundConstraint : IConstraint
     {
 
     /**
      * The first constraint.
      */
-    private Constraint first;
+    private IConstraint first;
 
     /**
      * The second constraint.
      */
-    private Constraint second;
+    private IConstraint second;
 
     /**
      * Creates a new compound constraint.
@@ -55,7 +55,7 @@ namespace MibbleSharp.Type
      * @param first          the first constraint
      * @param second         the second constraint
      */
-    public CompoundConstraint(Constraint first, Constraint second)
+    public CompoundConstraint(IConstraint first, IConstraint second)
     {
         this.first = first;
         this.second = second;
@@ -118,9 +118,9 @@ namespace MibbleSharp.Type
      *
      * @return a list of the base constraints in the compound
      */
-    public IList<Constraint> getConstraintList()
+    public IList<IConstraint> getConstraintList()
     {
-            List<Constraint> list = new List<Constraint>();
+            List<IConstraint> list = new List<IConstraint>();
 
         if (first is CompoundConstraint) {
             list.AddRange(((CompoundConstraint)first).getConstraintList());

@@ -36,7 +36,7 @@ namespace MibbleSharp.Type
      * @version  2.9
      * @since    2.0
      */
-    public class SizeConstraint : Constraint
+    public class SizeConstraint : IConstraint
     {
 
         /**
@@ -48,7 +48,7 @@ namespace MibbleSharp.Type
         /**
          * The constrained size values.
          */
-        private Constraint values;
+        private IConstraint values;
 
         /**
          * Creates a new size constraint.
@@ -56,7 +56,7 @@ namespace MibbleSharp.Type
          * @param location       the constraint location
          * @param values         the constrained size values
          */
-        public SizeConstraint(FileLocation location, Constraint values)
+        public SizeConstraint(FileLocation location, IConstraint values)
         {
             this.location = location;
             this.values = values;
@@ -132,7 +132,7 @@ namespace MibbleSharp.Type
          *
          * @return a list of the value constraints
          */
-        public IEnumerable<Constraint> getValues()
+        public IEnumerable<IConstraint> getValues()
         {
 
             if (values is CompoundConstraint)
@@ -141,7 +141,7 @@ namespace MibbleSharp.Type
             }
             else
             {
-                List<Constraint> l = new List<Constraint>();
+                List<IConstraint> l = new List<IConstraint>();
                 l.Add(values);
                 return l;
             }
@@ -161,7 +161,7 @@ namespace MibbleSharp.Type
          */
         public int nextValue(int start)
         {
-            IEnumerable<Constraint> list = getValues();
+            IEnumerable<IConstraint> list = getValues();
             BigInteger val;
             // TODO: the constraint list should be sorted
             foreach(var c in list)

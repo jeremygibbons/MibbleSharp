@@ -161,7 +161,7 @@ namespace MibbleSharp.Value
          */
         protected int getByteSize(MibType type, int initialBytes)
         {
-            Constraint c = null;
+            IConstraint c = null;
             int res = -1;
 
             if (type is StringType)

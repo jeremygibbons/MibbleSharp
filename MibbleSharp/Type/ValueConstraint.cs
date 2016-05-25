@@ -33,7 +33,7 @@ namespace MibbleSharp.Type
      * @version  2.8
      * @since    2.0
      */
-    public class ValueConstraint : Constraint
+    public class ValueConstraint : IConstraint
     {
 
     /**

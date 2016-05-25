@@ -100,7 +100,7 @@
     <Compile Include="Type\BooleanType.cs" />
     <Compile Include="Type\ChoiceType.cs" />
     <Compile Include="Type\CompoundConstraint.cs" />
-    <Compile Include="Type\Constraint.cs" />
+    <Compile Include="Type\IConstraint.cs" />
     <Compile Include="Type\ElementType.cs" />
     <Compile Include="Type\IntegerType.cs" />
     <Compile Include="Type\NullType.cs" />
