@@ -77,7 +77,7 @@ namespace MibbleSharp
 
             if (this.context is SnmpObjectType)
             {
-                this.context = ((SnmpObjectType)this.context).getSyntax();
+                this.context = ((SnmpObjectType)this.context).Syntax;
             }
 
             if (this.context is TypeReference)

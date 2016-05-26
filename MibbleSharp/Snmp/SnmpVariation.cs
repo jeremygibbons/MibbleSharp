@@ -132,7 +132,7 @@ namespace MibbleSharp.Snmp
                 }
                 if (type is SnmpObjectType)
                 {
-                    type = ((SnmpObjectType)type).getSyntax();
+                    type = ((SnmpObjectType)type).Syntax;
                 }
             }
             if (syntax != null)

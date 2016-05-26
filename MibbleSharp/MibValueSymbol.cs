@@ -95,7 +95,7 @@ namespace MibbleSharp
 
                 if (this.type is SnmpObjectType)
                 {
-                    syntax = ((SnmpObjectType)this.type).getSyntax();
+                    syntax = ((SnmpObjectType)this.type).Syntax;
                     return syntax is SequenceOfType;
                 }
                 else
@@ -122,7 +122,7 @@ namespace MibbleSharp
 
                 if (this.type is SnmpObjectType)
                 {
-                    syntax = ((SnmpObjectType)this.type).getSyntax();
+                    syntax = ((SnmpObjectType)this.type).Syntax;
                     return syntax is SequenceType;
                 }
                 else

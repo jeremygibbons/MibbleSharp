@@ -76,7 +76,7 @@ namespace MibbleSharp.Snmp
         MibTypeSymbol sym;
 
         if (type is SnmpObjectType) {
-            type = ((SnmpObjectType)type).getSyntax();
+            type = ((SnmpObjectType)type).Syntax;
         }
         if (type is SnmpTextualConvention) {
             return (SnmpTextualConvention)type;

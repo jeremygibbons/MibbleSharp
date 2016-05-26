@@ -2247,7 +2247,7 @@ namespace MibbleSharp
             value = (MibValue)this.GetValue(this.GetChildAt(node, 1), 0);
             desc = this.GetStringValue(this.GetChildAt(node, 3), 0);
             rev = new SnmpRevision(value, desc);
-            rev.setComment(MibAnalyzerUtil.GetComments(node));
+            rev.Comment = MibAnalyzerUtil.GetComments(node);
             node.AddValue(rev);
             return node;
         }
