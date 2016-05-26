@@ -450,10 +450,10 @@ namespace MibbleSharp.Snmp
             builder.Append(access);
             builder.Append("\n  Status: ");
             builder.Append(status);
-            if (getUnformattedDescription() != null)
+            if (UnformattedDescription!= null)
             {
                 builder.Append("\n  Description: ");
-                builder.Append(getDescription("               "));
+                builder.Append(GetDescription("               "));
             }
             if (reference != null)
             {

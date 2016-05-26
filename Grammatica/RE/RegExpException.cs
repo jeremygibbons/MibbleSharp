@@ -169,8 +169,8 @@ namespace PerCederberg.Grammatica.Runtime.RE
         /// <summary>
         /// Serialize a RegExpException object
         /// </summary>
-        /// <param name="info"></param>
-        /// <param name="context"></param>
+        /// <param name="info">The SerializationInfo object</param>
+        /// <param name="context">The StreamingContext object</param>
         [SecurityPermissionAttribute(SecurityAction.Demand, SerializationFormatter = true)]
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {

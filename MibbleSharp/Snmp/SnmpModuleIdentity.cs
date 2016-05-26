@@ -194,7 +194,7 @@ namespace MibbleSharp.Snmp
             builder.Append("\n  Contact Info: ");
             builder.Append(this.contactInfo);
             builder.Append("\n  Description: ");
-            builder.Append(this.getDescription("               "));
+            builder.Append(this.GetDescription("               "));
 
             foreach (var rev in this.revisions)
             {

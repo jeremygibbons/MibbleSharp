@@ -174,10 +174,10 @@ namespace MibbleSharp.Snmp
             builder.Append(enterprise);
             builder.Append("\n  Variables: ");
             builder.Append(variables);
-            if (getUnformattedDescription() != null)
+            if (UnformattedDescription!= null)
             {
                 builder.Append("\n  Description: ");
-                builder.Append(getDescription("               "));
+                builder.Append(GetDescription("               "));
             }
             if (reference != null)
             {

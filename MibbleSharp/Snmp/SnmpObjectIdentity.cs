@@ -147,7 +147,7 @@ namespace MibbleSharp.Snmp
             builder.Append("\n  Status: ");
             builder.Append(status);
             builder.Append("\n  Description: ");
-            builder.Append(getDescription("               "));
+            builder.Append(GetDescription("               "));
             if (reference != null)
             {
                 builder.Append("\n  Reference: ");
