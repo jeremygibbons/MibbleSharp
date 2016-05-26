@@ -62,7 +62,7 @@ namespace MibbleSharp
 
             if (this.context is ValueReference)
             {
-                this.context = ((ValueReference)this.context).getSymbol();
+                this.context = ((ValueReference)this.context).Symbol;
             }
 
             if (this.context is MibTypeSymbol)

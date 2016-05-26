@@ -188,7 +188,7 @@ namespace MibbleSharp.Value
                 }
                 else
                 {
-                    throw new MibException(vref.getLocation(),
+                    throw new MibException(vref.Location,
                                            "referenced value is not an " +
                                            "object identifier");
                 }
