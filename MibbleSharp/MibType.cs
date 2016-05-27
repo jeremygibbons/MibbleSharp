@@ -116,7 +116,7 @@ namespace MibbleSharp
         /// same base type (such as <c>DisplayString</c> and <c>IpAddress</c>).
         /// </summary>
         /// <see cref="getTag"/>
-        /// <see cref="Snmp.SnmpTextualConvention.findReference(MibType)"/>
+        /// <see cref="Snmp.SnmpTextualConvention.FindReference(MibType)"/>
         public MibTypeSymbol ReferenceSymbol
         {
             get
@@ -331,7 +331,7 @@ namespace MibbleSharp
         /// <see cref="HasTag(int, int)"/>
         /// <see cref="HasTag(MibTypeTag)"/>
         /// <see cref="ReferenceSymbol"/>
-        /// <see cref="Snmp.SnmpTextualConvention.findReference(MibType)"/>
+        /// <see cref="Snmp.SnmpTextualConvention.FindReference(MibType)"/>
         public bool HasReferenceTo(string name)
         {
             if (this.reference == null)
@@ -362,7 +362,7 @@ namespace MibbleSharp
         /// <see cref="HasTag(int, int)"/>
         /// <see cref="HasTag(MibTypeTag)"/>
         /// <see cref="ReferenceSymbol"/>
-        /// <see cref="Snmp.SnmpTextualConvention.findReference(MibType)"/>
+        /// <see cref="Snmp.SnmpTextualConvention.FindReference(MibType)"/>
         public bool HasReferenceTo(string module, string name)
         {
             Mib mib;
