@@ -1,4 +1,4 @@
-// <copyright file="Element.cs" company="None">
+// <copyright file="RegExpException.cs" company="None">
 //    <para>
 //    This program is free software: you can redistribute it and/or
 //    modify it under the terms of the BSD license.</para>
@@ -16,9 +16,9 @@
 namespace PerCederberg.Grammatica.Runtime.RE
 {
     using System;
-    using System.Text;
     using System.Runtime.Serialization;
     using System.Security.Permissions;
+    using System.Text;
 
     /// <summary>
     /// A regular expression exception. This exception is thrown if a 
@@ -27,48 +27,6 @@ namespace PerCederberg.Grammatica.Runtime.RE
     [Serializable]
     public class RegExpException : Exception
     {
-        /// <summary>
-        /// ErrorType enumeration
-        /// </summary>
-        public enum ErrorType
-        {
-            /// <summary>
-            /// The unexpected character error constant. This error is
-            /// used when a character was read that didn't match the
-            /// allowed set of characters at the given position.
-            /// </summary>
-            UnexpectedCharacter,
-
-            /// <summary>
-            /// The unterminated pattern error constant. This error is
-            /// used when more characters were expected in the pattern.
-            /// </summary>
-            UnterminatedPattern,
-
-            /// <summary>
-            /// The unsupported special character error constant. This
-            /// error is used when special regular expression
-            /// characters are used in the pattern, but not supported
-            /// in this implementation.
-            /// </summary>
-            UnsupportedSpecialCharacter,
-
-            /// <summary>
-            /// The unsupported escape character error constant. This
-            /// error is used when an escape character construct is
-            /// used in the pattern, but not supported in this
-            /// implementation.
-            /// </summary>
-            UnsupportedEscapeCharacter,
-
-            /// <summary>
-            /// The invalid repeat count error constant. This error is
-            /// used when a repetition count of zero is specified, or
-            /// when the minimum exceeds the maximum.
-            /// </summary>
-            InvalidRepeatCount
-        }
-
         /// <summary>
         /// The error type
         /// </summary>
@@ -96,8 +54,7 @@ namespace PerCederberg.Grammatica.Runtime.RE
             this.position = pos;
             this.pattern = pattern;
         }
-
-        /// 
+ 
         /// <summary>
         /// Initializes a new instance of the <see cref="RegExpException"/> class,
         /// in the context of a de-serialization
@@ -111,6 +68,48 @@ namespace PerCederberg.Grammatica.Runtime.RE
             this.position = info.GetInt32("Position");
             this.pattern = info.GetString("Pattern");
             this.type = (RegExpException.ErrorType)info.GetInt32("Type");
+        }
+
+        /// <summary>
+        /// ErrorType enumeration
+        /// </summary>
+        public enum ErrorType
+        {
+            /// <summary>
+            /// The unexpected character error constant. This error is
+            /// used when a character was read that didn't match the
+            /// allowed set of characters at the given position.
+            /// </summary>
+            UnexpectedCharacter,
+
+            /// <summary>
+            /// The un-terminated pattern error constant. This error is
+            /// used when more characters were expected in the pattern.
+            /// </summary>
+            UnterminatedPattern,
+
+            /// <summary>
+            /// The unsupported special character error constant. This
+            /// error is used when special regular expression
+            /// characters are used in the pattern, but not supported
+            /// in this implementation.
+            /// </summary>
+            UnsupportedSpecialCharacter,
+
+            /// <summary>
+            /// The unsupported escape character error constant. This
+            /// error is used when an escape character construct is
+            /// used in the pattern, but not supported in this
+            /// implementation.
+            /// </summary>
+            UnsupportedEscapeCharacter,
+
+            /// <summary>
+            /// The invalid repeat count error constant. This error is
+            /// used when a repetition count of zero is specified, or
+            /// when the minimum exceeds the maximum.
+            /// </summary>
+            InvalidRepeatCount
         }
 
         /// <summary>
@@ -167,17 +166,18 @@ namespace PerCederberg.Grammatica.Runtime.RE
         }
 
         /// <summary>
-        /// Serialize a RegExpException object
+        /// Serialize a <see cref="RegExpException"/> object
         /// </summary>
         /// <param name="info">The SerializationInfo object</param>
         /// <param name="context">The StreamingContext object</param>
         [SecurityPermissionAttribute(SecurityAction.Demand, SerializationFormatter = true)]
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
-            if(info == null)
+            if (info == null)
             {
                 throw new ArgumentNullException("info");
             }
+
             info.AddValue("Type", this.type);
             info.AddValue("Position", this.position);
             info.AddValue("Pattern", this.pattern);

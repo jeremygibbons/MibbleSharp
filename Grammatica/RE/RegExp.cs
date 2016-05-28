@@ -17,15 +17,15 @@ namespace PerCederberg.Grammatica.Runtime.RE
 {
     using System;
     using System.Collections;
-    using System.IO;
     using System.Globalization;
+    using System.IO;
     using System.Text;
 
     /// <summary>
     /// A regular expression. This class creates and holds an internal
     /// data structure representing a regular expression. It also
     /// allows creating matchers. This class is thread-safe. Multiple
-    /// matchers may operate simultanously on the same regular
+    /// matchers may operate simultaneously on the same regular
     /// expression.
     /// </summary>
     public class RegExp
@@ -51,7 +51,7 @@ namespace PerCederberg.Grammatica.Runtime.RE
         /// </summary>
         /// <param name="pattern">The regular expression pattern</param>
         /// <exception cref="RegExpException">
-        /// If the regexp couldn't be parsed correctly
+        /// If the regular expression couldn't be parsed correctly
         /// </exception>
         public RegExp(string pattern)
             : this(pattern, false)
@@ -65,19 +65,19 @@ namespace PerCederberg.Grammatica.Runtime.RE
         /// <param name="pattern">The regular expression pattern</param>
         /// <param name="ignoreCase">Whether to ignore case or not</param>
         /// <exception cref="RegExpException">
-        /// If the regexp couldn't be parsed correctly
+        /// If the regular expression couldn't be parsed correctly
         /// </exception> 
         public RegExp(string pattern, bool ignoreCase)
         {
             this.pattern = pattern;
             this.ignoreCase = ignoreCase;
             this.pos = 0;
-            this.element = ParseExpr();
+            this.element = this.ParseExpr();
             if (this.pos < pattern.Length)
             {
                 throw new RegExpException(
                     RegExpException.ErrorType.UnexpectedCharacter,
-                    pos,
+                    this.pos,
                     pattern);
             }
         }
@@ -86,10 +86,10 @@ namespace PerCederberg.Grammatica.Runtime.RE
         /// Creates a new matcher for the specified string.
         /// </summary>
         /// <param name="str">The string to work with</param>
-        /// <returns>The regular expresion matcher</returns>
+        /// <returns>The regular expression matcher</returns>
         public Matcher Matcher(string str)
         {
-            return Matcher(new ReaderBuffer(new StringReader(str)));
+            return this.Matcher(new ReaderBuffer(new StringReader(str)));
         }
 
         /// <summary>
@@ -97,10 +97,10 @@ namespace PerCederberg.Grammatica.Runtime.RE
         /// character input stream.
         /// </summary>
         /// <param name="buffer">The character input buffer</param>
-        /// <returns>The regular expresion matcher</returns>
+        /// <returns>The regular expression matcher</returns>
         public Matcher Matcher(ReaderBuffer buffer)
         {
-            return new Matcher((Element)element.Clone(), buffer, ignoreCase);
+            return new Matcher((Element)this.element.Clone(), buffer, this.ignoreCase);
         }
         
         /// <summary>
@@ -119,19 +119,20 @@ namespace PerCederberg.Grammatica.Runtime.RE
             {
                 str.Write(" caseignore");
             }
+
             str.WriteLine();
             str.WriteLine("  Compiled:");
-            element.PrintTo(str, "    ");
+            this.element.PrintTo(str, "    ");
             return str.ToString();
         }
-        
+
         /// <summary>
-        /// Parses a regular expression. This method handles the Expr
-        /// production in the grammar (see regexp.grammar).
+        /// Parses a regular expression. This method handles the <c>Expr</c>
+        /// production in the grammar (see <c>regexp.grammar</c>).
         /// </summary>
         /// <returns>The element representing this expression</returns>
         /// <exception cref="RegExpException">
-        /// If an error was encoutered in the pattern string
+        /// If an error was encountered in the pattern string
         /// </exception>
         private Element ParseExpr()
         {
@@ -153,7 +154,7 @@ namespace PerCederberg.Grammatica.Runtime.RE
 
         /// <summary>
         /// Parses a regular expression term. This method handles the
-        /// Term production in the grammar (see regexp.grammar).
+        /// Term production in the grammar (see <c>regexp.grammar</c>).
         /// </summary>
         /// <returns>The element representing this term</returns>
         /// <exception cref="RegExpException">
@@ -183,10 +184,10 @@ namespace PerCederberg.Grammatica.Runtime.RE
                 }
             }
         }
-        
+
         /// <summary>
         /// Parses a regular expression factor. This method handles the
-        /// Fact production in the grammar (see regexp.grammar).
+        /// Fact production in the grammar (see <c>regexp.grammar</c>).
         /// </summary>
         /// <returns>The element representing this factor</returns>
         /// <exception cref="RegExpException">
@@ -212,7 +213,7 @@ namespace PerCederberg.Grammatica.Runtime.RE
 
         /// <summary>
         /// Parses a regular expression atom. This method handles the
-        /// Atom production in the grammar (see regexp.grammar).
+        /// Atom production in the grammar (see <c>regexp.grammar</c>).
         /// </summary>
         /// <returns>The element representing this atom</returns>
         /// <exception cref="RegExpException">
@@ -249,16 +250,16 @@ namespace PerCederberg.Grammatica.Runtime.RE
                 case '|':
                     throw new RegExpException(
                         RegExpException.ErrorType.UnexpectedCharacter,
-                        pos,
-                        pattern);
+                        this.pos,
+                        this.pattern);
                 default:
                     return this.ParseChar();
             }
         }
-        
+
         /// <summary>
         /// Parses a regular expression atom modifier. This method handles
-        /// the AtomModifier production in the grammar (see regexp.grammar).
+        /// the AtomModifier production in the grammar (see <c>regexp.grammar</c>).
         /// </summary>
         /// <param name="elem">The element to modify</param>
         /// <returns>The modified element</returns>
@@ -290,7 +291,7 @@ namespace PerCederberg.Grammatica.Runtime.RE
                     max = -1;
                     break;
                 case '{':
-                    firstPos = pos - 1;
+                    firstPos = this.pos - 1;
                     min = this.ReadNumber();
                     max = min;
                     if (this.PeekChar(0) == ',')
@@ -302,20 +303,22 @@ namespace PerCederberg.Grammatica.Runtime.RE
                             max = this.ReadNumber();
                         }
                     }
+
                     this.ReadChar('}');
                     if (max == 0 || (max > 0 && min > max))
                     {
                         throw new RegExpException(
                             RegExpException.ErrorType.InvalidRepeatCount,
                             firstPos,
-                            pattern);
+                            this.pattern);
                     }
+
                     break;
                 default:
                     throw new RegExpException(
                         RegExpException.ErrorType.UnexpectedCharacter,
-                        pos - 1,
-                        pattern);
+                        this.pos - 1,
+                        this.pattern);
             }
 
             // Read operator mode
@@ -378,6 +381,7 @@ namespace PerCederberg.Grammatica.Runtime.RE
                         {
                             charset.AddCharacterSet((CharacterSetElement)elem);
                         }
+
                         break;
                     default:
                         this.ReadChar(start);
@@ -420,8 +424,8 @@ namespace PerCederberg.Grammatica.Runtime.RE
                 case '$':
                     throw new RegExpException(
                         RegExpException.ErrorType.UnsupportedSpecialCharacter,
-                        pos,
-                        pattern);
+                        this.pos,
+                        this.pattern);
                 default:
                     return new StringElement(this.FixChar(this.ReadChar()));
             }
@@ -452,30 +456,33 @@ namespace PerCederberg.Grammatica.Runtime.RE
                     {
                         throw new RegExpException(
                             RegExpException.ErrorType.UnsupportedEscapeCharacter,
-                            pos - 3,
-                            pattern);
+                            this.pos - 3,
+                            this.pattern);
                     }
+
                     value = c - '0';
                     c = (char)this.PeekChar(0);
-                    if ('0' <= c && c <= '7')
+                    if (c >= '0' && c <= '7')
                     {
                         value *= 8;
                         value += this.ReadChar() - '0';
                         c = (char)this.PeekChar(0);
-                        if ('0' <= c && c <= '7')
+                        if (c >= '0' && c <= '7')
                         {
                             value *= 8;
                             value += this.ReadChar() - '0';
                         }
                     }
+
                     return new StringElement(this.FixChar((char)value));
                 case 'x':
                     str = this.ReadChar().ToString() +
                           this.ReadChar().ToString();
                     try
                     {
-                        value = Int32.Parse(str,
-                                            NumberStyles.AllowHexSpecifier);
+                        value = int.Parse(
+                            str,
+                            NumberStyles.AllowHexSpecifier);
                         return new StringElement(this.FixChar((char)value));
                     }
                     catch (FormatException)
@@ -485,6 +492,7 @@ namespace PerCederberg.Grammatica.Runtime.RE
                             pos - str.Length - 2,
                             this.pattern);
                     }
+
                 case 'u':
                     str = this.ReadChar().ToString() +
                           this.ReadChar().ToString() +
@@ -492,8 +500,9 @@ namespace PerCederberg.Grammatica.Runtime.RE
                           this.ReadChar().ToString();
                     try
                     {
-                        value = Int32.Parse(str,
-                                            NumberStyles.AllowHexSpecifier);
+                        value = int.Parse(
+                            str,
+                            NumberStyles.AllowHexSpecifier);
                         return new StringElement(this.FixChar((char)value));
                     }
                     catch (FormatException)
@@ -519,23 +528,24 @@ namespace PerCederberg.Grammatica.Runtime.RE
                 case 'd':
                     return CharacterSetElement.DIGIT;
                 case 'D':
-                    return CharacterSetElement.NON_DIGIT;
+                    return CharacterSetElement.NONDIGIT;
                 case 's':
                     return CharacterSetElement.WHITESPACE;
                 case 'S':
-                    return CharacterSetElement.NON_WHITESPACE;
+                    return CharacterSetElement.NONWHITESPACE;
                 case 'w':
                     return CharacterSetElement.WORD;
                 case 'W':
-                    return CharacterSetElement.NON_WORD;
+                    return CharacterSetElement.NONWORD;
                 default:
-                    if (('A' <= c && c <= 'Z') || ('a' <= c && c <= 'z'))
+                    if ((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z'))
                     {
                         throw new RegExpException(
                             RegExpException.ErrorType.UnsupportedEscapeCharacter,
-                            pos - 2,
+                            this.pos - 2,
                             this.pattern);
                     }
+
                     return new StringElement(this.FixChar(c));
             }
         }
@@ -549,7 +559,7 @@ namespace PerCederberg.Grammatica.Runtime.RE
         /// <returns>The adjusted character</returns>
         private char FixChar(char c)
         {
-            return this.ignoreCase ? Char.ToLower(c) : c;
+            return this.ignoreCase ? char.ToLower(c) : c;
         }
 
         /// <summary>
@@ -568,7 +578,7 @@ namespace PerCederberg.Grammatica.Runtime.RE
             int c;
 
             c = this.PeekChar(0);
-            while ('0' <= c && c <= '9')
+            while (c >= '0' && c <= '9')
             {
                 buf.Append(this.ReadChar());
                 c = this.PeekChar(0);
@@ -578,11 +588,11 @@ namespace PerCederberg.Grammatica.Runtime.RE
             {
                 throw new RegExpException(
                     RegExpException.ErrorType.UnexpectedCharacter,
-                    pos,
+                    this.pos,
                     this.pattern);
             }
 
-            return Int32.Parse(buf.ToString());
+            return int.Parse(buf.ToString());
         }
 
         /// <summary>
@@ -601,12 +611,12 @@ namespace PerCederberg.Grammatica.Runtime.RE
             {
                 throw new RegExpException(
                     RegExpException.ErrorType.UnterminatedPattern,
-                    pos,
+                    this.pos,
                     this.pattern);
             }
             else
             {
-                pos++;
+                this.pos++;
                 return (char)c;
             }
         }
@@ -628,7 +638,7 @@ namespace PerCederberg.Grammatica.Runtime.RE
             {
                 throw new RegExpException(
                     RegExpException.ErrorType.UnexpectedCharacter,
-                    pos - 1,
+                    this.pos - 1,
                     this.pattern);
             }
 
@@ -679,14 +689,14 @@ namespace PerCederberg.Grammatica.Runtime.RE
                 if (prev is StringElement
                  && elem is StringElement)
                 {
-
-                    str = ((StringElement)prev).GetString() +
-                          ((StringElement)elem).GetString();
+                    str = ((StringElement)prev).String +
+                          ((StringElement)elem).String;
                     elem = new StringElement(str);
                     list.RemoveAt(i);
                     list[i - 1] = elem;
                     i--;
                 }
+
                 prev = elem;
             }
 

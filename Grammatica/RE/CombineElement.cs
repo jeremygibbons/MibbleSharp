@@ -77,12 +77,13 @@ namespace PerCederberg.Grammatica.Runtime.RE
             int start,
             int skip)
         {
-            int  length1 = -1;
-            int  length2 = 0;
-            int  skip1 = 0;
-            int  skip2 = 0;
+            int length1 = -1;
+            int length2 = 0;
+            int skip1 = 0;
+            int skip2 = 0;
 
-            while (skip >= 0) {
+            while (skip >= 0)
+            {
                 length1 = this.elem1.Match(m, buffer, start, skip1);
                 if (length1 < 0)
                 {
@@ -110,7 +111,8 @@ namespace PerCederberg.Grammatica.Runtime.RE
         /// </summary>
         /// <param name="output">The output stream to be used</param>
         /// <param name="indent">The current indentation</param>
-        public override void PrintTo(TextWriter output, string indent) {
+        public override void PrintTo(TextWriter output, string indent)
+        {
             this.elem1.PrintTo(output, indent);
             this.elem2.PrintTo(output, indent);
         }

@@ -1,4 +1,4 @@
-// <copyright file="Element.cs" company="None">
+// <copyright file="CharacterSetElement.cs" company="None">
 //    <para>
 //    This program is free software: you can redistribute it and/or
 //    modify it under the terms of the BSD license.</para>
@@ -30,54 +30,53 @@ namespace PerCederberg.Grammatica.Runtime.RE
     /// </summary>
     internal class CharacterSetElement : Element
     {
-
         /// <summary>
         /// The dot ('.') character set. This element matches a single
         /// character that is not equal to a newline character.
         /// </summary>
-        public static CharacterSetElement DOT =
+        public static readonly CharacterSetElement DOT =
             new CharacterSetElement(false);
 
         /// <summary>
         /// The digit character set. This element matches a single
         /// numeric character.
         /// </summary>
-        public static CharacterSetElement DIGIT =
+        public static readonly CharacterSetElement DIGIT =
             new CharacterSetElement(false);
 
         /// <summary>
         /// The non-digit character set. This element matches a single
         /// non-numeric character.
         /// </summary>
-        public static CharacterSetElement NON_DIGIT =
+        public static readonly CharacterSetElement NONDIGIT =
             new CharacterSetElement(true);
 
         /// <summary>
         /// The whitespace character set. This element matches a single
         /// whitespace character.
         /// </summary>
-        public static CharacterSetElement WHITESPACE =
+        public static readonly CharacterSetElement WHITESPACE =
             new CharacterSetElement(false);
 
         /// <summary>
         /// The non-whitespace character set. This element matches a
         /// single non-whitespace character.
         /// </summary>
-        public static CharacterSetElement NON_WHITESPACE =
+        public static readonly CharacterSetElement NONWHITESPACE =
             new CharacterSetElement(true);
 
         /// <summary>
         /// The word character set. This element matches a single word
         /// character.
         /// </summary>
-        public static CharacterSetElement WORD =
+        public static readonly CharacterSetElement WORD =
             new CharacterSetElement(false);
 
         /// <summary>
         /// The non-word character set. This element matches a single
         /// non-word character.
         /// </summary>
-        public static CharacterSetElement NON_WORD =
+        public static readonly CharacterSetElement NONWORD =
             new CharacterSetElement(true);
 
         /// <summary>
@@ -129,7 +128,7 @@ namespace PerCederberg.Grammatica.Runtime.RE
         /// <param name="elem">The string element with characters to be added</param>
         public void AddCharacters(StringElement elem)
         {
-            this.AddCharacters(elem.GetString());
+            this.AddCharacters(elem.String);
         }
 
         /// <summary>
@@ -157,7 +156,7 @@ namespace PerCederberg.Grammatica.Runtime.RE
         /// of clone(), but as new characters are not added to the
         /// character set after creation, this will work correctly.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>A copy of this object</returns>
         public override object Clone()
         {
             return this;
@@ -199,45 +198,81 @@ namespace PerCederberg.Grammatica.Runtime.RE
 
             if (m.IsCaseInsensitive)
             {
-                c = (int)Char.ToLower((char)c);
+                c = (int)char.ToLower((char)c);
             }
 
             return this.InSet((char)c) ? 1 : -1;
         }
 
         /// <summary>
-        /// Checks if the specified character matches this character
-        /// set.This method takes the inverted flag into account.
+        /// Prints this element to the specified output stream.
         /// </summary>
-        /// <param name="c">The character to check</param>
-        /// <returns>True if the character is in the set, false if not</returns>
-        private bool InSet(char c)
+        /// <param name="output">The output stream to be used</param>
+        /// <param name="indent">The current indentation</param>
+        public override void PrintTo(TextWriter output, string indent)
         {
+            output.WriteLine(indent + this.ToString());
+        }
+
+        /// <summary>
+        /// Returns a string description of this character set.
+        /// </summary>
+        /// <returns>A string description of this character set.</returns>
+        public override string ToString()
+        {
+            StringBuilder buffer;
+
+            // Handle predefined character sets
             if (this == CharacterSetElement.DOT)
             {
-                return CharacterSetElement.InDotSet(c);
+                return ".";
             }
-            else if (this == CharacterSetElement.DIGIT ||
-              this == CharacterSetElement.NON_DIGIT)
+            else if (this == CharacterSetElement.DIGIT)
             {
-                return CharacterSetElement.InDigitSet(c) != this.inverted;
+                return "\\d";
             }
-            else if (this == CharacterSetElement.WHITESPACE ||
-              this == CharacterSetElement.NON_WHITESPACE)
+            else if (this == CharacterSetElement.NONDIGIT)
             {
-                return CharacterSetElement.InWhitespaceSet(c) != this.inverted;
+                return "\\D";
             }
-            else if (this == CharacterSetElement.WORD ||
-              this == CharacterSetElement.NON_WORD)
+            else if (this == CharacterSetElement.WHITESPACE)
             {
-                return CharacterSetElement.InWordSet(c) != this.inverted;
+                return "\\s";
+            }
+            else if (this == CharacterSetElement.NONWHITESPACE)
+            {
+                return "\\S";
+            }
+            else if (this == CharacterSetElement.WORD)
+            {
+                return "\\w";
+            }
+            else if (this == CharacterSetElement.NONWORD)
+            {
+                return "\\W";
+            }
+
+            // Handle user-defined character sets
+            buffer = new StringBuilder();
+            if (this.inverted)
+            {
+                buffer.Append("^[");
             }
             else
             {
-                return this.InUserSet(c) != this.inverted;
+                buffer.Append("[");
             }
-        }
 
+            foreach (var obj in this.contents)
+            {
+                buffer.Append(obj);
+            }
+
+            buffer.Append("]");
+
+            return buffer.ToString();
+        }
+       
         /// <summary>
         /// Checks if the specified character is present in the 'dot'
         /// set.This method does not consider the inverted flag.
@@ -267,7 +302,7 @@ namespace PerCederberg.Grammatica.Runtime.RE
         /// <returns>True if the character is in the set, false if not</returns>
         private static bool InDigitSet(char c)
         {
-            return '0' <= c && c <= '9';
+            return c >= '0' && c <= '9';
         }
 
         /// <summary>
@@ -300,10 +335,43 @@ namespace PerCederberg.Grammatica.Runtime.RE
         /// <returns>True if the character is in the set, false if not</returns>
         private static bool InWordSet(char c)
         {
-            return ('a' <= c && c <= 'z')
-                || ('A' <= c && c <= 'Z')
-                || ('0' <= c && c <= '9')
+            return (c <= 'a' && c <= 'z')
+                || (c <= 'A' && c <= 'Z')
+                || (c <= '0' && c <= '9')
                 || c == '_'; // TODO: check this is the complete set
+        }
+
+        /// <summary>
+        /// Checks if the specified character matches this character
+        /// set.This method takes the inverted flag into account.
+        /// </summary>
+        /// <param name="c">The character to check</param>
+        /// <returns>True if the character is in the set, false if not</returns>
+        private bool InSet(char c)
+        {
+            if (this == CharacterSetElement.DOT)
+            {
+                return CharacterSetElement.InDotSet(c);
+            }
+            else if (this == CharacterSetElement.DIGIT 
+                || this == CharacterSetElement.NONDIGIT)
+            {
+                return CharacterSetElement.InDigitSet(c) != this.inverted;
+            }
+            else if (this == CharacterSetElement.WHITESPACE 
+                || this == CharacterSetElement.NONWHITESPACE)
+            {
+                return CharacterSetElement.InWhitespaceSet(c) != this.inverted;
+            }
+            else if (this == CharacterSetElement.WORD 
+                || this == CharacterSetElement.NONWORD)
+            {
+                return CharacterSetElement.InWordSet(c) != this.inverted;
+            }
+            else
+            {
+                return this.InUserSet(c) != this.inverted;
+            }
         }
 
         /// <summary>
@@ -337,80 +405,13 @@ namespace PerCederberg.Grammatica.Runtime.RE
                 }
 
                 e = obj as CharacterSetElement;
-                if(e != null && e.InSet(value))
+                if (e != null && e.InSet(value))
                 {
                     return true;
                 }
             }
 
             return false;
-        }
-
-        /// <summary>
-        /// Prints this element to the specified output stream.
-        /// </summary>
-        /// <param name="output">The output stream to be used</param>
-        /// <param name="indent">The current indentation</param>
-        public override void PrintTo(TextWriter output, string indent)
-        {
-            output.WriteLine(indent + this.ToString());
-        }
-
-        /// <summary>
-        /// Returns a string description of this character set.
-        /// </summary>
-        /// <returns>A string description of this character set.</returns>
-        public override string ToString()
-        {
-            StringBuilder buffer;
-
-            // Handle predefined character sets
-            if (this == CharacterSetElement.DOT)
-            {
-                return ".";
-            }
-            else if (this == CharacterSetElement.DIGIT)
-            {
-                return "\\d";
-            }
-            else if (this == CharacterSetElement.NON_DIGIT)
-            {
-                return "\\D";
-            }
-            else if (this == CharacterSetElement.WHITESPACE)
-            {
-                return "\\s";
-            }
-            else if (this == CharacterSetElement.NON_WHITESPACE)
-            {
-                return "\\S";
-            }
-            else if (this == CharacterSetElement.WORD)
-            {
-                return "\\w";
-            }
-            else if (this == CharacterSetElement.NON_WORD)
-            {
-                return "\\W";
-            }
-
-            // Handle user-defined character sets
-            buffer = new StringBuilder();
-            if (this.inverted)
-            {
-                buffer.Append("^[");
-            }
-            else
-            {
-                buffer.Append("[");
-            }
-            foreach(var obj in contents)
-            {
-                buffer.Append(obj);
-            }
-            buffer.Append("]");
-
-            return buffer.ToString();
         }
 
         /// <summary>

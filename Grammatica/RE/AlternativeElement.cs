@@ -72,7 +72,7 @@ namespace PerCederberg.Grammatica.Runtime.RE
         /// the length of the longest matching string, or
         /// -1 if no match was found
         /// </returns>
-        /// <exception cref="IOException">If an I/O error occured</exception>
+        /// <exception cref="IOException">If an I/O error occurred</exception>
         public override int Match(
             Matcher m,
             ReaderBuffer buffer,
@@ -112,9 +112,10 @@ namespace PerCederberg.Grammatica.Runtime.RE
         public override void PrintTo(TextWriter output, string indent)
         {
             output.WriteLine(indent + "Alternative 1");
-            elem1.PrintTo(output, indent + "  ");
+            this.elem1.PrintTo(output, indent + "  ");
+
             output.WriteLine(indent + "Alternative 2");
-            elem2.PrintTo(output, indent + "  ");
+            this.elem2.PrintTo(output, indent + "  ");
         }
     }
 }

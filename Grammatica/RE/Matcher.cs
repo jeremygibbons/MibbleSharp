@@ -58,13 +58,14 @@ namespace PerCederberg.Grammatica.Runtime.RE
         private bool endOfString;
 
         /// <summary>
-        /// Creates a new instance of the <see cref="Matcher"/> class, with 
+        /// Initializes a new instance of the <see cref="Matcher"/> class, with 
         /// the specified element.
         /// </summary>
         /// <param name="e">The base regular expression element</param>
         /// <param name="buffer">The input character buffer to work with</param>
         /// <param name="ignoreCase">The character case ignore flag</param>
-        internal Matcher(Element e, ReaderBuffer buffer, bool ignoreCase) {
+        internal Matcher(Element e, ReaderBuffer buffer, bool ignoreCase)
+        {
             this.element = e;
             this.buffer = buffer;
             this.ignoreCase = ignoreCase;
@@ -92,7 +93,7 @@ namespace PerCederberg.Grammatica.Runtime.RE
         {
             get
             {
-                return start;
+                return this.start;
             }
         }
 
@@ -129,8 +130,9 @@ namespace PerCederberg.Grammatica.Runtime.RE
         }
 
         /// <summary>
-        /// the end of the string was encountered during the
-        /// last match attempt.This flag signals that more input may
+        /// Gets a value indicating whether the end of the string 
+        /// was encountered during the last match attempt.
+        /// This flag signals that more input may
         /// be needed in order to get a match(or a longer match).
         /// </summary>
         public bool HasReadEndOfString
@@ -147,7 +149,8 @@ namespace PerCederberg.Grammatica.Runtime.RE
         /// value.This method is automatically called before starting
         /// a new match.
         /// </summary>
-        public void Reset() {
+        public void Reset()
+        {
             this.length = -1;
             this.endOfString = false;
         }
@@ -158,7 +161,8 @@ namespace PerCederberg.Grammatica.Runtime.RE
         /// value.
         /// </summary>
         /// <param name="str">The new string to work with</param>
-        public void Reset(string str) {
+        public void Reset(string str)
+        {
             this.Reset(new ReaderBuffer(new StringReader(str)));
         }
 
@@ -168,7 +172,8 @@ namespace PerCederberg.Grammatica.Runtime.RE
         /// value.
         /// </summary>
         /// <param name="buffer">The character buffer to work with</param>
-        public void Reset(ReaderBuffer buffer) {
+        public void Reset(ReaderBuffer buffer)
+        {
             this.buffer = buffer;
             this.Reset();
         }
@@ -215,11 +220,11 @@ namespace PerCederberg.Grammatica.Runtime.RE
         {
             if (this.length <= 0)
             {
-                return "";
+                return string.Empty;
             }
             else
             {
-                return this.buffer.Substring(buffer.Position, this.length);
+                return this.buffer.Substring(this.buffer.Position, this.length);
             }
         }
 
