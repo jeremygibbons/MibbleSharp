@@ -62,7 +62,7 @@ namespace MibbleSharp.Type
             {
                 if (this.values is CompoundConstraint)
                 {
-                    return ((CompoundConstraint)this.values).getConstraintList();
+                    return ((CompoundConstraint)this.values).ConstraintList;
                 }
                 else
                 {
