@@ -175,11 +175,11 @@ namespace MibbleSharp.Value
 
             if (type is StringType)
             {
-                c = ((StringType)type).getConstraint();
+                c = ((StringType)type).Constraint;
             }
             if (c is SizeConstraint)
             {
-                res = ((SizeConstraint)c).nextValue(initialBytes);
+                res = ((SizeConstraint)c).NextValue(initialBytes);
             }
             if (res < 0)
             {
