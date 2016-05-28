@@ -82,7 +82,7 @@ namespace MibbleSharp
 
             if (this.context is TypeReference)
             {
-                this.context = ((TypeReference)this.context).getSymbol();
+                this.context = ((TypeReference)this.context).Symbol;
                 return this.FindSymbol(name, expanded);
             }
 

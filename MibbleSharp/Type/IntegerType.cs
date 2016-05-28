@@ -1,137 +1,174 @@
-﻿//
-// IntegerType.cs
-// 
-// This work is free software; you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published
-// by the Free Software Foundation; either version 2 of the License,
-// or (at your option) any later version.
-//
-// This work is distributed in the hope that it will be useful, but
-// WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
-// General Public License for more details.
-// 
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
-// USA
-// 
-// Original Java code Copyright (c) 2004-2016 Per Cederberg. All
-// rights reserved.
-// C# conversion Copyright (c) 2016 Jeremy Gibbons. All rights reserved
-//
-
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using MibbleSharp.Value;
+﻿// <copyright file="IntegerType.cs" company="None">
+//    <para>
+//    This work is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published
+//    by the Free Software Foundation; either version 2 of the License,
+//    or (at your option) any later version.</para>
+//    <para>
+//    This work is distributed in the hope that it will be useful, but
+//    WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+//    General Public License for more details.</para>
+//    <para>
+//    along with this program; if not, write to the Free Software
+//    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
+//    USA</para>
+//    Original Java code Copyright (c) 2004-2016 Per Cederberg. All
+//    rights reserved.
+//    C# conversion Copyright (c) 2016 Jeremy Gibbons. All rights reserved
+// </copyright>
 
 namespace MibbleSharp.Type
 {
-    /**
-     * An integer MIB type.
-     *
-     * @author   Per Cederberg, <per at percederberg dot net>
-     * @version  2.7
-     * @since    2.0
-     */
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Text;
+    using MibbleSharp.Value;
+
+    /// <summary>
+    /// An integer MIB type.
+    /// </summary>
     public class IntegerType : MibType, IMibContext
     {
-
-        /**
-         * The additional type constraint.
-         */
+        /// <summary>
+        /// The additional type constraint.
+        /// </summary>
         private IConstraint constraint = null;
 
-        /**
-         * The additional defined symbols.
-         */
+        /// <summary>
+        /// The additional defined symbols.
+        /// </summary>
         private IDictionary<string, MibValueSymbol> symbols = new Dictionary<string, MibValueSymbol>();
 
-        /**
-         * Creates a new integer MIB type.
-         */
+        /// <summary>
+        /// Initializes a new instance of the <see cref="IntegerType"/> class.
+        /// </summary>
         public IntegerType() : this(true, null, null)
         {
-
         }
 
-        /**
-         * Creates a new integer MIB type.
-         *
-         * @param constraint     the additional type constraint
-         */
-        public IntegerType(IConstraint constraint) : this(true, constraint, null)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="IntegerType"/> class.
+        /// </summary>
+        /// <param name="constraint">The additional type constraint</param>
+        public IntegerType(IConstraint constraint)
+            : this(true, constraint, null)
         {
-
         }
 
-        /**
-         * Creates a new integer MIB type.
-         *
-         * @param values         the additional defined symbols
-         */
+        /// <summary>
+        /// Initializes a new instance of the <see cref="IntegerType"/> class.
+        /// </summary> 
+        /// <param name="values">The additional defined symbols</param>
         public IntegerType(IList<MibValueSymbol> values) : this(true, null, null)
         {
-            CreateValueConstraints(values);
+            this.CreateValueConstraints(values);
         }
 
-        /**
-         * Creates a new integer MIB type.
-         *
-         * @param primitive      the primitive type flag
-         * @param constraint     the type constraint, or null
-         * @param symbols        the defined symbols, or null
-         */
-        private IntegerType(bool primitive,
-                            IConstraint constraint,
-                            IDictionary<string, MibValueSymbol> symbols)
-                : base("INTEGER", primitive)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="IntegerType"/> class.
+        /// </summary> 
+        /// <param name="primitive">The primitive type flag</param>
+        /// <param name="constraint">The type constraint, or null</param>
+        /// <param name="symbols">The defined symbols, or null</param>
+        private IntegerType(
+            bool primitive,
+            IConstraint constraint,
+            IDictionary<string, MibValueSymbol> symbols)
+            : base("INTEGER", primitive)
         {
-
             if (constraint != null)
             {
                 this.constraint = constraint;
             }
+
             if (symbols != null)
             {
                 this.symbols = symbols;
             }
         }
 
-        /**
-         * Initializes the MIB type. This will remove all levels of
-         * indirection present, such as references to types or values. No
-         * information is lost by this operation. This method may modify
-         * this object as a side-effect, and will return the basic
-         * type.<p>
-         *
-         * <strong>NOTE:</strong> This is an internal method that should
-         * only be called by the MIB loader.
-         *
-         * @param symbol         the MIB symbol containing this type
-         * @param log            the MIB loader log
-         *
-         * @return the basic MIB type
-         *
-         * @throws MibException if an error was encountered during the
-         *             initialization
-         *
-         * @since 2.2
-         */
+        /// <summary>
+        /// Gets a value indicating whether this type has any constraint.
+        /// </summary>
+        /// <returns>
+        /// True if this type has any constraint, or
+        /// false otherwise
+        /// </returns>
+        public bool HasConstraint
+        {
+            get
+            {
+                return this.constraint != null;
+            }
+        }
+
+        /// <summary>
+        /// Gets a value indicating whether this type has any defined value symbols.
+        /// </summary>
+        public bool HasSymbols
+        {
+            get
+            {
+                return this.symbols.Count > 0;
+            }
+        }
+
+        /// <summary>
+        /// Gets the optional type constraint. The type constraints for
+        /// an integer will typically be value, value range or compound
+        /// constraints.
+        /// </summary>
+        public IConstraint Constraint
+        {
+            get
+            {
+                return this.constraint;
+            }
+        }
+
+        /// <summary>
+        /// Gets all named integer values. An integer may also allow
+        /// unnamed values, depending on the constraints. Use the
+        /// constraint object or the isCompatible() method to check if a
+        /// value is compatible with this type. Also note that the value
+        /// symbols returned by this method are not normal MIB symbols,
+        /// i.e. only the name and value components are valid.
+        /// </summary>
+        public IEnumerable<MibValueSymbol> AllSymbols
+        {
+            get
+            {
+                return this.symbols.Values;
+            }
+        }
+
+        /// <summary>
+        /// Initializes the MIB type. This will remove all levels of
+        /// indirection present, such as references to types or values. No
+        /// information is lost by this operation. This method may modify
+        /// this object as a side-effect, and will return the basic
+        /// type.
+        /// NOTE: This is an internal method that should
+        /// only be called by the MIB loader.
+        /// </summary>
+        /// <param name="symbol">The MIB symbol containing this type</param>
+        /// <param name="log">The MIB loader log</param>
+        /// <returns>The basic MIB type</returns>
         public override MibType Initialize(MibSymbol symbol, MibLoaderLog log)
         {
-            SetTag(true, MibTypeTag.Integer);
+            this.SetTag(true, MibTypeTag.Integer);
 
-            if (constraint != null)
+            if (this.constraint != null)
             {
-                constraint.Initialize(this, log);
+                this.constraint.Initialize(this, log);
             }
-            foreach(MibValueSymbol sym in symbols.Values)
+
+            foreach (MibValueSymbol sym in this.symbols.Values)
             {
                 sym.Initialize(log);
-                if (!IsCompatibleType(sym.Value))
+                if (!this.IsCompatibleType(sym.Value))
                 {
                     string message = "value is not compatible with type";
                     throw new MibException(sym.Location, message);
@@ -141,261 +178,170 @@ namespace MibbleSharp.Type
             return this;
         }
 
-        /**
-         * Creates a type reference to this type. The type reference is
-         * normally an identical type, but with the primitive flag set to
-         * false. Only certain types support being referenced, and the
-         * default implementation of this method throws an exception.<p>
-         *
-         * <strong>NOTE:</strong> This is an internal method that should
-         * only be called by the MIB loader.
-         *
-         * @return the MIB type reference
-         *
-         * @since 2.2
-         */
+        /// <summary>
+        /// Creates a type reference to this type. The type reference is
+        /// normally an identical type, but with the primitive flag set to
+        /// false. Only certain types support being referenced, and the
+        /// default implementation of this method throws an exception.
+        /// NOTE: This is an internal method that should
+        /// only be called by the MIB loader.
+        /// </summary>
+        /// <returns>The MIB type reference</returns>
         public override MibType CreateReference()
         {
-            IntegerType type = new IntegerType(false, constraint, symbols);
-
-            type.SetTag(true, Tag);
+            IntegerType type = new IntegerType(false, this.constraint, this.symbols);
+            type.SetTag(true, this.Tag);
             return type;
         }
 
-        /**
-         * Creates a constrained type reference to this type. The type
-         * reference is normally an identical type, but with the
-         * primitive flag set to false. Only certain types support being
-         * referenced, and the default implementation of this method
-         * throws an exception.<p>
-         *
-         * <strong>NOTE:</strong> This is an internal method that should
-         * only be called by the MIB loader.
-         *
-         * @param constraint     the type constraint
-         *
-         * @return the MIB type reference
-         *
-         * @since 2.2
-         */
+        /// <summary>
+        /// Creates a constrained type reference to this type. The type
+        /// reference is normally an identical type, but with the
+        /// primitive flag set to false. Only certain types support being
+        /// referenced, and the default implementation of this method
+        /// throws an exception.
+        /// NOTE: This is an internal method that should
+        /// only be called by the MIB loader.
+        /// </summary>
+        /// <param name="constraint">The type constraint</param>
+        /// <returns>The MIB type reference</returns>
         public override MibType CreateReference(IConstraint constraint)
         {
             IntegerType type = new IntegerType(false, constraint, null);
-
-            type.SetTag(true, Tag);
+            type.SetTag(true, this.Tag);
             return type;
         }
 
-        /**
-         * Creates a constrained type reference to this type. The type
-         * reference is normally an identical type, but with the
-         * primitive flag set to false. Only certain types support being
-         * referenced, and the default implementation of this method
-         * throws an exception.<p>
-         *
-         * <strong>NOTE:</strong> This is an internal method that should
-         * only be called by the MIB loader.
-         *
-         * @param values         the type value symbols
-         *
-         * @return the MIB type reference
-         *
-         * @since 2.2
-         */
+        /// <summary>
+        /// Creates a constrained type reference to this type. The type
+        /// reference is normally an identical type, but with the
+        /// primitive flag set to false. Only certain types support being
+        /// referenced, and the default implementation of this method
+        /// throws an exception.
+        /// NOTE: This is an internal method that should
+        /// only be called by the MIB loader.
+        /// </summary>
+        /// <param name="values">The type value symbols</param>
+        /// <returns>The MIB type reference</returns>
         public override MibType CreateReference(IList<MibValueSymbol> values)
         {
             IntegerType type;
 
             type = new IntegerType(false, null, null);
             type.CreateValueConstraints(values);
-            type.SetTag(true, Tag);
+            type.SetTag(true, this.Tag);
             return type;
         }
 
-        /**
-         * Creates the constraints and symbol map from a list of value
-         * symbols.
-         *
-         * @param values         the list of value symbols
-         */
-        private void CreateValueConstraints(IList<MibValueSymbol> values)
-        {
-            ValueConstraint c;
-            foreach (MibValueSymbol sym in values)
-            {
-                symbols[sym.Name] = sym;
-                // TODO: check value constraint compability
-                c = new ValueConstraint(null, sym.Value);
-                if (constraint == null)
-                {
-                    constraint = c;
-                }
-                else
-                {
-                    constraint = new CompoundConstraint(constraint, c);
-                }
-            }
-        }
-
-
-        /**
-         * Checks if this type has any constraint.
-         *
-         * @return true if this type has any constraint, or
-         *         false otherwise
-         */
-        public bool HasConstraint
-        {
-            get
-            {
-                return constraint != null;
-            }
-        }
-
-        /**
-         * Checks if this type has any defined value symbols.
-         *
-         * @return true if this type has any defined value symbols, or
-         *         false otherwise
-         */
-        public bool HasSymbols
-        {
-            get
-            {
-                return symbols.Count > 0;
-            }
-            
-        }
-
-        /**
-         * Checks if the specified value is compatible with this type. A
-         * value is compatible if it is an integer number value that is
-         * compatible with the constraints.
-         *
-         * @param value          the value to check
-         *
-         * @return true if the value is compatible, or
-         *         false otherwise
-         */
+        /// <summary>
+        /// Checks if the specified value is compatible with this type. A
+        /// value is compatible if it is an integer number value that is
+        /// compatible with the constraints.
+        /// </summary>
+        /// <param name="value">The value to check</param>
+        /// <returns>True if the value is compatible, or false if not</returns>
         public override bool IsCompatible(MibValue value)
         {
-            return IsCompatibleType(value)
-                && (constraint == null || constraint.IsCompatible(value));
+            return this.IsCompatibleType(value)
+                && (this.constraint == null || this.constraint.IsCompatible(value));
         }
 
-        /**
-         * Checks if the specified value is compatible with this type. A
-         * value is compatible if it is an integer number value.
-         *
-         * @param value          the value to check
-         *
-         * @return true if the value is compatible, or
-         *         false otherwise
-         */
-        private bool IsCompatibleType(MibValue value)
-        {
-            return value is NumberValue;
-        }
-
-        /**
-         * Returns the optional type constraint. The type constraints for
-         * an integer will typically be value, value range or compound
-         * constraints.
-         *
-         * @return the type constraint, or
-         *         null if no constraint has been set
-         *
-         * @since 2.2
-         */
-        public IConstraint getConstraint()
-        {
-            return constraint;
-        }
-
-        /**
-         * Returns a named integer value. The value will be returned as a
-         * value symbol, containing a numeric MIB value. The symbol
-         * returned is not a normal MIB symbol, i.e. only the name and
-         * value components are valid.<p>
-         *
-         * <strong>Note:</strong> As of version 2.4 the method signature
-         * was changed to return a MibValueSymbol instead of a MibSymbol.
-         *
-         * @param name           the symbol name
-         *
-         * @return the MIB value symbol, or
-         *         null if not found
-         */
+        /// <summary>
+        /// Returns a named integer value. The value will be returned as a
+        /// value symbol, containing a numeric MIB value. The symbol
+        /// returned is not a normal MIB symbol, i.e. only the name and
+        /// value components are valid.
+        /// NOTE: As of version 2.4 the method signature
+        /// was changed to return a MibValueSymbol instead of a MibSymbol.
+        /// </summary>
+        /// <param name="name">The symbol name</param>
+        /// <returns>The MIB Value symbol, or null if not found</returns>
         public MibValueSymbol GetSymbol(string name)
         {
-            return symbols[name];
+            return this.symbols[name];
         }
 
-        /**
-         * Returns all named integer values. An integer may also allow
-         * unnamed values, depending on the constraints. Use the
-         * constraint object or the isCompatible() method to check if a
-         * value is compatible with this type. Also note that the value
-         * symbols returned by this method are not normal MIB symbols,
-         * i.e. only the name and value components are valid.
-         *
-         * @return an array of all named values (as MIB value symbols)
-         *
-         * @since 2.2
-         */
-        public IEnumerable<MibValueSymbol> getAllSymbols()
-        {
-            return symbols.Values;
-        }
-
-        /**
-         * Searches for a named MIB symbol. This method may search outside
-         * the normal (or strict) scope, thereby allowing a form of
-         * relaxed search. Note that the results from the normal and
-         * expanded search may not be identical, due to the context
-         * chaining and the same symbol name appearing in various
-         * contexts.<p>
-         *
-         * <strong>NOTE:</strong> This is an internal method that should
-         * only be called by the MIB loader.
-         *
-         * @param name           the symbol name
-         * @param expanded       the expanded scope flag
-         *
-         * @return the MIB symbol, or null if not found
-         *
-         * @since 2.4
-         */
+        /// <summary>
+        /// Searches for a named MIB symbol. This method may search outside
+        /// the normal (or strict) scope, thereby allowing a form of
+        /// relaxed search. Note that the results from the normal and
+        /// expanded search may not be identical, due to the context
+        /// chaining and the same symbol name appearing in various
+        /// contexts.
+        /// NOTE: This is an internal method that should
+        /// only be called by the MIB loader.
+        /// </summary>
+        /// <param name="name">The symbol name</param>
+        /// <param name="expanded">The expanded scope flag</param>
+        /// <returns>The MIB symbol, or null if not found</returns>
         public MibSymbol FindSymbol(string name, bool expanded)
         {
-            return GetSymbol(name);
+            return this.GetSymbol(name);
         }
 
-        /**
-         * Returns a string representation of this type.
-         *
-         * @return a string representation of this type
-         */
+        /// <summary>
+        /// Returns a string representation of this type.
+        /// </summary>
+        /// <returns>A string representation of this type</returns>
         public override string ToString()
         {
             StringBuilder builder = new StringBuilder();
 
             builder.Append(base.ToString());
 
-            if (symbols.Count > 0)
+            if (this.symbols.Count > 0)
             {
                 builder.Append(" { ");
-                String.Join(", ", symbols.Values.Select(sym => sym.Name + "(" + sym.Value+ ")"));
+                string.Join(", ", this.symbols.Values.Select(sym => sym.Name + "(" + sym.Value + ")"));
                 builder.Append(" }");
             }
-            else if (constraint != null)
+            else if (this.constraint != null)
             {
                 builder.Append(" (");
-                builder.Append(constraint.ToString());
+                builder.Append(this.constraint.ToString());
                 builder.Append(")");
             }
+
             return builder.ToString();
         }
-    }
 
+        /// <summary>
+        /// Creates the constraints and symbol map from a list of value
+        /// symbols.
+        /// </summary>
+        /// <param name="values">The list of value symbols</param>
+        private void CreateValueConstraints(IList<MibValueSymbol> values)
+        {
+            ValueConstraint c;
+            foreach (MibValueSymbol sym in values)
+            {
+                this.symbols[sym.Name] = sym;
+
+                // TODO: check value constraint compability
+                c = new ValueConstraint(null, sym.Value);
+                if (this.constraint == null)
+                {
+                    this.constraint = c;
+                }
+                else
+                {
+                    this.constraint = new CompoundConstraint(this.constraint, c);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Checks if the specified value is compatible with this type. A
+        /// value is compatible if it is an integer number value.
+        /// </summary>
+        /// <param name="value">The value to check</param>
+        /// <returns>
+        /// True if the value is compatible, or
+        /// false if not.
+        /// </returns>
+        private bool IsCompatibleType(MibValue value)
+        {
+            return value is NumberValue;
+        }
+    }
 }

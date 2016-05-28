@@ -427,7 +427,7 @@ namespace MibbleSharp.Snmp
                 }
 
                 type = new SnmpObjectType(
-                    element.getType(),
+                    element.Type,
                     null,
                     SnmpAccess.ReadOnly,
                     SnmpStatus.CURRENT,

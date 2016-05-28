@@ -169,7 +169,7 @@ namespace MibbleSharp.Type
                 ValueConstraint vc = c as ValueConstraint;
                 if (vc != null)
                 {
-                    NumberValue nv = vc.getValue() as NumberValue;
+                    NumberValue nv = vc.Value as NumberValue;
                     if (nv != null)
                         val = nv.value;
                     else
@@ -186,7 +186,7 @@ namespace MibbleSharp.Type
                         }
                         else
                         {
-                            NumberValue nv = vrc.getLowerBound() as NumberValue;
+                            NumberValue nv = vrc.LowerBound as NumberValue;
                             if (nv != null)
                                 val = nv.value;
                             else
