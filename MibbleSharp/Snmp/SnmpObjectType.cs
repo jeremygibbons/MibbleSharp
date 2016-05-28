@@ -366,11 +366,11 @@ namespace MibbleSharp.Snmp
             if (type is SequenceOfType)
             {
                 sequence = (SequenceOfType)type;
-                SnmpObjectType.CheckType(symbol, log, sequence.getElementType());
+                SnmpObjectType.CheckType(symbol, log, sequence.ElementType);
             }
             else if (type is SequenceType)
             {
-                IList<ElementType> elems = ((SequenceType)type).getAllElements().ToList();
+                IList<ElementType> elems = ((SequenceType)type).AllElements.ToList();
                 for (int i = 0; i < elems.Count(); i++)
                 {
                     SnmpObjectType.CheckElement(symbol, log, elems[i], i + 1);
