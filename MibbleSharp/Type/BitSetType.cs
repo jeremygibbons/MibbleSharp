@@ -283,7 +283,7 @@ namespace MibbleSharp.Type
                 return true;
             }
 
-            IList<NumberValue> bits = value.getBits();
+            IList<NumberValue> bits = value.Bits;
             foreach (NumberValue v in bits)
             {
                 if (!this.constraint.IsCompatible(v))

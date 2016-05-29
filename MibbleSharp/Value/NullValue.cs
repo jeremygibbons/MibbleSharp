@@ -28,15 +28,14 @@ namespace MibbleSharp.Value
     /// </summary>
     public class NullValue : MibValue
     {
-
         /// <summary>
         /// The one and only null value instance.
         /// </summary>
         public static readonly NullValue NULL = new NullValue();
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="NullValue"> class.
-        /// The constructor is private as only the NULL static instance should be used.
+        /// Prevents a default instance of the <see cref="NullValue"/> class from
+        /// being created, as only the NULL static instance should be used.
         /// </summary>
         private NullValue() : base("NULL")
         {
@@ -53,6 +52,7 @@ namespace MibbleSharp.Value
         /// </summary>
         /// <param name="log">The Mib Loader log</param>
         /// <param name="type">The value type</param>
+        /// <returns>The MIB value</returns>
         public override MibValue Initialize(MibLoaderLog log, MibType type)
         {
             return this;

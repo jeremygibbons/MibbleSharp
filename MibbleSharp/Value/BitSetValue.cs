@@ -1,252 +1,204 @@
-﻿//
-// BitSetValue.cs
-// 
-// This work is free software; you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published
-// by the Free Software Foundation; either version 2 of the License,
-// or (at your option) any later version.
-//
-// This work is distributed in the hope that it will be useful, but
-// WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
-// General Public License for more details.
-// 
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
-// USA
-// 
-// Original Java code Copyright (c) 2004-2016 Per Cederberg. All
-// rights reserved.
-// C# conversion Copyright (c) 2016 Jeremy Gibbons. All rights reserved
-//
-
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Text;
+﻿// <copyright file="BitSetValue.cs" company="None">
+//    <para>
+//    This work is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published
+//    by the Free Software Foundation; either version 2 of the License,
+//    or (at your option) any later version.</para>
+//    <para>
+//    This work is distributed in the hope that it will be useful, but
+//    WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+//    General Public License for more details.</para>
+//    <para>
+//    You should have received a copy of the GNU General Public License
+//    along with this program; if not, write to the Free Software
+//    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
+//    USA</para>
+//    Original Java code Copyright (c) 2004-2016 Per Cederberg. All
+//    rights reserved.
+//    C# conversion Copyright (c) 2016 Jeremy Gibbons. All rights reserved
+// </copyright>
 
 namespace MibbleSharp.Value
 {
-    /**
-     * A bit set MIB value.
-     *
-     * @author   Per Cederberg, <per at percederberg dot net>
-     * @version  2.8
-     * @since    2.0
-     */
+    using System;
+    using System.Collections;
+    using System.Collections.Generic;
+    using System.Numerics;
+    using System.Text;
+    
+    /// <summary>
+    /// A bit set MIB value.
+    /// </summary>
     public class BitSetValue : MibValue
     {
-
-        /**
-         * The bit set value.
-         */
+        /// <summary>
+        /// The bit set value.
+        /// </summary>
         private BitArray value;
 
-        /**
-         * The additional value references.
-         */
+        /// <summary>
+        /// The additional value references.
+        /// </summary>
         private IList<ValueReference> references;
 
-        /**
-         * Creates a new bit set MIB value.
-         *
-         * @param value          the bit set value
-         */
+        /// <summary>
+        /// Initializes a new instance of the <see cref="BitSetValue"/> class.
+        /// </summary>
+        /// <param name="value">The bit set value</param>
         public BitSetValue(BitArray value) : this(value, null)
         {
-
         }
 
-        /**
-         * Creates a new bit set MIB value.
-         *
-         * @param value          the bit set value
-         * @param references     the additional referenced bit values
-         */
+        /// <summary>
+        /// Initializes a new instance of the <see cref="BitSetValue"/> class.
+        /// </summary>
+        /// <param name="value">The bit set value</param>
+        /// <param name="references">The additional referenced bit values</param>
         public BitSetValue(BitArray value, IList<ValueReference> references) : base("BIT STRING")
         {
             this.value = value;
             this.references = references;
         }
 
-        /**
-         * Initializes the MIB value. This will remove all levels of
-         * indirection present, such as references to other values. No
-         * value information is lost by this operation. This method may
-         * modify this object as a side-effect, and will return the basic
-         * value.<p>
-         *
-         * <strong>NOTE:</strong> This is an internal method that should
-         * only be called by the MIB loader.
-         *
-         * @param log            the MIB loader log
-         * @param type           the value type
-         *
-         * @return the basic MIB value
-         *
-         * @throws MibException if an error was encountered during the
-         *             initialization
-         */
+        /// <summary>
+        /// Gets all the bits in this bit set as individual number
+        /// values.
+        /// </summary> 
+        public IList<NumberValue> Bits
+        {
+            get
+            {
+                IList<NumberValue> components = new List<NumberValue>();
+
+                foreach (bool b in this.value)
+                {
+                    components.Add(new NumberValue((BigInteger)(b ? 1 : 0)));
+                }
+
+                return components;
+            }
+        }
+
+        /// <summary>
+        /// Initializes the MIB value. This will remove all levels of
+        /// indirection present, such as references to other values. No
+        /// value information is lost by this operation. This method may
+        /// modify this object as a side-effect, and will return the basic
+        /// value.
+        /// </summary>
+        /// <remarks>
+        /// This is an internal method that should only be called by 
+        /// the MIB loader.
+        /// </remarks>
+        /// <param name="log">The MIB loader log</param>
+        /// <param name="type">The value type</param>
+        /// <returns>The basic MIB value</returns>
+        /// <exception cref="MibException">If an error occurs during initialization</exception>
         public override MibValue Initialize(MibLoaderLog log, MibType type)
         {
-
-            if (references != null)
+            if (this.references != null)
             {
-                foreach(ValueReference vref in references)
+                foreach (ValueReference vref in this.references)
                 {
-                    Initialize(log, type, vref);
+                    this.Initialize(log, type, vref);
                 }
-                references = null;
+
+                this.references = null;
             }
+
             return this;
         }
 
-        /**
-         * Creates a value reference to this value. The value reference
-         * is normally an identical value. Only certain values support
-         * being referenced, and the default implementation of this
-         * method throws an exception.<p>
-         *
-         * <strong>NOTE:</strong> This is an internal method that should
-         * only be called by the MIB loader.
-         *
-         * @return the MIB value reference
-         *
-         * @since 2.2
-         */
+        /// <summary>
+        /// Creates a value reference to this value. The value reference
+        /// is normally an identical value. Only certain values support
+        /// being referenced, and the default implementation of this
+        /// method throws an exception.
+        /// </summary>
+        /// <remarks>
+        /// This is an internal method that should
+        /// only be called by the MIB loader.
+        /// </remarks>
+        /// <returns>The MIB value reference</returns>
         public override MibValue CreateReference()
         {
-            return new BitSetValue(value, references);
+            return new BitSetValue(this.value, this.references);
         }
 
-        /**
-         * Initializes a the MIB value from a value reference. This will
-         * resolve the reference, and set the bit corresponding to the
-         * value.
-         *
-         * @param log            the MIB loader log
-         * @param type           the value type
-         * @param ref            the value reference to resolve
-         *
-         * @throws MibException if an error was encountered during the
-         *             initialization
-         */
-        private void Initialize(MibLoaderLog log, MibType type, ValueReference vref)
-        {
-
-            MibValue val = vref.Initialize(log, type);
-
-            NumberValue nv = val as NumberValue;
-
-            if (nv != null)
-            {
-                value.Set((int) nv.value, true);
-            }
-            else
-            {
-                throw new MibException(vref.Location,
-                                       "referenced value is not a number");
-            }
-        }
-
-        /**
-         * Clears and prepares this value for garbage collection. This
-         * method will recursively clear any associated types or values,
-         * making sure that no data structures references this object.<p>
-         *
-         * <strong>NOTE:</strong> This is an internal method that should
-         * only be called by the MIB loader.
-         */
+        /// <summary>
+        /// Clears and prepares this value for garbage collection. This
+        /// method will recursively clear any associated types or values,
+        /// making sure that no data structures references this object.
+        /// </summary>
+        /// <remarks>
+        /// This is an internal method that should
+        /// only be called by the MIB loader.
+        /// </remarks>
         public override void Clear()
         {
             base.Clear();
-            value = null;
-            references = null;
+            this.value = null;
+            this.references = null;
         }
 
-        /**
-         * Returns all the bits in this bit set as individual number
-         * values.
-         *
-         * @return the number values for all bits in this bit set
-         */
-        public IList<NumberValue> getBits()
+        /// <summary>
+        /// Checks if this object equals another object. This method will
+        /// compare the string representations for equality.
+        /// </summary>
+        /// <param name="obj">The object to compare with</param>
+        /// <returns>True if the objects are equal, false if not</returns>
+        public override bool Equals(object obj)
         {
-
-            IList<NumberValue> components = new List<NumberValue>();
-            foreach (bool b in value)
-            {
-                components.Add(new NumberValue((ulong) (b ? 1 : 0)));
-            }
-            return components;
+            return this.ToString().Equals(obj.ToString());
         }
 
-
-        /**
-         * Checks if this object equals another object. This method will
-         * compare the string representations for equality.
-         *
-         * @param obj            the object to compare with
-         *
-         * @return true if the objects are equal, or
-         *         false otherwise
-         *
-         * @since 2.6
-         */
-        public override bool Equals(Object obj)
-        {
-            return ToString().Equals(obj.ToString());
-        }
-
-        /**
-         * Returns a hash code for this object.
-         *
-         * @return a hash code for this object
-         *
-         * @since 2.6
-         */
+        /// <summary>
+        /// Returns a hash code for this object.
+        /// </summary>
+        /// <returns>
+        /// A hash code for this object
+        /// </returns>
         public override int GetHashCode()
         {
-            return ToString().GetHashCode();
+            return this.ToString().GetHashCode();
         }
 
-        /**
-         * Returns a Java BitSet representation of this value.
-         *
-         * @return a Java BitSet representation of this value
-         */
-        public Object toObject()
-        {
-            return value;
-        }
-
-        /**
-         * Returns a string representation of this value.
-         *
-         * @return a string representation of this value
-         */
+        /// <summary>
+        /// Returns a string representation of this value.
+        /// </summary>
+        /// <returns>
+        /// A string representation of this value
+        /// </returns>
         public override string ToString()
         {
-            return value.ToString();
+            return this.value.ToString();
         }
 
-        /**
-         * Returns an ASN.1 representation of this value. The string will
-         * contain named references to any values that can be found in the
-         * specified list.
-         *
-         * @param values         the defined symbol values
-         *
-         * @return an ASN.1 representation of this value
-         * 
-         * @since 2.8
-         */
-        public string toAsn1String(MibValueSymbol[] values)
+        /// <summary>
+        /// Compares this object to a MibValue
+        /// </summary>
+        /// <param name="other">The MIB Value to compare against</param>
+        /// <returns>
+        /// Zero (0) if the objects are equal, an non-zero integer value if not
+        /// </returns>
+        public override int CompareTo(MibValue other)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Returns an ASN.1 representation of this value. The string will
+        /// contain named references to any values that can be found in the
+        /// specified list.
+        /// </summary>
+        /// <param name="values">The defined symbol values</param>
+        /// <returns>An ASN.1 representation of this value</returns>
+        public string ToAsn1String(MibValueSymbol[] values)
         {
             StringBuilder builder = new StringBuilder();
 
-            foreach (bool b in value)
+            foreach (bool b in this.value)
             {
                 if (b)
                 {
@@ -254,7 +206,8 @@ namespace MibbleSharp.Value
                     {
                         builder.Append(", ");
                     }
-                    builder.Append(toAsn1String(b, values));
+
+                    builder.Append(this.ToAsn1String(b, values));
                 }
             }
 
@@ -268,16 +221,16 @@ namespace MibbleSharp.Value
             }
         }
 
-        /**
-         * Returns an ASN.1 representation of a bit number. The value
-         * name will be returned if found in the specified array.
-         *
-         * @param bit            the bit number
-         * @param values         the defined bit names
-         *
-         * @return the ASN.1 representation of the bit number
-         */
-        private string toAsn1String(bool bit, MibValueSymbol[] values)
+        /// <summary>
+        /// Returns an ASN.1 representation of a bit number. The value
+        /// name will be returned if found in the specified array.
+        /// </summary>
+        /// <param name="bit">The bit number</param>
+        /// <param name="values">The defined bit names</param>
+        /// <returns>
+        /// The ASN.1 representation of the bit number
+        /// </returns>
+        private string ToAsn1String(bool bit, MibValueSymbol[] values)
         {
             foreach (MibValueSymbol s in values)
             {
@@ -286,13 +239,37 @@ namespace MibbleSharp.Value
                     return s.Name;
                 }
             }
+
             return bit.ToString();
         }
 
-        public override int CompareTo(MibValue other)
+        /// <summary>
+        /// Initializes a the MIB value from a value reference. This will
+        /// resolve the reference, and set the bit corresponding to the
+        /// value.
+        /// </summary>
+        /// <param name="log">The MIB loader log</param>
+        /// <param name="type">The value type</param>
+        /// <param name="vref">The value reference to resolve</param>
+        /// <exception cref="MibException">
+        /// If an error occurred during initialization
+        /// </exception> 
+        private void Initialize(MibLoaderLog log, MibType type, ValueReference vref)
         {
-            throw new NotImplementedException();
+            MibValue val = vref.Initialize(log, type);
+
+            NumberValue nv = val as NumberValue;
+
+            if (nv != null)
+            {
+                this.value.Set((int)nv.value, true);
+            }
+            else
+            {
+                throw new MibException(
+                    vref.Location,
+                    "referenced value is not a number");
+            }
         }
     }
-
 }

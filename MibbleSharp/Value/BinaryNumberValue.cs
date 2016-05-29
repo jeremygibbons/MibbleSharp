@@ -1,131 +1,125 @@
-﻿//
-// BinaryNumberValue.cs
-// 
-// This work is free software; you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published
-// by the Free Software Foundation; either version 2 of the License,
-// or (at your option) any later version.
-//
-// This work is distributed in the hope that it will be useful, but
-// WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
-// General Public License for more details.
-// 
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
-// USA
-// 
-// Original Java code Copyright (c) 2004-2016 Per Cederberg. All
-// rights reserved.
-// C# conversion Copyright (c) 2016 Jeremy Gibbons. All rights reserved
-//
-
-using System.Text;
-using System.Numerics;
-using MibbleSharp.Util;
+﻿// <copyright file="BinaryNumberValue.cs" company="None">
+//    <para>
+//    This work is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published
+//    by the Free Software Foundation; either version 2 of the License,
+//    or (at your option) any later version.</para>
+//    <para>
+//    This work is distributed in the hope that it will be useful, but
+//    WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+//    General Public License for more details.</para>
+//    <para>
+//    You should have received a copy of the GNU General Public License
+//    along with this program; if not, write to the Free Software
+//    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
+//    USA</para>
+//    Original Java code Copyright (c) 2004-2016 Per Cederberg. All
+//    rights reserved.
+//    C# conversion Copyright (c) 2016 Jeremy Gibbons. All rights reserved
+// </copyright>
 
 namespace MibbleSharp.Value
 {
-    /**
-     * A binary numeric MIB value.
-     *
-     * @author   Per Cederberg, <per at percederberg dot net>
-     * @version  2.9
-     * @since    2.6
-     */
+    using System.Numerics;
+    using System.Text;
+    using MibbleSharp.Util;
+
+    /// <summary>
+    /// A binary numeric MIB value.
+    /// </summary>
     public class BinaryNumberValue : NumberValue
     {
+        /// <summary>
+        /// The minimum number of bits to print.
+        /// </summary>
+        private int minLength;
 
-    /**
-     * The minimum number of bits to print.
-     */
-    private int minLength;
-
-    /**
-     * Creates a new binary number value. A default minimum print
-     * length of one (1) will be used.
-     *
-     * @param value          the number value
-     */
-    public BinaryNumberValue(BigInteger value) : this(value, 1)
-    {
-
-    }
-
-    /**
-     * Creates a new binary number value.
-     *
-     * @param value          the number value
-     * @param minLength      the minimum print length
-     *
-     * @since 2.9
-     */
-    public BinaryNumberValue(BigInteger value, int minLength) : base(value)
-    {
-        this.minLength = minLength;
-    }
-
-    /**
-     * Initializes the MIB value. This will remove all levels of
-     * indirection present, such as references to other values. No
-     * value information is lost by this operation. This method may
-     * modify this object as a side-effect, and will return the basic
-     * value.<p>
-     *
-     * <strong>NOTE:</strong> This is an internal method that should
-     * only be called by the MIB loader.
-     *
-     * @param log            the MIB loader log
-     * @param type           the value type
-     *
-     * @return the basic MIB value
-     */
-    public override MibValue Initialize(MibLoaderLog log, MibType type)
-    {
-        int bytes = minLength / 8 + ((minLength % 8 > 0) ? 1 : 0);
-        int length = getByteSize(type, bytes) * 8;
-        if (length > minLength)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="BinaryNumberValue"/> class. 
+        /// A default minimum print length of one(1) will be used.
+        /// </summary>
+        /// <param name="value">The numeric value</param>
+        public BinaryNumberValue(BigInteger value) : this(value, 1)
         {
-            minLength = length;
         }
-        return this;
-    }
 
-    /**
-     * Returns a string representation of this value.
-     *
-     * @return a string representation of this value
-     */
-    public override string ToString()
-    {
-        StringBuilder builder = new StringBuilder();
-        string value;
-
-        builder.Append("'");
-        value = ToBinaryString();
-        if (value.Equals("0"))
+        /// <summary>
+        /// Initializes a new instance of the <see cref="BinaryNumberValue"/> class.
+        /// </summary>
+        /// <param name="value">The numeric value</param>
+        /// <param name="minLength">The minimum print length</param>
+        public BinaryNumberValue(BigInteger value, int minLength) : base(value)
         {
-            value = "";
+            this.minLength = minLength;
         }
-        for (int i = value.Length; i < minLength; i++)
+         
+        /// <summary>
+        /// Gets a binary representation of this value.
+        /// </summary>
+        private string ToBinaryString
         {
-            builder.Append("0");
+            get
+            {
+                return this.value.ToBinaryString();
+            }
+        } 
+
+        /// <summary>
+        /// Initializes the MIB value. This will remove all levels of
+        /// indirection present, such as references to other values. No
+        /// value information is lost by this operation. This method may
+        /// modify this object as a side-effect, and will return the basic
+        /// value.
+        /// </summary>
+        /// <remarks>
+        /// This is an internal method that should only be called by 
+        /// the MIB loader.
+        /// </remarks>
+        /// <param name="log">The MIB loader log</param>
+        /// <param name="type">The value type</param>
+        /// <returns>The basic MIB value</returns>
+        public override MibValue Initialize(MibLoaderLog log, MibType type)
+        {
+            int bytes = (this.minLength / 8) + ((this.minLength % 8 > 0) ? 1 : 0);
+            int length = this.getByteSize(type, bytes) * 8;
+            if (length > this.minLength)
+            {
+                this.minLength = length;
+            }
+
+            return this;
         }
-        builder.Append(value);
-        builder.Append("'B");
-        return builder.ToString();
-    }
 
-    /**
-     * Returns a binary representation of this value.
-     *
-     * @return a binary representation of this value
-     */
-    private string ToBinaryString()
-    {
-            return value.ToBinaryString();
-    }
-}
+        /// <summary>
+        /// Returns a string representation of this value.
+        /// </summary>
+        /// <returns>
+        /// A string representation of this value.
+        /// </returns>
+        public override string ToString()
+        {
+            StringBuilder builder = new StringBuilder();
+            string val;
 
+            builder.Append("'");
+            val = this.ToBinaryString;
+
+            if (val.Equals("0"))
+            {
+                val = string.Empty;
+            }
+
+            for (int i = val.Length; i < this.minLength; i++)
+            {
+                builder.Append("0");
+            }
+
+            builder.Append(val);
+
+            builder.Append("'B");
+
+            return builder.ToString();
+        }
+    }
 }
