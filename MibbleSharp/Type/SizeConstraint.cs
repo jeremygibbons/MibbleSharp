@@ -155,7 +155,7 @@ namespace MibbleSharp.Type
                     NumberValue nv = vc.Value as NumberValue;
                     if (nv != null)
                     {
-                        val = nv.value;
+                        val = nv.Value;
                     }
                     else
                     {
@@ -176,7 +176,7 @@ namespace MibbleSharp.Type
                             NumberValue nv = vrc.LowerBound as NumberValue;
                             if (nv != null)
                             {
-                                val = nv.value;
+                                val = nv.Value;
                             }
                             else
                             {

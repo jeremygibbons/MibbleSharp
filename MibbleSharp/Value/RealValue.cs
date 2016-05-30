@@ -83,7 +83,7 @@ namespace MibbleSharp.Value
         {
             NumberValue nv = m as NumberValue;
             if (nv != null)
-                return compareToNumber((double) nv.value);
+                return compareToNumber((double)nv.Value);
 
             return ToString().CompareTo(m);
         }

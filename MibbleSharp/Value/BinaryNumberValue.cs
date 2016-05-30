@@ -61,7 +61,7 @@ namespace MibbleSharp.Value
         {
             get
             {
-                return this.value.ToBinaryString();
+                return this.Value.ToBinaryString();
             }
         } 
 
@@ -82,7 +82,7 @@ namespace MibbleSharp.Value
         public override MibValue Initialize(MibLoaderLog log, MibType type)
         {
             int bytes = (this.minLength / 8) + ((this.minLength % 8 > 0) ? 1 : 0);
-            int length = this.getByteSize(type, bytes) * 8;
+            int length = NumberValue.GetByteSize(type, bytes) * 8;
             if (length > this.minLength)
             {
                 this.minLength = length;

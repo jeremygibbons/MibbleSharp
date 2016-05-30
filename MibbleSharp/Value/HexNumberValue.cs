@@ -61,7 +61,7 @@ namespace MibbleSharp.Value
         {
             get
             {
-                return this.value.ToHexadecimalString();
+                return this.Value.ToHexadecimalString();
             }
         }
 
@@ -82,7 +82,7 @@ namespace MibbleSharp.Value
         public override MibValue Initialize(MibLoaderLog log, MibType type)
         {
             int bytes = (this.minLength / 2) + ((this.minLength % 2 > 0) ? 1 : 0);
-            int length = this.getByteSize(type, bytes) * 2;
+            int length = NumberValue.GetByteSize(type, bytes) * 2;
 
             if (length > this.minLength)
             {
@@ -107,7 +107,7 @@ namespace MibbleSharp.Value
 
             val = this.HexString;
 
-            if (value.Equals("0"))
+            if (Value.Equals("0"))
             {
                 val = string.Empty;
             }

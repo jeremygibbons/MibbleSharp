@@ -262,7 +262,7 @@ namespace MibbleSharp.Value
 
             if (nv != null)
             {
-                this.value.Set((int)nv.value, true);
+                this.value.Set((int)nv.Value, true);
             }
             else
             {

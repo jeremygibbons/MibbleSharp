@@ -188,10 +188,10 @@ namespace MibbleSharp
 
                 if (this.value is ObjectIdentifierValue)
                 {
-                    oid = ((ObjectIdentifierValue)this.value).getParent();
+                    oid = ((ObjectIdentifierValue)this.value).Parent;
                     if (oid != null)
                     {
-                        return oid.getSymbol();
+                        return oid.Symbol;
                     }
                 }
 
@@ -214,7 +214,7 @@ namespace MibbleSharp
                     return 0;
                 }
                 
-                return oiv.getChildCount();
+                return oiv.ChildCount;
             }
         }
 
@@ -236,11 +236,11 @@ namespace MibbleSharp
                     return new MibValueSymbol[0];
                 }
 
-                children = new MibValueSymbol[oid.getChildCount()];
+                children = new MibValueSymbol[oid.ChildCount];
 
-                for (int i = 0; i < oid.getChildCount(); i++)
+                for (int i = 0; i < oid.ChildCount; i++)
                 {
-                    children[i] = oid.getChild(i).getSymbol();
+                    children[i] = oid.GetChild(i).Symbol;
                 }
 
                 return children;
@@ -269,10 +269,10 @@ namespace MibbleSharp
                 return null;
             }
 
-            child = oiv.getChild(index);
+            child = oiv.GetChild(index);
             if (child != null)
             {
-                return child.getSymbol();
+                return child.Symbol;
             }
 
             return null;
@@ -328,9 +328,9 @@ namespace MibbleSharp
             if (this.value is ObjectIdentifierValue)
             {
                 oid = (ObjectIdentifierValue)this.value;
-                if (oid.getSymbol() == null)
+                if (oid.Symbol== null)
                 {
-                    oid.setSymbol(this);
+                    oid.Symbol = (this);
                 }
             }
         }

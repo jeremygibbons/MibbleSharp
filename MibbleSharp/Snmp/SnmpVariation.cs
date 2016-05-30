@@ -105,7 +105,7 @@ namespace MibbleSharp.Snmp
             {
                 if (this.value is ObjectIdentifierValue)
                 {
-                    return ((ObjectIdentifierValue)this.value).getSymbol();
+                    return ((ObjectIdentifierValue)this.value).Symbol;
                 }
 
                 return null;

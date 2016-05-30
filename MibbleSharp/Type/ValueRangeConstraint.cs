@@ -172,8 +172,8 @@ namespace MibbleSharp.Type
         /// <returns>True if the value is compatible, false if not</returns>
         public bool IsCompatible(BigInteger value)
         {
-            return (this.lower == null || this.IsLessThan(this.strictLower, this.lower.value, value))
-                && (this.upper == null || this.IsLessThan(this.strictUpper, value, this.upper.value));
+            return (this.lower == null || this.IsLessThan(this.strictLower, this.lower.Value, value))
+                && (this.upper == null || this.IsLessThan(this.strictUpper, value, this.upper.Value));
         }
 
         /// <summary>
@@ -239,8 +239,8 @@ namespace MibbleSharp.Type
             {
                 return this.IsLessThan(
                     strict,
-                    nv1.value,
-                    nv2.value);
+                    nv1.Value,
+                    nv2.Value);
             }
 
             StringValue s1 = value1 as StringValue;

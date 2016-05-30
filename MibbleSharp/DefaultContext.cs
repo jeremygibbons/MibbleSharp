@@ -96,7 +96,7 @@ namespace MibbleSharp
                 CCITT,
                 new ObjectIdentifierType(),
                 oid);
-            oid.setSymbol((MibValueSymbol)symbol);
+            oid.Symbol = (MibValueSymbol)symbol;
             this.symbols.Add(CCITT, symbol);
 
             // Add the iso symbol
@@ -107,7 +107,7 @@ namespace MibbleSharp
                 ISO,
                 new ObjectIdentifierType(),
                 oid);
-            oid.setSymbol((MibValueSymbol)symbol);
+            oid.Symbol = (MibValueSymbol)symbol;
             this.symbols.Add(ISO, symbol);
 
             // Add the joint-iso-ccitt symbol
@@ -118,7 +118,7 @@ namespace MibbleSharp
                 JOINTISOCCITT,
                 new ObjectIdentifierType(),
                 oid);
-            oid.setSymbol((MibValueSymbol)symbol);
+            oid.Symbol = (MibValueSymbol)symbol;
             this.symbols.Add(JOINTISOCCITT, symbol);
         }
     }
