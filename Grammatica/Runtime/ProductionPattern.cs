@@ -344,7 +344,7 @@ namespace PerCederberg.Grammatica.Runtime {
         public void AddAlternative(ProductionPatternAlternative alt) {
             if (alternatives.Contains(alt)) {
                 throw new ParserCreationException(
-                    ParserCreationException.ErrorType.INVALID_PRODUCTION,
+                    ParserCreationException.ErrorType.InvalidProduction,
                     name,
                     "two identical alternatives exist");
             }

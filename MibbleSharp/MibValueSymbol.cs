@@ -328,9 +328,9 @@ namespace MibbleSharp
             if (this.value is ObjectIdentifierValue)
             {
                 oid = (ObjectIdentifierValue)this.value;
-                if (oid.Symbol== null)
+                if (oid.Symbol == null)
                 {
-                    oid.Symbol = (this);
+                    oid.Symbol = this;
                 }
             }
         }

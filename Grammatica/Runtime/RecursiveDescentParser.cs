@@ -74,7 +74,7 @@ namespace PerCederberg.Grammatica.Runtime {
             // Check for empty matches
             if (pattern.IsMatchingEmpty()) {
                 throw new ParserCreationException(
-                    ParserCreationException.ErrorType.INVALID_PRODUCTION,
+                    ParserCreationException.ErrorType.InvalidProduction,
                     pattern.Name,
                     "zero elements can be matched (minimum is one)");
             }
@@ -82,7 +82,7 @@ namespace PerCederberg.Grammatica.Runtime {
             // Check for left-recusive patterns
             if (pattern.IsLeftRecursive()) {
                 throw new ParserCreationException(
-                    ParserCreationException.ErrorType.INVALID_PRODUCTION,
+                    ParserCreationException.ErrorType.InvalidProduction,
                     pattern.Name,
                     "left recursive patterns are not allowed");
             }
@@ -136,7 +136,7 @@ namespace PerCederberg.Grammatica.Runtime {
                 list = new List<string>(1);
                 list.Add("<EOF>");
                 throw new ParseException(
-                    ParseException.ErrorType.UNEXPECTED_TOKEN,
+                    ParseException.ErrorType.UnexpectedToken,
                     token.ToShortString(),
                     list,
                     token.StartLine,
@@ -333,7 +333,7 @@ namespace PerCederberg.Grammatica.Runtime {
             conflicts = FindConflicts(pattern, 1);
 
             // Resolve conflicts
-            while (conflicts.Size() > 0) {
+            while (conflicts.Size> 0) {
                 length++;
                 stack.Clear();
                 stack.Push(pattern.Name, length);
@@ -416,7 +416,7 @@ namespace PerCederberg.Grammatica.Runtime {
                                       location,
                                       first,
                                       follow);
-            while (conflicts.Size() > 0) {
+            while (conflicts.Size> 0) {
                 length++;
                 conflicts.AddAll(previous);
                 first = FindLookAhead(elem,
@@ -472,7 +472,7 @@ namespace PerCederberg.Grammatica.Runtime {
             // Check for infinite loop
             if (stack.Contains(pattern.Name, length)) {
                 throw new ParserCreationException(
-                    ParserCreationException.ErrorType.INFINITE_LOOP,
+                    ParserCreationException.ErrorType.InfiniteLoop,
                     pattern.Name,
                     (string) null);
             }
@@ -534,14 +534,14 @@ namespace PerCederberg.Grammatica.Runtime {
 
             // Find remaining look-ahead
             if (filter == null) {
-                length -= first.GetMinLength();
+                length -= first.MinLength;
                 if (length > 0) {
                     follow = FindLookAhead(alt, length, pos + 1, stack, null);
                     first = first.CreateCombination(follow);
                 }
             } else if (filter.IsOverlap(first)) {
                 overlaps = first.CreateOverlaps(filter);
-                length -= overlaps.GetMinLength();
+                length -= overlaps.MinLength;
                 filter = filter.CreateFilter(overlaps);
                 follow = FindLookAhead(alt, length, pos + 1, stack, filter);
                 first.RemoveAll(overlaps);
@@ -598,7 +598,7 @@ namespace PerCederberg.Grammatica.Runtime {
             }
             for (int i = 1; i < max; i++) {
                 first = first.CreateOverlaps(filter);
-                if (first.Size() <= 0 || first.GetMinLength() >= length) {
+                if (first.Size<= 0 || first.MinLength>= length) {
                     break;
                 }
                 follow = FindLookAhead(elem,
@@ -681,7 +681,7 @@ namespace PerCederberg.Grammatica.Runtime {
                     result.AddAll(set1.CreateIntersection(set2));
                 }
             }
-            if (result.IsRepetitive()) {
+            if (result.IsRepetitive) {
                 ThrowAmbiguityException(pattern.Name, null, result);
             }
             return result;
@@ -709,7 +709,7 @@ namespace PerCederberg.Grammatica.Runtime {
             LookAheadSet  result;
 
             result = set1.CreateIntersection(set2);
-            if (result.IsRepetitive()) {
+            if (result.IsRepetitive) {
                 ThrowAmbiguityException(pattern, location, result);
             }
             return result;
@@ -730,8 +730,8 @@ namespace PerCederberg.Grammatica.Runtime {
 
             for (i = 0; i < pattern.Count; i++) {
                 result = pattern[i].LookAhead;
-                if (result.GetMaxLength() > length) {
-                    length = result.GetMaxLength();
+                if (result.MaxLength> length) {
+                    length = result.MaxLength;
                 }
             }
             result = new LookAheadSet(length);
@@ -762,14 +762,14 @@ namespace PerCederberg.Grammatica.Runtime {
             }
 
             // Find next token descriptions
-            initials = set.GetInitialTokens();
+            initials = set.InitialTokens;
             for (int i = 0; i < initials.Length; i++) {
                 list.Add(GetTokenDescription(initials[i]));
             }
 
             // Create exception
             token = NextToken();
-            throw new ParseException(ParseException.ErrorType.UNEXPECTED_TOKEN,
+            throw new ParseException(ParseException.ErrorType.UnexpectedToken,
                                      token.ToShortString(),
                                      list,
                                      token.StartLine,
@@ -793,12 +793,12 @@ namespace PerCederberg.Grammatica.Runtime {
             int[]      initials;
 
             // Find next token descriptions
-            initials = set.GetInitialTokens();
+            initials = set.InitialTokens;
             IList<string> list = initials.Select(i => GetTokenDescription(i)).ToList();
 
             // Create exception
             throw new ParserCreationException(
-                ParserCreationException.ErrorType.INHERENT_AMBIGUITY,
+                ParserCreationException.ErrorType.InherentAmbiguity,
                 pattern,
                 location,
                 list);

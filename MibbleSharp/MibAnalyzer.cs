@@ -164,8 +164,8 @@ namespace MibbleSharp
 
             str = str.Substring(1, str.Length - 2);
             long value = Convert.ToInt64(str, 16);
-            node.AddValue((BigInteger)value);
-            node.AddValue(str);
+            node.Values.Add((BigInteger)value);
+            node.Values.Add(str);
             return node;
         }
 
@@ -192,7 +192,7 @@ namespace MibbleSharp
             }
             while (pos >= 0);
 
-            node.AddValue(str);
+            node.Values.Add(str);
             return node;
         }
 
@@ -203,7 +203,7 @@ namespace MibbleSharp
         /// <returns>The node to add to the parse tree</returns>
         public override Node ExitIdentifierString(Token node)
         {
-            node.AddValue(node.GetImage());
+            node.Values.Add(node.GetImage());
             return node;
         }
 
@@ -217,7 +217,7 @@ namespace MibbleSharp
         {
             string str = node.GetImage();
             BigInteger value = BigInteger.Parse(str);
-            node.AddValue(value);
+            node.Values.Add(value);
             return node;
         }
 
@@ -277,7 +277,7 @@ namespace MibbleSharp
         /// </exception> 
         public override Node ExitModuleIdentifier(Production node)
         {
-            node.AddValue(this.GetStringValue(this.GetChildAt(node, 0), 0));
+            node.Values.Add(this.GetStringValue(this.GetChildAt(node, 0), 0));
             return node;
         }
 
@@ -291,7 +291,7 @@ namespace MibbleSharp
         /// </exception> 
         public override Node ExitModuleReference(Production node)
         {
-            node.AddValue(this.GetStringValue(this.GetChildAt(node, 0), 0));
+            node.Values.Add(this.GetStringValue(this.GetChildAt(node, 0), 0));
             return node;
         }
 
@@ -306,7 +306,7 @@ namespace MibbleSharp
             Node child;
 
             child = this.GetChildAt(node, 0);
-            if (child.GetId() == (int)Asn1Constants.EXPLICIT)
+            if (child.Id == (int)Asn1Constants.EXPLICIT)
             {
                 this.implicitTags = false;
             }
@@ -399,7 +399,7 @@ namespace MibbleSharp
 
             // Add reference to MIB and node
             this.currentMib.AddImport(imp);
-            node.AddValue(imp);
+            node.Values.Add(imp);
             return node;
         }
 
@@ -410,7 +410,7 @@ namespace MibbleSharp
         /// <returns>The node to add to the parse tree</returns>
         public override Node ExitSymbolList(Production node)
         {
-            node.AddValues(this.GetChildValues(node));
+            node.Values.AddRange(this.GetChildValues(node));
             return node;
         }
 
@@ -422,7 +422,7 @@ namespace MibbleSharp
         /// <returns>The node to add to the parse tree</returns>
         public override Node ExitSymbol(Production node)
         {
-            node.AddValues(this.GetChildValues(node));
+            node.Values.AddRange(this.GetChildValues(node));
             return node;
         }
 
@@ -443,10 +443,10 @@ namespace MibbleSharp
             if (this.currentMib.GetSymbol(name) != null)
             {
                 throw new ParseException(
-                    ParseException.ErrorType.ANALYSIS,
+                    ParseException.ErrorType.Analysis,
                     "a symbol '" + name + "' already present in the MIB",
-                    node.GetStartLine(),
-                    node.GetStartColumn());
+                    node.StartLine,
+                    node.StartColumn);
             }
 
             // Create macro symbol
@@ -464,7 +464,7 @@ namespace MibbleSharp
         /// <returns>The node to add to the parse tree</returns>
         public override Node ExitMacroReference(Production node)
         {
-            node.AddValues(this.GetChildValues(node));
+            node.Values.AddRange(this.GetChildValues(node));
             return node;
         }
 
@@ -486,10 +486,10 @@ namespace MibbleSharp
             if (this.currentMib.GetSymbol(name) != null)
             {
                 throw new ParseException(
-                    ParseException.ErrorType.ANALYSIS,
+                    ParseException.ErrorType.Analysis,
                     "a symbol '" + name + "' already present in the MIB",
-                    node.GetStartLine(),
-                    node.GetStartColumn());
+                    node.StartLine,
+                    node.StartColumn);
             }
 
             if (!char.IsUpper(name[0]))
@@ -516,7 +516,7 @@ namespace MibbleSharp
         /// <returns>The node to add to the parse tree</returns>
         public override Node ExitType(Production node)
         {
-            node.AddValues(this.GetChildValues(node));
+            node.Values.AddRange(this.GetChildValues(node));
             return node;
         }
 
@@ -532,10 +532,10 @@ namespace MibbleSharp
             FileLocation loc = this.GetLocation(node);
             Node child;
 
-            for (int i = 0; i < node.GetChildCount(); i++)
+            for (int i = 0; i < node.ChildCount; i++)
             {
-                child = node.GetChildAt(i);
-                switch ((Asn1Constants)child.GetId())
+                child = node[i];
+                switch ((Asn1Constants)child.Id)
                 {
                     case Asn1Constants.MODULE_REFERENCE:
                         name = this.GetStringValue(child, 0);
@@ -543,10 +543,10 @@ namespace MibbleSharp
                         if (local == null)
                         {
                             throw new ParseException(
-                                ParseException.ErrorType.ANALYSIS,
+                                ParseException.ErrorType.Analysis,
                                 "referenced module not imported '" + name + "'",
-                                child.GetStartLine(),
-                                child.GetStartColumn());
+                                child.StartLine,
+                                child.StartColumn);
                         }
 
                         break;
@@ -573,7 +573,7 @@ namespace MibbleSharp
                 value = new TypeReference(loc, local, name);
             }
 
-            node.AddValue(value);
+            node.Values.Add(value);
             return node;
         }
 
@@ -582,7 +582,7 @@ namespace MibbleSharp
         /// <returns>The node to add to the parse tree</returns>
         public override Node ExitBuiltinType(Production node)
         {
-            node.AddValues(this.GetChildValues(node));
+            node.Values.AddRange(this.GetChildValues(node));
             return node;
         }
 
@@ -591,7 +591,7 @@ namespace MibbleSharp
         /// <returns>The node to add to the parse tree</returns>
         public override Node ExitNullType(Production node)
         {
-            node.AddValue(new NullType());
+            node.Values.Add(new NullType());
             return node;
         }
 
@@ -600,7 +600,7 @@ namespace MibbleSharp
         /// <returns>The node to add to the parse tree</returns>
         public override Node ExitBooleanType(Production node)
         {
-            node.AddValue(new BooleanType());
+            node.Values.Add(new BooleanType());
             return node;
         }
 
@@ -609,7 +609,7 @@ namespace MibbleSharp
         /// <returns>The node to add to the parse tree</returns>
         public override Node ExitRealType(Production node)
         {
-            node.AddValue(new RealType());
+            node.Values.Add(new RealType());
             return node;
         }
 
@@ -641,7 +641,7 @@ namespace MibbleSharp
                 }
             }
 
-            node.AddValue(type);
+            node.Values.Add(type);
             return node;
         }
 
@@ -650,7 +650,7 @@ namespace MibbleSharp
         /// <returns>The node to add to the parse tree</returns>
         public override Node ExitObjectIdentifierType(Production node)
         {
-            node.AddValue(new ObjectIdentifierType());
+            node.Values.Add(new ObjectIdentifierType());
             return node;
         }
 
@@ -672,7 +672,7 @@ namespace MibbleSharp
                 type = new StringType((IConstraint)values[0]);
             }
 
-            node.AddValue(type);
+            node.Values.Add(type);
             return node;
         }
 
@@ -704,7 +704,7 @@ namespace MibbleSharp
                 }
             }
 
-            node.AddValue(type);
+            node.Values.Add(type);
             return node;
         }
 
@@ -723,7 +723,7 @@ namespace MibbleSharp
         {
             System.Collections.ArrayList elements = this.GetChildValues(node);
 
-            node.AddValue(new SequenceType(elements.OfType<ElementType>().ToList()));
+            node.Values.Add(new SequenceType(elements.OfType<ElementType>().ToList()));
             return node;
         }
 
@@ -737,15 +737,15 @@ namespace MibbleSharp
             IConstraint c = null;
             Node child;
 
-            child = this.GetChildAt(node, node.GetChildCount() - 1);
+            child = this.GetChildAt(node, node.ChildCount - 1);
             type = (MibType)this.GetValue(child, 0);
-            if (node.GetChildCount() == 4)
+            if (node.ChildCount == 4)
             {
                 child = this.GetChildAt(node, 1);
                 c = (IConstraint)this.GetValue(child, 0);
             }
 
-            node.AddValue(new SequenceOfType(type, c));
+            node.Values.Add(new SequenceOfType(type, c));
             return node;
         }
 
@@ -761,7 +761,7 @@ namespace MibbleSharp
             this.log.AddError(
                 this.GetLocation(node),
                 "SET type currently unsupported");
-            node.AddValue(new NullType());
+            node.Values.Add(new NullType());
             return node;
         }
 
@@ -777,7 +777,7 @@ namespace MibbleSharp
             this.log.AddError(
                 this.GetLocation(node),
                 "SET OF type currently unsupported");
-            node.AddValue(new NullType());
+            node.Values.Add(new NullType());
             return node;
         }
 
@@ -787,7 +787,7 @@ namespace MibbleSharp
         public override Node ExitChoiceType(Production node)
         {
             ArrayList al = this.GetChildValues(node);
-            node.AddValue(new ChoiceType(al.OfType<ElementType>().ToList()));
+            node.Values.Add(new ChoiceType(al.OfType<ElementType>().ToList()));
             return node;
         }
 
@@ -803,7 +803,7 @@ namespace MibbleSharp
             this.log.AddError(
                 this.GetLocation(node),
                 "ENUMERATED type currently unsupported");
-            node.AddValue(new NullType());
+            node.Values.Add(new NullType());
             return node;
         }
 
@@ -819,7 +819,7 @@ namespace MibbleSharp
             this.log.AddError(
                 this.GetLocation(node),
                 "selection type currently unsupported");
-            node.AddValue(new NullType());
+            node.Values.Add(new NullType());
             return node;
         }
 
@@ -840,15 +840,15 @@ namespace MibbleSharp
             tag = (MibTypeTag)this.GetValue(child, 0);
 
             child = this.GetChildAt(node, 1);
-            if (child.GetId() == (int)Asn1Constants.EXPLICIT_OR_IMPLICIT_TAG)
+            if (child.Id == (int)Asn1Constants.EXPLICIT_OR_IMPLICIT_TAG)
             {
                 implicitly = (bool)this.GetValue(child, 0);
             }
 
-            child = this.GetChildAt(node, node.GetChildCount() - 1);
+            child = this.GetChildAt(node, node.ChildCount - 1);
             type = (MibType)this.GetValue(child, 0);
             type.SetTag(implicitly, tag);
-            node.AddValue(type);
+            node.Values.Add(type);
             return node;
         }
 
@@ -874,7 +874,7 @@ namespace MibbleSharp
                 value = (int)((BigInteger)values[1]);
             }
 
-            node.AddValue(new MibTypeTag(category, value));
+            node.Values.Add(new MibTypeTag(category, value));
             return node;
         }
 
@@ -887,15 +887,15 @@ namespace MibbleSharp
             Node child = GetChildAt(node, 0);
             int category;
 
-            if (child.GetId() == (int)Asn1Constants.UNIVERSAL)
+            if (child.Id == (int)Asn1Constants.UNIVERSAL)
             {
                 category = MibTypeTag.UniversalCategory;
             }
-            else if (child.GetId() == (int)Asn1Constants.APPLICATION)
+            else if (child.Id == (int)Asn1Constants.APPLICATION)
             {
                 category = MibTypeTag.ApplicationCategory;
             }
-            else if (child.GetId() == (int)Asn1Constants.PRIVATE)
+            else if (child.Id == (int)Asn1Constants.PRIVATE)
             {
                 category = MibTypeTag.PrivateCategory;
             }
@@ -904,7 +904,7 @@ namespace MibbleSharp
                 category = MibTypeTag.ContextSpecificCategory;
             }
 
-            node.AddValue(category);
+            node.Values.Add(category);
             return node;
         }
 
@@ -916,13 +916,13 @@ namespace MibbleSharp
         {
             Node child = GetChildAt(node, 0);
 
-            if (child.GetId() == (int)Asn1Constants.EXPLICIT)
+            if (child.Id == (int)Asn1Constants.EXPLICIT)
             {
-                node.AddValue(false);
+                node.Values.Add(false);
             }
             else
             {
-                node.AddValue(true);
+                node.Values.Add(true);
             }
 
             return node;
@@ -940,7 +940,7 @@ namespace MibbleSharp
             this.log.AddError(
                 this.GetLocation(node),
                 "ANY type currently unsupported");
-            node.AddValue(new NullType());
+            node.Values.Add(new NullType());
             return node;
         }
 
@@ -949,7 +949,7 @@ namespace MibbleSharp
         /// <returns>The node to add to the parse tree</returns>
         public override Node ExitElementTypeList(Production node)
         {
-            node.AddValues(this.GetChildValues(node));
+            node.Values.AddRange(this.GetChildValues(node));
             return node;
         }
 
@@ -964,24 +964,24 @@ namespace MibbleSharp
             Node child;
 
             child = this.GetChildAt(node, 0);
-            if (child.GetId() == (int)Asn1Constants.IDENTIFIER_STRING)
+            if (child.Id == (int)Asn1Constants.IDENTIFIER_STRING)
             {
                 name = this.GetStringValue(child, 0);
                 child = this.GetChildAt(node, 1);
             }
 
-            if (child.GetId() != (int)Asn1Constants.TYPE)
+            if (child.Id != (int)Asn1Constants.TYPE)
             {
                 throw new ParseException(
-                    ParseException.ErrorType.ANALYSIS,
+                    ParseException.ErrorType.Analysis,
                     "referencing components is currently unsupported",
-                    child.GetStartLine(),
-                    child.GetStartColumn());
+                    child.StartLine,
+                    child.StartColumn);
             }
 
             type = new ElementType(name, (MibType)this.GetValue(child, 0));
             type.Comment = MibAnalyzerUtil.GetComments(node);
-            node.AddValue(type);
+            node.Values.Add(type);
             return node;
         }
 
@@ -1005,7 +1005,7 @@ namespace MibbleSharp
         /// <returns>The node to add to the parse tree</returns>
         public override Node ExitValueOrConstraintList(Production node)
         {
-            node.AddValues(this.GetChildValues(node));
+            node.Values.AddRange(this.GetChildValues(node));
             return node;
         }
 
@@ -1019,17 +1019,17 @@ namespace MibbleSharp
             MibValueSymbol symbol;
             Node child;
 
-            for (int i = 0; i < node.GetChildCount(); i++)
+            for (int i = 0; i < node.ChildCount; i++)
             {
-                child = node.GetChildAt(i);
-                if (child.GetId() == (int)Asn1Constants.NAMED_NUMBER)
+                child = node[i];
+                if (child.Id == (int)Asn1Constants.NAMED_NUMBER)
                 {
-                    symbol = (MibValueSymbol)child.GetValue(0);
+                    symbol = (MibValueSymbol)child.Values[0];
                     symbol.Comment = MibAnalyzerUtil.GetComments(child);
                 }
             }
 
-            node.AddValue(this.GetChildValues(node));
+            node.Values.Add(this.GetChildValues(node));
             return node;
         }
 
@@ -1051,7 +1051,7 @@ namespace MibbleSharp
                 name,
                 null,
                 value);
-            node.AddValue(symbol);
+            node.Values.Add(symbol);
             return node;
         }
 
@@ -1061,7 +1061,7 @@ namespace MibbleSharp
         /// <exception cref="ParseException"> if the node analysis discovered errors</exception>
         public override Node ExitNumber(Production node)
         {
-            node.AddValues(this.GetChildValues(node));
+            node.Values.AddRange(this.GetChildValues(node));
             return node;
         }
 
@@ -1088,7 +1088,7 @@ namespace MibbleSharp
                 }
             }
 
-            node.AddValue(result);
+            node.Values.Add(result);
             return node;
         }
 
@@ -1097,7 +1097,7 @@ namespace MibbleSharp
         /// <returns>The node to add to the parse tree</returns>
         public override Node ExitConstraint(Production node)
         {
-            node.AddValues(this.GetChildValues(node));
+            node.Values.AddRange(this.GetChildValues(node));
             return node;
         }
 
@@ -1128,10 +1128,10 @@ namespace MibbleSharp
             if (list.Count == 0)
             {
                 throw new ParseException(
-                    ParseException.ErrorType.ANALYSIS,
+                    ParseException.ErrorType.Analysis,
                     "no value specified in constraint",
-                    node.GetStartLine(),
-                    node.GetStartColumn());
+                    node.StartLine,
+                    node.StartColumn);
             }
             else if (list.Count == 1)
             {
@@ -1169,7 +1169,7 @@ namespace MibbleSharp
                     strictUpper);
             }
 
-            node.AddValue(obj);
+            node.Values.Add(obj);
             return node;
         }
 
@@ -1186,28 +1186,28 @@ namespace MibbleSharp
 
             // Check for strict lower end point
             child = this.GetChildAt(node, 0);
-            if (child.GetId() == (int)Asn1Constants.LESS_THAN)
+            if (child.Id == (int)Asn1Constants.LESS_THAN)
             {
-                node.AddValue(true);
+                node.Values.Add(true);
             }
             else
             {
-                node.AddValue(false);
+                node.Values.Add(false);
             }
 
             // Add upper end point (or null)
-            child = this.GetChildAt(node, node.GetChildCount() - 1);
-            node.AddValue(child.GetValue(0));
+            child = this.GetChildAt(node, node.ChildCount - 1);
+            node.Values.Add(child.Values[0]);
 
             // Check for strict upper end point
-            child = this.GetChildAt(node, node.GetChildCount() - 2);
-            if (child.GetId() == (int)Asn1Constants.LESS_THAN)
+            child = this.GetChildAt(node, node.ChildCount - 2);
+            if (child.Id == (int)Asn1Constants.LESS_THAN)
             {
-                node.AddValue(true);
+                node.Values.Add(true);
             }
             else
             {
-                node.AddValue(false);
+                node.Values.Add(false);
             }
 
             return node;
@@ -1221,7 +1221,7 @@ namespace MibbleSharp
         /// <returns>The node to add to the parse tree</returns>
         public override Node ExitLowerEndPoint(Production node)
         {
-            node.AddValues(this.GetChildValues(node));
+            node.Values.AddRange(this.GetChildValues(node));
             return node;
         }
 
@@ -1233,7 +1233,7 @@ namespace MibbleSharp
         /// <returns>The node to add to the parse tree</returns>
         public override Node ExitUpperEndPoint(Production node)
         {
-            node.AddValues(this.GetChildValues(node));
+            node.Values.AddRange(this.GetChildValues(node));
             return node;
         }
 
@@ -1248,7 +1248,7 @@ namespace MibbleSharp
             IConstraint c;
 
             c = (IConstraint)this.GetValue(this.GetChildAt(node, 1), 0);
-            node.AddValue(new SizeConstraint(this.GetLocation(node), c));
+            node.Values.Add(new SizeConstraint(this.GetLocation(node), c));
             return node;
         }
 
@@ -1316,10 +1316,10 @@ namespace MibbleSharp
             if (this.currentMib.GetSymbol(name) != null)
             {
                 throw new ParseException(
-                    ParseException.ErrorType.ANALYSIS,
+                    ParseException.ErrorType.Analysis,
                     "a symbol '" + name + "' already present in the MIB",
-                    node.GetStartLine(),
-                    node.GetStartColumn());
+                    node.StartLine,
+                    node.StartColumn);
             }
 
             if (!char.IsLower(name[0]))
@@ -1350,7 +1350,7 @@ namespace MibbleSharp
         /// <returns>The node to add to the parse tree</returns>
         public override Node ExitValue(Production node)
         {
-            node.AddValues(this.GetChildValues(node));
+            node.Values.AddRange(this.GetChildValues(node));
             return node;
         }
         
@@ -1367,17 +1367,17 @@ namespace MibbleSharp
 
             // Check for module reference
             child = this.GetChildAt(node, 0);
-            if (child.GetId() == (int)Asn1Constants.MODULE_REFERENCE)
+            if (child.Id == (int)Asn1Constants.MODULE_REFERENCE)
             {
                 name = this.GetStringValue(child, 0);
                 local = this.currentMib.GetImport(name);
                 if (local == null)
                 {
                     throw new ParseException(
-                        ParseException.ErrorType.ANALYSIS,
+                        ParseException.ErrorType.Analysis,
                         "referenced module not imported '" + name + "'",
-                        child.GetStartLine(),
-                        child.GetStartColumn());
+                        child.StartLine,
+                        child.StartColumn);
                 }
 
                 child = this.GetChildAt(node, 1);
@@ -1386,7 +1386,7 @@ namespace MibbleSharp
             // Create value reference
             name = this.GetStringValue(child, 0);
             vref = new ValueReference(this.GetLocation(node), local, name);
-            node.AddValue(vref);
+            node.Values.Add(vref);
             return node;
         }
 
@@ -1395,7 +1395,7 @@ namespace MibbleSharp
         /// <returns>The node to add to the parse tree</returns>
         public override Node ExitBuiltinValue(Production node)
         {
-            node.AddValues(this.GetChildValues(node));
+            node.Values.AddRange(this.GetChildValues(node));
             return node;
         }
 
@@ -1404,7 +1404,7 @@ namespace MibbleSharp
         /// <returns>The node to add to the parse tree</returns>
         public override Node ExitNullValue(Production node)
         {
-            node.AddValue(NullValue.NULL);
+            node.Values.Add(NullValue.NULL);
             return node;
         }
 
@@ -1416,13 +1416,13 @@ namespace MibbleSharp
         {
             Node child = GetChildAt(node, 0);
 
-            if (child.GetId() == (int)Asn1Constants.TRUE)
+            if (child.Id == (int)Asn1Constants.TRUE)
             {
-                node.AddValue(BooleanValue.TRUE);
+                node.Values.Add(BooleanValue.TRUE);
             }
             else
             {
-                node.AddValue(BooleanValue.FALSE);
+                node.Values.Add(BooleanValue.FALSE);
             }
 
             return node;
@@ -1436,7 +1436,7 @@ namespace MibbleSharp
         {
             double d;
 
-            if (this.GetChildAt(node, 0).GetId() == (int)Asn1Constants.PLUS_INFINITY)
+            if (this.GetChildAt(node, 0).Id == (int)Asn1Constants.PLUS_INFINITY)
             {
                 d = double.PositiveInfinity;
             }
@@ -1445,7 +1445,7 @@ namespace MibbleSharp
                 d = double.NegativeInfinity;
             }
 
-            node.AddValue(new RealValue(d));
+            node.Values.Add(new RealValue(d));
             return node;
         }
 
@@ -1457,7 +1457,7 @@ namespace MibbleSharp
         {
             BigInteger number;
 
-            if (this.GetChildAt(node, 0).GetId() == (int)Asn1Constants.MINUS)
+            if (this.GetChildAt(node, 0).Id == (int)Asn1Constants.MINUS)
             {
                 number = (BigInteger)this.GetValue(this.GetChildAt(node, 1), 0);
                 number = -number;
@@ -1467,7 +1467,7 @@ namespace MibbleSharp
                 number = (BigInteger)this.GetValue(this.GetChildAt(node, 0), 0);
             }
 
-            node.AddValue(new NumberValue(number));
+            node.Values.Add(new NumberValue(number));
             return node;
         }
 
@@ -1482,9 +1482,9 @@ namespace MibbleSharp
             string text;
 
             child = this.GetChildAt(node, 0);
-            number = (BigInteger)child.GetValue(0);
-            text = (string)child.GetValue(1);
-            node.AddValue(new BinaryNumberValue(number, text.Length));
+            number = (BigInteger)child.Values[0];
+            text = (string)child.Values[1];
+            node.Values.Add(new BinaryNumberValue(number, text.Length));
             return node;
         }
 
@@ -1499,9 +1499,9 @@ namespace MibbleSharp
             string text;
 
             child = this.GetChildAt(node, 0);
-            number = (BigInteger)child.GetValue(0);
-            text = (string)child.GetValue(1);
-            node.AddValue(new HexNumberValue(number, text.Length));
+            number = (BigInteger)child.Values[0];
+            text = (string)child.Values[1];
+            node.Values.Add(new HexNumberValue(number, text.Length));
             return node;
         }
 
@@ -1514,7 +1514,7 @@ namespace MibbleSharp
             string str;
 
             str = this.GetStringValue(this.GetChildAt(node, 0), 0);
-            node.AddValue(new StringValue(str));
+            node.Values.Add(new StringValue(str));
             return node;
         }
 
@@ -1558,7 +1558,7 @@ namespace MibbleSharp
                 }
             }
 
-            node.AddValue(new BitSetValue(bits, values));
+            node.Values.Add(new BitSetValue(bits, values));
             return node;
         }
 
@@ -1577,10 +1577,10 @@ namespace MibbleSharp
             if (components.Count < 1)
             {
                 throw new ParseException(
-                    ParseException.ErrorType.ANALYSIS,
+                    ParseException.ErrorType.Analysis,
                     "object identifier must contain at least one component",
-                    node.GetStartLine(),
-                    node.GetStartColumn());
+                    node.StartLine,
+                    node.StartColumn);
             }
 
             // Analyze components
@@ -1642,10 +1642,10 @@ namespace MibbleSharp
                         "' has been previously defined, remove any " +
                         "components to the left";
                     throw new ParseException(
-                        ParseException.ErrorType.ANALYSIS,
+                        ParseException.ErrorType.Analysis,
                         error,
-                        node.GetStartLine(),
-                        node.GetStartColumn());
+                        node.StartLine,
+                        node.StartColumn);
                 }
                 else
                 {
@@ -1654,7 +1654,7 @@ namespace MibbleSharp
             }
 
             // Set node value
-            node.AddValue(parent);
+            node.Values.Add(parent);
             return node;
         }
 
@@ -1663,7 +1663,7 @@ namespace MibbleSharp
         /// <returns>The node to add to the parse tree</returns>
         public override Node ExitNameValueList(Production node)
         {
-            node.AddValues(this.GetChildValues(node));
+            node.Values.AddRange(this.GetChildValues(node));
             return node;
         }
 
@@ -1672,7 +1672,7 @@ namespace MibbleSharp
         /// <returns>The node to add to the parse tree</returns>
         public override Node ExitNameValueComponent(Production node)
         {
-            node.AddValues(this.GetChildValues(node));
+            node.Values.AddRange(this.GetChildValues(node));
             return node;
         }
 
@@ -1704,7 +1704,7 @@ namespace MibbleSharp
                 value = (NamedNumber)obj;
             }
 
-            node.AddValue(value);
+            node.Values.Add(value);
             return node;
         }
 
@@ -1729,7 +1729,7 @@ namespace MibbleSharp
                 value = new NamedNumber(name, (ValueReference)obj);
             }
 
-            node.AddValue(value);
+            node.Values.Add(value);
             return node;
         }
 
@@ -1738,7 +1738,7 @@ namespace MibbleSharp
         /// <returns>The node to add to the parse tree</returns>
         public override Node ExitDefinedMacroType(Production node)
         {
-            node.AddValues(this.GetChildValues(node));
+            node.Values.AddRange(this.GetChildValues(node));
             return node;
         }
 
@@ -1747,7 +1747,7 @@ namespace MibbleSharp
         /// <returns>The node to add to the parse tree</returns>
         public override Node ExitDefinedMacroName(Production node)
         {
-            node.AddValue(((Token)node.GetChildAt(0)).GetImage());
+            node.Values.Add(((Token)node[0]).GetImage());
             return node;
         }
 
@@ -1768,12 +1768,12 @@ namespace MibbleSharp
             org = this.GetStringValue(this.GetChildAt(node, 2), 0);
             contact = this.GetStringValue(this.GetChildAt(node, 3), 0);
             desc = this.GetStringValue(this.GetChildAt(node, 4), 0);
-            for (int i = 5; i < node.GetChildCount(); i++)
+            for (int i = 5; i < node.ChildCount; i++)
             {
                 revisions.Add(this.GetValue(this.GetChildAt(node, i), 0));
             }
 
-            node.AddValue(
+            node.Values.Add(
                 new SnmpModuleIdentity(
                     update,
                     org,
@@ -1796,7 +1796,7 @@ namespace MibbleSharp
             this.currentMib.SmiVersion = 2;
             status = (SnmpStatus)this.GetValue(this.GetChildAt(node, 1), 0);
             desc = this.GetStringValue(this.GetChildAt(node, 2), 0);
-            if (node.GetChildCount() <= 3)
+            if (node.ChildCount <= 3)
             {
                 sref = null;
             }
@@ -1805,7 +1805,7 @@ namespace MibbleSharp
                 sref = this.GetStringValue(this.GetChildAt(node, 3), 0);
             }
 
-            node.AddValue(new SnmpObjectIdentity(status, desc, sref));
+            node.Values.Add(new SnmpObjectIdentity(status, desc, sref));
             return node;
         }
 
@@ -1817,7 +1817,7 @@ namespace MibbleSharp
         {
             MibType type;
 
-            if (child.GetId() == (int)Asn1Constants.SNMP_SYNTAX_PART)
+            if (child.Id == (int)Asn1Constants.SNMP_SYNTAX_PART)
             {
                 type = (MibType)this.GetValue(child, 0);
                 if (type is IMibContext)
@@ -1849,10 +1849,10 @@ namespace MibbleSharp
             MibValue defVal = null;
             Node child;
 
-            for (int i = 0; i < node.GetChildCount(); i++)
+            for (int i = 0; i < node.ChildCount; i++)
             {
-                child = node.GetChildAt(i);
-                switch ((Asn1Constants)child.GetId())
+                child = node[i];
+                switch ((Asn1Constants)child.Id)
                 {
                     case Asn1Constants.SNMP_SYNTAX_PART:
                         syntax = (MibType)this.GetValue(child, 0);
@@ -1912,7 +1912,7 @@ namespace MibbleSharp
                     defVal);
             }
 
-            node.AddValue(type);
+            node.Values.Add(type);
             return node;
         }
 
@@ -1929,10 +1929,10 @@ namespace MibbleSharp
             Node child;
 
             this.currentMib.SmiVersion = 2;
-            for (int i = 0; i < node.GetChildCount(); i++)
+            for (int i = 0; i < node.ChildCount; i++)
             {
-                child = node.GetChildAt(i);
-                switch ((Asn1Constants)child.GetId())
+                child = node[i];
+                switch ((Asn1Constants)child.Id)
                 {
                     case Asn1Constants.SNMP_OBJECTS_PART:
                         objects = (System.Collections.ArrayList)this.GetValue(child, 0);
@@ -1949,7 +1949,7 @@ namespace MibbleSharp
                 }
             }
 
-            node.AddValue(
+            node.Values.Add(
                 new SnmpNotificationType(
                     objects.OfType<MibValue>().ToList(),
                     status,
@@ -1970,10 +1970,10 @@ namespace MibbleSharp
             string sref = null;
             Node child;
 
-            for (int i = 0; i < node.GetChildCount(); i++)
+            for (int i = 0; i < node.ChildCount; i++)
             {
-                child = node.GetChildAt(i);
-                switch ((Asn1Constants)child.GetId())
+                child = node[i];
+                switch ((Asn1Constants)child.Id)
                 {
                     case Asn1Constants.SNMP_ENTERPRISE_PART:
                         enterprise = (MibValue)this.GetValue(child, 0);
@@ -1990,7 +1990,7 @@ namespace MibbleSharp
                 }
             }
 
-            node.AddValue(new SnmpTrapType(enterprise, vars.OfType<MibValue>().ToList(), desc, sref));
+            node.Values.Add(new SnmpTrapType(enterprise, vars.OfType<MibValue>().ToList(), desc, sref));
             return node;
         }
         
@@ -2008,10 +2008,10 @@ namespace MibbleSharp
             Node child;
 
             this.currentMib.SmiVersion = 2;
-            for (int i = 0; i < node.GetChildCount(); i++)
+            for (int i = 0; i < node.ChildCount; i++)
             {
-                child = node.GetChildAt(i);
-                switch ((Asn1Constants)child.GetId())
+                child = node[i];
+                switch ((Asn1Constants)child.Id)
                 {
                     case Asn1Constants.SNMP_DISPLAY_PART:
                         display = this.GetStringValue(child, 0);
@@ -2032,7 +2032,7 @@ namespace MibbleSharp
                 }
             }
 
-            node.AddValue(
+            node.Values.Add(
                 new SnmpTextualConvention(
                     display,
                     status,
@@ -2058,7 +2058,7 @@ namespace MibbleSharp
             status = (SnmpStatus)this.GetValue(this.GetChildAt(node, 2), 0);
             desc = this.GetStringValue(this.GetChildAt(node, 3), 0);
 
-            if (node.GetChildCount() <= 4)
+            if (node.ChildCount <= 4)
             {
                 sref = null;
             }
@@ -2067,7 +2067,7 @@ namespace MibbleSharp
                 sref = this.GetStringValue(this.GetChildAt(node, 4), 0);
             }
 
-            node.AddValue(
+            node.Values.Add(
                 new SnmpObjectGroup(
                     objects.OfType<MibValue>().ToList(),
                     status,
@@ -2091,7 +2091,7 @@ namespace MibbleSharp
             notifications = this.GetChildAt(node, 1).Values;
             status = (SnmpStatus)this.GetValue(this.GetChildAt(node, 2), 0);
             desc = this.GetStringValue(this.GetChildAt(node, 3), 0);
-            if (node.GetChildCount() <= 4)
+            if (node.ChildCount <= 4)
             {
                 sref = null;
             }
@@ -2100,7 +2100,7 @@ namespace MibbleSharp
                 sref = this.GetStringValue(this.GetChildAt(node, 4), 0);
             }
 
-            node.AddValue(
+            node.Values.Add(
                 new SnmpNotificationGroup(
                     notifications.OfType<MibValue>().ToList(),
                     status,
@@ -2122,10 +2122,10 @@ namespace MibbleSharp
             Node child;
 
             this.currentMib.SmiVersion = 2;
-            for (int i = 0; i < node.GetChildCount(); i++)
+            for (int i = 0; i < node.ChildCount; i++)
             {
-                child = node.GetChildAt(i);
-                switch ((Asn1Constants)child.GetId())
+                child = node[i];
+                switch ((Asn1Constants)child.Id)
                 {
                     case Asn1Constants.SNMP_STATUS_PART:
                         status = (SnmpStatus)this.GetValue(child, 0);
@@ -2142,7 +2142,7 @@ namespace MibbleSharp
                 }
             }
 
-            node.AddValue(
+            node.Values.Add(
                 new SnmpModuleCompliance(
                     status,
                     desc,
@@ -2165,10 +2165,10 @@ namespace MibbleSharp
             Node child;
 
             this.currentMib.SmiVersion = 2;
-            for (int i = 0; i < node.GetChildCount(); i++)
+            for (int i = 0; i < node.ChildCount; i++)
             {
-                child = node.GetChildAt(i);
-                switch ((Asn1Constants)child.GetId())
+                child = node[i];
+                switch ((Asn1Constants)child.Id)
                 {
                     case Asn1Constants.SNMP_PRODUCT_RELEASE_PART:
                         prod = this.GetStringValue(child, 0);
@@ -2188,7 +2188,7 @@ namespace MibbleSharp
                 }
             }
 
-            node.AddValue(
+            node.Values.Add(
                 new SnmpAgentCapabilities(
                     prod,
                     status,
@@ -2203,7 +2203,7 @@ namespace MibbleSharp
         /// <returns>The node to add to the parse tree</returns>
         public override Node ExitSnmpUpdatePart(Production node)
         {
-            node.AddValues(this.GetChildValues(node));
+            node.Values.AddRange(this.GetChildValues(node));
             return node;
         }
         
@@ -2212,7 +2212,7 @@ namespace MibbleSharp
         /// <returns>The node to add to the parse tree</returns>
         public override Node ExitSnmpOrganizationPart(Production node)
         {
-            node.AddValues(this.GetChildValues(node));
+            node.Values.AddRange(this.GetChildValues(node));
             return node;
         }
         
@@ -2221,7 +2221,7 @@ namespace MibbleSharp
         /// <returns>The node to add to the parse tree</returns>
         public override Node ExitSnmpContactPart(Production node)
         {
-            node.AddValues(this.GetChildValues(node));
+            node.Values.AddRange(this.GetChildValues(node));
             return node;
         }
         
@@ -2230,7 +2230,7 @@ namespace MibbleSharp
         /// <returns>The node to add to the parse tree</returns>
         public override Node ExitSnmpDescrPart(Production node)
         {
-            node.AddValues(this.GetChildValues(node));
+            node.Values.AddRange(this.GetChildValues(node));
             return node;
         }
         
@@ -2248,7 +2248,7 @@ namespace MibbleSharp
             desc = this.GetStringValue(this.GetChildAt(node, 3), 0);
             rev = new SnmpRevision(value, desc);
             rev.Comment = MibAnalyzerUtil.GetComments(node);
-            node.AddValue(rev);
+            node.Values.Add(rev);
             return node;
         }
         
@@ -2265,32 +2265,32 @@ namespace MibbleSharp
             name = this.GetStringValue(child, 0);
             if (name.Equals("mandatory"))
             {
-                node.AddValue(SnmpStatus.MANDATORY);
+                node.Values.Add(SnmpStatus.MANDATORY);
             }
             else if (name.Equals("optional"))
             {
-                node.AddValue(SnmpStatus.OPTIONAL);
+                node.Values.Add(SnmpStatus.OPTIONAL);
             }
             else if (name.Equals("current"))
             {
-                node.AddValue(SnmpStatus.CURRENT);
+                node.Values.Add(SnmpStatus.CURRENT);
             }
             else if (name.Equals("deprecated"))
             {
-                node.AddValue(SnmpStatus.DEPRECATED);
+                node.Values.Add(SnmpStatus.DEPRECATED);
             }
             else if (name.Equals("obsolete"))
             {
-                node.AddValue(SnmpStatus.OBSOLETE);
+                node.Values.Add(SnmpStatus.OBSOLETE);
             }
             else
             {
-                node.AddValue(SnmpStatus.CURRENT);
+                node.Values.Add(SnmpStatus.CURRENT);
                 throw new ParseException(
-                    ParseException.ErrorType.ANALYSIS,
+                    ParseException.ErrorType.Analysis,
                     "unrecognized status value: '" + name + "'",
-                    child.GetStartLine(),
-                    child.GetStartColumn());
+                    child.StartLine,
+                    child.StartColumn);
             }
 
             return node;
@@ -2301,7 +2301,7 @@ namespace MibbleSharp
         /// <returns>The node to add to the parse tree</returns>
         public override Node ExitSnmpReferPart(Production node)
         {
-            node.AddValues(this.GetChildValues(node));
+            node.Values.AddRange(this.GetChildValues(node));
             return node;
         }
 
@@ -2310,7 +2310,7 @@ namespace MibbleSharp
         /// <returns>The node to add to the parse tree</returns>
         public override Node ExitSnmpSyntaxPart(Production node)
         {
-            node.AddValues(this.GetChildValues(node));
+            node.Values.AddRange(this.GetChildValues(node));
             return node;
         }
         
@@ -2319,7 +2319,7 @@ namespace MibbleSharp
         /// <returns>The node to add to the parse tree</returns>
         public override Node ExitSnmpUnitsPart(Production node)
         {
-            node.AddValues(this.GetChildValues(node));
+            node.Values.AddRange(this.GetChildValues(node));
             return node;
         }
 
@@ -2333,7 +2333,7 @@ namespace MibbleSharp
             string name;
 
             child = this.GetChildAt(node, 0);
-            if (child.GetId() != (int)Asn1Constants.ACCESS)
+            if (child.Id != (int)Asn1Constants.ACCESS)
             {
                 this.currentMib.SmiVersion = 2;
             }
@@ -2342,40 +2342,40 @@ namespace MibbleSharp
             name = this.GetStringValue(child, 0);
             if (name.Equals("read-only"))
             {
-                node.AddValue(SnmpAccess.ReadOnly);
+                node.Values.Add(SnmpAccess.ReadOnly);
             }
             else if (name.Equals("read-write"))
             {
-                node.AddValue(SnmpAccess.ReadWrite);
+                node.Values.Add(SnmpAccess.ReadWrite);
             }
             else if (name.Equals("read-create"))
             {
-                node.AddValue(SnmpAccess.ReadCreate);
+                node.Values.Add(SnmpAccess.ReadCreate);
             }
             else if (name.Equals("write-only"))
             {
-                node.AddValue(SnmpAccess.WriteOnly);
+                node.Values.Add(SnmpAccess.WriteOnly);
             }
             else if (name.Equals("not-implemented"))
             {
-                node.AddValue(SnmpAccess.NotImplemented);
+                node.Values.Add(SnmpAccess.NotImplemented);
             }
             else if (name.Equals("not-accessible"))
             {
-                node.AddValue(SnmpAccess.NotAccessible);
+                node.Values.Add(SnmpAccess.NotAccessible);
             }
             else if (name.Equals("accessible-for-notify"))
             {
-                node.AddValue(SnmpAccess.AccessibleForNotify);
+                node.Values.Add(SnmpAccess.AccessibleForNotify);
             }
             else
             {
-                node.AddValue(SnmpAccess.ReadWrite);
+                node.Values.Add(SnmpAccess.ReadWrite);
                 throw new ParseException(
-                    ParseException.ErrorType.ANALYSIS,
+                    ParseException.ErrorType.Analysis,
                     "unrecognized access value: '" + name + "'",
-                    child.GetStartLine(),
-                    child.GetStartColumn());
+                    child.StartLine,
+                    child.StartColumn);
             }
 
             return node;
@@ -2389,13 +2389,13 @@ namespace MibbleSharp
         /// <exception cref="ParseException"> if the node analysis discovered errors</exception>
         public override Node ExitSnmpIndexPart(Production node)
         {
-            if (this.GetChildAt(node, 0).GetId() == (int)Asn1Constants.INDEX)
+            if (this.GetChildAt(node, 0).Id == (int)Asn1Constants.INDEX)
             {
-                node.AddValue(this.GetChildValues(node));
+                node.Values.Add(this.GetChildValues(node));
             }
             else
             {
-                node.AddValues(this.GetChildValues(node));
+                node.Values.AddRange(this.GetChildValues(node));
             }
 
             return node;
@@ -2406,7 +2406,7 @@ namespace MibbleSharp
         /// <returns>The node to add to the parse tree</returns>
         public override Node ExitIndexValueList(Production node)
         {
-            node.AddValues(this.GetChildValues(node));
+            node.Values.AddRange(this.GetChildValues(node));
             return node;
         }
 
@@ -2418,7 +2418,7 @@ namespace MibbleSharp
             SnmpIndex index;
             object obj = this.GetChildValues(node)[0];
 
-            switch ((Asn1Constants)node.GetChildAt(0).GetId())
+            switch ((Asn1Constants)node[0].Id)
             {
                 case Asn1Constants.VALUE:
                     index = new SnmpIndex(false, (MibValue)obj, null);
@@ -2431,7 +2431,7 @@ namespace MibbleSharp
                     break;
             }
 
-            node.AddValue(index);
+            node.Values.Add(index);
             return node;
         }
 
@@ -2440,7 +2440,7 @@ namespace MibbleSharp
         /// <returns>The node to add to the parse tree</returns>
         public override Node ExitIndexType(Production node)
         {
-            node.AddValues(this.GetChildValues(node));
+            node.Values.AddRange(this.GetChildValues(node));
             return node;
         }
 
@@ -2449,7 +2449,7 @@ namespace MibbleSharp
         /// <returns>The node to add to the parse tree</returns>
         public override Node ExitSnmpDefValPart(Production node)
         {
-            node.AddValues(this.GetChildValues(node));
+            node.Values.AddRange(this.GetChildValues(node));
             return node;
         }
         
@@ -2458,7 +2458,7 @@ namespace MibbleSharp
         /// <returns>The node to add to the parse tree</returns>
         public override Node ExitSnmpObjectsPart(Production node)
         {
-            node.AddValue(this.GetChildValues(node));
+            node.Values.Add(this.GetChildValues(node));
             return node;
         }
         
@@ -2467,7 +2467,7 @@ namespace MibbleSharp
         /// <returns>The node to add to the parse tree</returns>
         public override Node ExitValueList(Production node)
         {
-            node.AddValues(this.GetChildValues(node));
+            node.Values.AddRange(this.GetChildValues(node));
             return node;
         }
 
@@ -2476,7 +2476,7 @@ namespace MibbleSharp
         /// <returns>The node to add to the parse tree</returns>
         public override Node ExitSnmpEnterprisePart(Production node)
         {
-            node.AddValues(this.GetChildValues(node));
+            node.Values.AddRange(this.GetChildValues(node));
             return node;
         }
         
@@ -2485,7 +2485,7 @@ namespace MibbleSharp
         /// <returns>The node to add to the parse tree</returns>
         public override Node ExitSnmpVarPart(Production node)
         {
-            node.AddValues(this.GetChildValues(node));
+            node.Values.AddRange(this.GetChildValues(node));
             return node;
         }
         
@@ -2494,7 +2494,7 @@ namespace MibbleSharp
         /// <returns>The node to add to the parse tree</returns>
         public override Node ExitSnmpDisplayPart(Production node)
         {
-            node.AddValues(this.GetChildValues(node));
+            node.Values.AddRange(this.GetChildValues(node));
             return node;
         }
         
@@ -2503,7 +2503,7 @@ namespace MibbleSharp
         /// <returns>The node to add to the parse tree</returns>
         public override Node ExitSnmpNotificationsPart(Production node)
         {
-            node.AddValues(this.GetChildValues(node));
+            node.Values.AddRange(this.GetChildValues(node));
             return node;
         }
         
@@ -2520,10 +2520,10 @@ namespace MibbleSharp
             string comment = null;
             Node child;
 
-            for (int i = 0; i < node.GetChildCount(); i++)
+            for (int i = 0; i < node.ChildCount; i++)
             {
-                child = node.GetChildAt(i);
-                switch ((Asn1Constants)child.GetId())
+                child = node[i];
+                switch ((Asn1Constants)child.Id)
                 {
                     case Asn1Constants.MODULE:
                         comment = MibAnalyzerUtil.GetComments(child);
@@ -2543,7 +2543,7 @@ namespace MibbleSharp
 
             module = new SnmpModule(name, groups.OfType<MibValue>().ToList(), modules.OfType<SnmpCompliance>().ToList());
             module.Comment = comment;
-            node.AddValue(module);
+            node.Values.Add(module);
             return node;
         }
         
@@ -2571,7 +2571,7 @@ namespace MibbleSharp
             this.PushContextExtension(imp);
 
             // Return results
-            node.AddValue(module);
+            node.Values.Add(module);
             return node;
         }
         
@@ -2580,7 +2580,7 @@ namespace MibbleSharp
         /// <returns>The node to add to the parse tree</returns>
         public override Node ExitSnmpMandatoryPart(Production node)
         {
-            node.AddValue(this.GetChildValues(node));
+            node.Values.Add(this.GetChildValues(node));
             return node;
         }
         
@@ -2589,7 +2589,7 @@ namespace MibbleSharp
         /// <returns>The node to add to the parse tree</returns>
         public override Node ExitSnmpCompliancePart(Production node)
         {
-            node.AddValues(this.GetChildValues(node));
+            node.Values.AddRange(this.GetChildValues(node));
             return node;
         }
         
@@ -2607,7 +2607,7 @@ namespace MibbleSharp
             desc = this.GetStringValue(this.GetChildAt(node, 2), 0);
             comp = new SnmpCompliance(true, value, null, null, null, desc);
             comp.Comment = MibAnalyzerUtil.GetComments(node);
-            node.AddValue(comp);
+            node.Values.Add(comp);
             return node;
         }
         
@@ -2625,10 +2625,10 @@ namespace MibbleSharp
             string desc = null;
             Node child;
 
-            for (int i = 0; i < node.GetChildCount(); i++)
+            for (int i = 0; i < node.ChildCount; i++)
             {
-                child = node.GetChildAt(i);
-                switch ((Asn1Constants)child.GetId())
+                child = node[i];
+                switch ((Asn1Constants)child.Id)
                 {
                     case Asn1Constants.VALUE:
                         value = (MibValue)this.GetValue(child, 0);
@@ -2652,7 +2652,7 @@ namespace MibbleSharp
 
             comp = new SnmpCompliance(false, value, syntax, write, access, desc);
             comp.Comment = MibAnalyzerUtil.GetComments(node);
-            node.AddValue(comp);
+            node.Values.Add(comp);
             return node;
         }
         
@@ -2661,7 +2661,7 @@ namespace MibbleSharp
         /// <returns>The node to add to the parse tree</returns>
         public override Node ExitSnmpWriteSyntaxPart(Production node)
         {
-            node.AddValues(this.GetChildValues(node));
+            node.Values.AddRange(this.GetChildValues(node));
             return node;
         }
         
@@ -2670,7 +2670,7 @@ namespace MibbleSharp
         /// <returns>The node to add to the parse tree</returns>
         public override Node ExitSnmpProductReleasePart(Production node)
         {
-            node.AddValues(this.GetChildValues(node));
+            node.Values.AddRange(this.GetChildValues(node));
             return node;
         }
 
@@ -2685,10 +2685,10 @@ namespace MibbleSharp
             System.Collections.ArrayList vars = new System.Collections.ArrayList();
             Node child;
 
-            for (int i = 0; i < node.GetChildCount(); i++)
+            for (int i = 0; i < node.ChildCount; i++)
             {
-                child = node.GetChildAt(i);
-                switch ((Asn1Constants)child.GetId())
+                child = node[i];
+                switch ((Asn1Constants)child.Id)
                 {
                     case Asn1Constants.SNMP_MODULE_IMPORT:
                         module = this.GetStringValue(child, 0);
@@ -2719,12 +2719,12 @@ namespace MibbleSharp
             MibType type;
             IMibContext context;
 
-            if (child.GetId() == (int)Asn1Constants.VALUE)
+            if (child.Id == (int)Asn1Constants.VALUE)
             {
                 context = new MibTypeContext(this.GetValue(child, 0));
                 this.PushContextExtension(context);
             }
-            else if (child.GetId() == (int)Asn1Constants.SNMP_SYNTAX_PART)
+            else if (child.Id == (int)Asn1Constants.SNMP_SYNTAX_PART)
             {
                 type = (MibType)this.GetValue(child, 0);
                 if (type is IMibContext)
@@ -2751,10 +2751,10 @@ namespace MibbleSharp
             string desc = null;
             Node child;
 
-            for (int i = 0; i < node.GetChildCount(); i++)
+            for (int i = 0; i < node.ChildCount; i++)
             {
-                child = node.GetChildAt(i);
-                switch ((Asn1Constants)child.GetId())
+                child = node[i];
+                switch ((Asn1Constants)child.Id)
                 {
                     case Asn1Constants.VALUE:
                         value = (MibValue)this.GetValue(child, 0);
@@ -2816,8 +2816,8 @@ namespace MibbleSharp
         {
             return new FileLocation(
                 this.file,
-                node.GetStartLine(),
-                node.GetStartColumn());
+                node.StartLine,
+                node.StartColumn);
         }
 
         /// <summary>Adds a new context to the top of the context stack.

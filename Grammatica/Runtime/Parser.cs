@@ -178,14 +178,14 @@ namespace PerCederberg.Grammatica.Runtime {
         public virtual void AddPattern(ProductionPattern pattern) {
             if (pattern.Count <= 0) {
                 throw new ParserCreationException(
-                    ParserCreationException.ErrorType.INVALID_PRODUCTION,
+                    ParserCreationException.ErrorType.InvalidProduction,
                     pattern.Name,
                     "no production alternatives are present (must have at " +
                     "least one)");
             }
             if (patternIds.ContainsKey(pattern.Id)) {
                 throw new ParserCreationException(
-                    ParserCreationException.ErrorType.INVALID_PRODUCTION,
+                    ParserCreationException.ErrorType.InvalidProduction,
                     pattern.Name,
                     "another pattern with the same id (" + pattern.Id +
                     ") has already been added");
@@ -206,7 +206,7 @@ namespace PerCederberg.Grammatica.Runtime {
         public virtual void Prepare() {
             if (patterns.Count <= 0) {
                 throw new ParserCreationException(
-                    ParserCreationException.ErrorType.INVALID_PARSER,
+                    ParserCreationException.ErrorType.InvalidParser,
                     "no production patterns have been added");
             }
             for (int i = 0; i < patterns.Count; i++) {
@@ -267,7 +267,7 @@ namespace PerCederberg.Grammatica.Runtime {
 
             if (elem.IsProduction() && GetPattern(elem.Id) == null) {
                 throw new ParserCreationException(
-                    ParserCreationException.ErrorType.INVALID_PRODUCTION,
+                    ParserCreationException.ErrorType.InvalidProduction,
                     name,
                     "an undefined production pattern id (" + elem.Id +
                     ") is referenced");
@@ -451,7 +451,7 @@ namespace PerCederberg.Grammatica.Runtime {
          * @param node           the parse tree node
          */
         internal void EnterNode(Node node) {
-            if (!node.IsHidden() && errorRecovery < 0) {
+            if (!node.Hidden && errorRecovery < 0) {
                 try {
                     analyzer.Enter(node);
                 } catch (ParseException e) {
@@ -472,7 +472,7 @@ namespace PerCederberg.Grammatica.Runtime {
          *         null if no parse tree should be created
          */
         internal Node ExitNode(Node node) {
-            if (!node.IsHidden() && errorRecovery < 0) {
+            if (!node.Hidden && errorRecovery < 0) {
                 try {
                     return analyzer.Exit(node);
                 } catch (ParseException e) {
@@ -494,10 +494,10 @@ namespace PerCederberg.Grammatica.Runtime {
         internal void AddNode(Production node, Node child) {
             if (errorRecovery >= 0) {
                 // Do nothing
-            } else if (node.IsHidden()) {
+            } else if (node.Hidden) {
                 node.AddChild(child);
-            } else if (child != null && child.IsHidden()) {
-                for (int i = 0; i < child.Count; i++) {
+            } else if (child != null && child.Hidden) {
+                for (int i = 0; i < child.ChildCount; i++) {
                     AddNode(node, child[i]);
                 }
             } else {
@@ -527,7 +527,7 @@ namespace PerCederberg.Grammatica.Runtime {
                 return token;
             } else {
                 throw new ParseException(
-                    ParseException.ErrorType.UNEXPECTED_EOF,
+                    ParseException.ErrorType.UnexpectedEOF,
                     null,
                     tokenizer.GetCurrentLine(),
                     tokenizer.GetCurrentColumn());
@@ -560,7 +560,7 @@ namespace PerCederberg.Grammatica.Runtime {
                 list = new List<string>(1);
                 list.Add(tokenizer.GetPatternDescription(id));
                 throw new ParseException(
-                    ParseException.ErrorType.UNEXPECTED_TOKEN,
+                    ParseException.ErrorType.UnexpectedToken,
                     token.ToShortString(),
                     list,
                     token.StartLine,
@@ -644,9 +644,9 @@ namespace PerCederberg.Grammatica.Runtime {
             }
             for (i = 0; i < prod.Count; i++) {
                 set = prod[i].LookAhead;
-                if (set.GetMaxLength() > 1) {
+                if (set.MaxLength> 1) {
                     buffer.Append("Using ");
-                    buffer.Append(set.GetMaxLength());
+                    buffer.Append(set.MaxLength);
                     buffer.Append(" token look-ahead for alternative ");
                     buffer.Append(i + 1);
                     buffer.Append(": ");

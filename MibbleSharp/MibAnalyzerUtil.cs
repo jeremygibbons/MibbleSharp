@@ -48,20 +48,20 @@ namespace MibbleSharp
         /// <returns>True if the node contains a bit value, false if not</returns>
         public static bool IsBitValue(Node node)
         {
-            if (node.GetId() == (int)Asn1Constants.COMMA)
+            if (node.Id == (int)Asn1Constants.COMMA)
             {
                 return true;
             }
-            else if (node.GetId() == (int)Asn1Constants.NAME_VALUE_LIST
-                && node.GetChildCount() < 4)
+            else if (node.Id == (int)Asn1Constants.NAME_VALUE_LIST
+                && node.ChildCount < 4)
             {
                 return true;
             }
             else
             {
-                for (int i = 0; i < node.GetChildCount(); i++)
+                for (int i = 0; i < node.ChildCount; i++)
                 {
-                    if (IsBitValue(node.GetChildAt(i)))
+                    if (IsBitValue(node[i]))
                     {
                         return true;
                     }
@@ -156,11 +156,11 @@ namespace MibbleSharp
 
             while (token != null)
             {
-                if (token.GetId() == (int)Asn1Constants.WHITESPACE)
+                if (token.Id == (int)Asn1Constants.WHITESPACE)
                 {
                     comments.Add(GetLineBreaks(token.GetImage()));
                 }
-                else if (token.GetId() == (int)Asn1Constants.COMMENT &&
+                else if (token.Id == (int)Asn1Constants.COMMENT &&
                     !commentTokens.Contains(token))
                 {
                     commentTokens.Add(token);
@@ -203,11 +203,11 @@ namespace MibbleSharp
 
             while (token != null)
             {
-                if (token.GetId() == (int)Asn1Constants.WHITESPACE)
+                if (token.Id == (int)Asn1Constants.WHITESPACE)
                 {
                     comment.Append(GetLineBreaks(token.GetImage()));
                 }
-                else if (token.GetId() == (int)Asn1Constants.COMMENT &&
+                else if (token.Id == (int)Asn1Constants.COMMENT &&
                     !commentTokens.Contains(token))
                 {
                     commentTokens.Add(token);
@@ -241,7 +241,7 @@ namespace MibbleSharp
 
             while (token != null && token != last)
             {
-                if (token.GetId() == (int)Asn1Constants.COMMENT &&
+                if (token.Id == (int)Asn1Constants.COMMENT &&
                     !commentTokens.Contains(token))
                 {
                     commentTokens.Add(token);
@@ -273,14 +273,14 @@ namespace MibbleSharp
             token = last.GetNextToken();
             while (token != null)
             {
-                switch ((Asn1Constants)token.GetId())
+                switch ((Asn1Constants)token.Id)
                 {
                     case Asn1Constants.WHITESPACE:
                     case Asn1Constants.COMMA:
                         // Skip to next
                         break;
                     case Asn1Constants.COMMENT:
-                        if (last.GetEndLine() == token.GetStartLine())
+                        if (last.EndLine == token.StartLine)
                         {
                             return token;
                         }
@@ -306,7 +306,7 @@ namespace MibbleSharp
         {
             while (node is Production)
             {
-                node = node.GetChildAt(0);
+                node = node[0];
             }
 
             return (Token)node;
@@ -319,7 +319,7 @@ namespace MibbleSharp
         {
             while (node is Production)
             {
-                node = node.GetChildAt(node.GetChildCount() - 1);
+                node = node[node.ChildCount - 1];
             }
 
             return (Token)node;

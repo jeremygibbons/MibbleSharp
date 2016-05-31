@@ -32,7 +32,6 @@ namespace MibbleSharp.Value
     /// </summary>
     public class ValueReference : MibValue
     {
-
         /// <summary>
         /// The reference location.
         /// </summary>
@@ -127,7 +126,7 @@ namespace MibbleSharp.Value
                 }
                 catch (NotSupportedException e)
                 {
-                    throw new MibException(location, e.Message);
+                    throw new MibException(this.location, e.Message);
                 }
 
                 if (!(value is ObjectIdentifierValue))
@@ -139,14 +138,53 @@ namespace MibbleSharp.Value
             }
             else if (sym == null)
             {
-                message = "undefined symbol '" + name + "'";
-                throw new MibException(location, message);
+                message = "undefined symbol '" + this.name + "'";
+                throw new MibException(this.location, message);
             }
             else
             {
-                message = "referenced symbol '" + name + "' is not a value";
-                throw new MibException(location, message);
+                message = "referenced symbol '" + this.name + "' is not a value";
+                throw new MibException(this.location, message);
             }
+        }
+        
+        /// <summary>
+        /// Compares this ValueReference to another MibValue
+        /// </summary>
+        /// <param name="other">The value to compare against</param>
+        /// <returns>0 if the two are equal, a non-zero integer if not</returns>
+        public override int CompareTo(MibValue other)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Checks if this object equals another object. This method will
+        /// compare the string representations for equality.
+        /// </summary>
+        /// <param name="obj">The object to compare against</param>
+        /// <returns>True if the objects are equal, false if not</returns>
+        public override bool Equals(object obj)
+        {
+            return this.ToString().Equals(obj.ToString());
+        }
+
+        /// <summary>
+        /// Returns a hash code for this object
+        /// </summary>
+        /// <returns>A hash code for this object</returns>
+        public override int GetHashCode()
+        {
+            return this.ToString().GetHashCode();
+        }
+
+        /// <summary>
+        /// Get a string representation of the ValueReference
+        /// </summary>
+        /// <returns>A string representing ValueReference</returns>
+        public override string ToString()
+        {
+            return "ReferenceToValue(" + this.name + ")";
         }
         
         /// <summary>
@@ -174,45 +212,6 @@ namespace MibbleSharp.Value
             }
 
             return sym;
-        }
-
-        /// <summary>
-        /// Compares this ValueReference to another MibValue
-        /// </summary>
-        /// <param name="other">The value to compare against</param>
-        /// <returns>0 if the two are equal, a non-zero integer if not</returns>
-        public override int CompareTo(MibValue other)
-        {
-            throw new NotImplementedException();
-        }
-
-        /// <summary>
-        /// Checks if this object equals another object. This method will
-        /// compare the string representations for equality.
-        /// </summary>
-        /// <param name="obj">The object to compare against</param>
-        /// <returns>True if the objects are equal, false if not</returns>
-        public override bool Equals(object obj)
-        {
-            return this.ToString().Equals(obj.ToString());
-        }
-
-        /// <summary>
-        /// Returns a hashcode for this object
-        /// </summary>
-        /// <returns>A hashcode for this object</returns>
-        public override int GetHashCode()
-        {
-            return ToString().GetHashCode();
-        }
-
-        /// <summary>
-        /// Get a string representation of the ValueReference
-        /// </summary>
-        /// <returns>A string representing ValueReference</returns>
-        public override string ToString()
-        {
-            return "ReferenceToValue(" + name + ")";
         }
     }
 }

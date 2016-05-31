@@ -190,7 +190,7 @@ namespace PerCederberg.Grammatica.Runtime {
                     stringDfaMatcher.AddPattern(pattern);
                 } catch (Exception e) {
                     throw new ParserCreationException(
-                        ParserCreationException.ErrorType.INVALID_TOKEN,
+                        ParserCreationException.ErrorType.InvalidToken,
                         pattern.Name,
                         "error adding string token: " +
                         e.Message);
@@ -204,7 +204,7 @@ namespace PerCederberg.Grammatica.Runtime {
                         regExpMatcher.AddPattern(pattern);
                     } catch (Exception e) {
                         throw new ParserCreationException(
-                            ParserCreationException.ErrorType.INVALID_TOKEN,
+                            ParserCreationException.ErrorType.InvalidToken,
                             pattern.Name,
                             "regular expression contains error(s): " +
                             e.Message);
@@ -213,7 +213,7 @@ namespace PerCederberg.Grammatica.Runtime {
                 break;
             default:
                 throw new ParserCreationException(
-                    ParserCreationException.ErrorType.INVALID_TOKEN,
+                    ParserCreationException.ErrorType.InvalidToken,
                     pattern.Name,
                     "pattern type " + pattern.Type +
                     " is undefined");
@@ -235,7 +235,7 @@ namespace PerCederberg.Grammatica.Runtime {
          * @since 1.5
          */
         public void Reset(TextReader input) {
-            this.buffer.Dispose();
+            this.buffer.Reset();
             this.buffer = new ReaderBuffer(input);
             this.previousToken = null;
             this.lastMatch.Clear();
@@ -272,7 +272,7 @@ namespace PerCederberg.Grammatica.Runtime {
                     token = null;
                 } else if (token.Pattern.Error) {
                     throw new ParseException(
-                        ParseException.ErrorType.INVALID_TOKEN,
+                        ParseException.ErrorType.InvalidToken,
                         token.Pattern.ErrorMessage,
                         token.StartLine,
                         token.StartColumn);
@@ -313,7 +313,7 @@ namespace PerCederberg.Grammatica.Runtime {
                     line = buffer.LineNumber;
                     column = buffer.ColumnNumber;
                     throw new ParseException(
-                        ParseException.ErrorType.UNEXPECTED_CHAR,
+                        ParseException.ErrorType.UnexpectedChar,
                         buffer.Read(1),
                         line,
                         column);
