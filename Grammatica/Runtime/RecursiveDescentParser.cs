@@ -105,7 +105,7 @@ namespace PerCederberg.Grammatica.Runtime {
 
             // Performs production pattern checks
             base.Prepare();
-            SetInitialized(false);
+            this.Initialized = false;
 
             // Calculate production look-ahead sets
             e = GetPatterns().GetEnumerator();
@@ -114,7 +114,7 @@ namespace PerCederberg.Grammatica.Runtime {
             }
 
             // Set initialized flag
-            SetInitialized(true);
+            this.Initialized = true;
         }
 
         /**
