@@ -33,15 +33,6 @@ namespace PerCederberg.Grammatica.Runtime
         private TokenPattern pattern = null;
 
         /// <summary>
-        /// Clears the current match information.
-        /// </summary>
-        public void Clear()
-        {
-            length = 0;
-            pattern = null;
-        }
-
-        /// <summary>
         /// Gets the length of the longest match found (read-only).
         /// </summary>
         public int Length
@@ -61,6 +52,15 @@ namespace PerCederberg.Grammatica.Runtime
             {
                 return this.pattern;
             }
+        }
+ 
+        /// <summary>
+        /// Clears the current match information.
+        /// </summary>
+        public void Clear()
+        {
+            this.length = 0;
+            this.pattern = null;
         }
 
         /// <summary>

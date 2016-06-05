@@ -328,7 +328,7 @@ namespace PerCederberg.Grammatica.Runtime
 
             buffer.Append('"');
 
-            if (this.pattern.Type == TokenPattern.PatternType.REGEXP)
+            if (this.pattern.Type == TokenPattern.PatternType.RegExp)
             {
                 buffer.Append(" <");
                 buffer.Append(this.pattern.Name);

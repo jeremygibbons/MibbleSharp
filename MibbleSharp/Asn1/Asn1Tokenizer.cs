@@ -64,645 +64,645 @@ namespace MibbleSharp.Asn1
 
             pattern = new TokenPattern((int)Asn1Constants.DOT,
                                        "DOT",
-                                       TokenPattern.PatternType.STRING,
+                                       TokenPattern.PatternType.String,
                                        ".");
             AddPattern(pattern);
 
             pattern = new TokenPattern((int)Asn1Constants.DOUBLE_DOT,
                                        "DOUBLE_DOT",
-                                       TokenPattern.PatternType.STRING,
+                                       TokenPattern.PatternType.String,
                                        "..");
             AddPattern(pattern);
 
             pattern = new TokenPattern((int)Asn1Constants.TRIPLE_DOT,
                                        "TRIPLE_DOT",
-                                       TokenPattern.PatternType.STRING,
+                                       TokenPattern.PatternType.String,
                                        "...");
             AddPattern(pattern);
 
             pattern = new TokenPattern((int)Asn1Constants.COMMA,
                                        "COMMA",
-                                       TokenPattern.PatternType.STRING,
+                                       TokenPattern.PatternType.String,
                                        ",");
             AddPattern(pattern);
 
             pattern = new TokenPattern((int)Asn1Constants.SEMI_COLON,
                                        "SEMI_COLON",
-                                       TokenPattern.PatternType.STRING,
+                                       TokenPattern.PatternType.String,
                                        ";");
             AddPattern(pattern);
 
             pattern = new TokenPattern((int)Asn1Constants.LEFT_PAREN,
                                        "LEFT_PAREN",
-                                       TokenPattern.PatternType.STRING,
+                                       TokenPattern.PatternType.String,
                                        "(");
             AddPattern(pattern);
 
             pattern = new TokenPattern((int)Asn1Constants.RIGHT_PAREN,
                                        "RIGHT_PAREN",
-                                       TokenPattern.PatternType.STRING,
+                                       TokenPattern.PatternType.String,
                                        ")");
             AddPattern(pattern);
 
             pattern = new TokenPattern((int)Asn1Constants.LEFT_BRACE,
                                        "LEFT_BRACE",
-                                       TokenPattern.PatternType.STRING,
+                                       TokenPattern.PatternType.String,
                                        "{");
             AddPattern(pattern);
 
             pattern = new TokenPattern((int)Asn1Constants.RIGHT_BRACE,
                                        "RIGHT_BRACE",
-                                       TokenPattern.PatternType.STRING,
+                                       TokenPattern.PatternType.String,
                                        "}");
             AddPattern(pattern);
 
             pattern = new TokenPattern((int)Asn1Constants.LEFT_BRACKET,
                                        "LEFT_BRACKET",
-                                       TokenPattern.PatternType.STRING,
+                                       TokenPattern.PatternType.String,
                                        "[");
             AddPattern(pattern);
 
             pattern = new TokenPattern((int)Asn1Constants.RIGHT_BRACKET,
                                        "RIGHT_BRACKET",
-                                       TokenPattern.PatternType.STRING,
+                                       TokenPattern.PatternType.String,
                                        "]");
             AddPattern(pattern);
 
             pattern = new TokenPattern((int)Asn1Constants.MINUS,
                                        "MINUS",
-                                       TokenPattern.PatternType.STRING,
+                                       TokenPattern.PatternType.String,
                                        "-");
             AddPattern(pattern);
 
             pattern = new TokenPattern((int)Asn1Constants.LESS_THAN,
                                        "LESS_THAN",
-                                       TokenPattern.PatternType.STRING,
+                                       TokenPattern.PatternType.String,
                                        "<");
             AddPattern(pattern);
 
             pattern = new TokenPattern((int)Asn1Constants.VERTICAL_BAR,
                                        "VERTICAL_BAR",
-                                       TokenPattern.PatternType.STRING,
+                                       TokenPattern.PatternType.String,
                                        "|");
             AddPattern(pattern);
 
             pattern = new TokenPattern((int)Asn1Constants.DEFINITION,
                                        "DEFINITION",
-                                       TokenPattern.PatternType.STRING,
+                                       TokenPattern.PatternType.String,
                                        "::=");
             AddPattern(pattern);
 
             pattern = new TokenPattern((int)Asn1Constants.DEFINITIONS,
                                        "DEFINITIONS",
-                                       TokenPattern.PatternType.STRING,
+                                       TokenPattern.PatternType.String,
                                        "DEFINITIONS");
             AddPattern(pattern);
 
             pattern = new TokenPattern((int)Asn1Constants.EXPLICIT,
                                        "EXPLICIT",
-                                       TokenPattern.PatternType.STRING,
+                                       TokenPattern.PatternType.String,
                                        "EXPLICIT");
             AddPattern(pattern);
 
             pattern = new TokenPattern((int)Asn1Constants.IMPLICIT,
                                        "IMPLICIT",
-                                       TokenPattern.PatternType.STRING,
+                                       TokenPattern.PatternType.String,
                                        "IMPLICIT");
             AddPattern(pattern);
 
             pattern = new TokenPattern((int)Asn1Constants.TAGS,
                                        "TAGS",
-                                       TokenPattern.PatternType.STRING,
+                                       TokenPattern.PatternType.String,
                                        "TAGS");
             AddPattern(pattern);
 
             pattern = new TokenPattern((int)Asn1Constants.BEGIN,
                                        "BEGIN",
-                                       TokenPattern.PatternType.STRING,
+                                       TokenPattern.PatternType.String,
                                        "BEGIN");
             AddPattern(pattern);
 
             pattern = new TokenPattern((int)Asn1Constants.END,
                                        "END",
-                                       TokenPattern.PatternType.STRING,
+                                       TokenPattern.PatternType.String,
                                        "END");
             AddPattern(pattern);
 
             pattern = new TokenPattern((int)Asn1Constants.EXPORTS,
                                        "EXPORTS",
-                                       TokenPattern.PatternType.STRING,
+                                       TokenPattern.PatternType.String,
                                        "EXPORTS");
             AddPattern(pattern);
 
             pattern = new TokenPattern((int)Asn1Constants.IMPORTS,
                                        "IMPORTS",
-                                       TokenPattern.PatternType.STRING,
+                                       TokenPattern.PatternType.String,
                                        "IMPORTS");
             AddPattern(pattern);
 
             pattern = new TokenPattern((int)Asn1Constants.FROM,
                                        "FROM",
-                                       TokenPattern.PatternType.STRING,
+                                       TokenPattern.PatternType.String,
                                        "FROM");
             AddPattern(pattern);
 
             pattern = new TokenPattern((int)Asn1Constants.MACRO,
                                        "MACRO",
-                                       TokenPattern.PatternType.STRING,
+                                       TokenPattern.PatternType.String,
                                        "MACRO");
             AddPattern(pattern);
 
             pattern = new TokenPattern((int)Asn1Constants.INTEGER,
                                        "INTEGER",
-                                       TokenPattern.PatternType.STRING,
+                                       TokenPattern.PatternType.String,
                                        "INTEGER");
             AddPattern(pattern);
 
             pattern = new TokenPattern((int)Asn1Constants.REAL,
                                        "REAL",
-                                       TokenPattern.PatternType.STRING,
+                                       TokenPattern.PatternType.String,
                                        "REAL");
             AddPattern(pattern);
 
             pattern = new TokenPattern((int)Asn1Constants.BOOLEAN,
                                        "BOOLEAN",
-                                       TokenPattern.PatternType.STRING,
+                                       TokenPattern.PatternType.String,
                                        "BOOLEAN");
             AddPattern(pattern);
 
             pattern = new TokenPattern((int)Asn1Constants.NULL,
                                        "NULL",
-                                       TokenPattern.PatternType.STRING,
+                                       TokenPattern.PatternType.String,
                                        "NULL");
             AddPattern(pattern);
 
             pattern = new TokenPattern((int)Asn1Constants.BIT,
                                        "BIT",
-                                       TokenPattern.PatternType.STRING,
+                                       TokenPattern.PatternType.String,
                                        "BIT");
             AddPattern(pattern);
 
             pattern = new TokenPattern((int)Asn1Constants.OCTET,
                                        "OCTET",
-                                       TokenPattern.PatternType.STRING,
+                                       TokenPattern.PatternType.String,
                                        "OCTET");
             AddPattern(pattern);
 
             pattern = new TokenPattern((int)Asn1Constants.STRING,
                                        "STRING",
-                                       TokenPattern.PatternType.STRING,
+                                       TokenPattern.PatternType.String,
                                        "STRING");
             AddPattern(pattern);
 
             pattern = new TokenPattern((int)Asn1Constants.ENUMERATED,
                                        "ENUMERATED",
-                                       TokenPattern.PatternType.STRING,
+                                       TokenPattern.PatternType.String,
                                        "ENUMERATED");
             AddPattern(pattern);
 
             pattern = new TokenPattern((int)Asn1Constants.SEQUENCE,
                                        "SEQUENCE",
-                                       TokenPattern.PatternType.STRING,
+                                       TokenPattern.PatternType.String,
                                        "SEQUENCE");
             AddPattern(pattern);
 
             pattern = new TokenPattern((int)Asn1Constants.SET,
                                        "SET",
-                                       TokenPattern.PatternType.STRING,
+                                       TokenPattern.PatternType.String,
                                        "SET");
             AddPattern(pattern);
 
             pattern = new TokenPattern((int)Asn1Constants.OF,
                                        "OF",
-                                       TokenPattern.PatternType.STRING,
+                                       TokenPattern.PatternType.String,
                                        "OF");
             AddPattern(pattern);
 
             pattern = new TokenPattern((int)Asn1Constants.CHOICE,
                                        "CHOICE",
-                                       TokenPattern.PatternType.STRING,
+                                       TokenPattern.PatternType.String,
                                        "CHOICE");
             AddPattern(pattern);
 
             pattern = new TokenPattern((int)Asn1Constants.UNIVERSAL,
                                        "UNIVERSAL",
-                                       TokenPattern.PatternType.STRING,
+                                       TokenPattern.PatternType.String,
                                        "UNIVERSAL");
             AddPattern(pattern);
 
             pattern = new TokenPattern((int)Asn1Constants.APPLICATION,
                                        "APPLICATION",
-                                       TokenPattern.PatternType.STRING,
+                                       TokenPattern.PatternType.String,
                                        "APPLICATION");
             AddPattern(pattern);
 
             pattern = new TokenPattern((int)Asn1Constants.PRIVATE,
                                        "PRIVATE",
-                                       TokenPattern.PatternType.STRING,
+                                       TokenPattern.PatternType.String,
                                        "PRIVATE");
             AddPattern(pattern);
 
             pattern = new TokenPattern((int)Asn1Constants.ANY,
                                        "ANY",
-                                       TokenPattern.PatternType.STRING,
+                                       TokenPattern.PatternType.String,
                                        "ANY");
             AddPattern(pattern);
 
             pattern = new TokenPattern((int)Asn1Constants.DEFINED,
                                        "DEFINED",
-                                       TokenPattern.PatternType.STRING,
+                                       TokenPattern.PatternType.String,
                                        "DEFINED");
             AddPattern(pattern);
 
             pattern = new TokenPattern((int)Asn1Constants.BY,
                                        "BY",
-                                       TokenPattern.PatternType.STRING,
+                                       TokenPattern.PatternType.String,
                                        "BY");
             AddPattern(pattern);
 
             pattern = new TokenPattern((int)Asn1Constants.OBJECT,
                                        "OBJECT",
-                                       TokenPattern.PatternType.STRING,
+                                       TokenPattern.PatternType.String,
                                        "OBJECT");
             AddPattern(pattern);
 
             pattern = new TokenPattern((int)Asn1Constants.IDENTIFIER,
                                        "IDENTIFIER",
-                                       TokenPattern.PatternType.STRING,
+                                       TokenPattern.PatternType.String,
                                        "IDENTIFIER");
             AddPattern(pattern);
 
             pattern = new TokenPattern((int)Asn1Constants.INCLUDES,
                                        "INCLUDES",
-                                       TokenPattern.PatternType.STRING,
+                                       TokenPattern.PatternType.String,
                                        "INCLUDES");
             AddPattern(pattern);
 
             pattern = new TokenPattern((int)Asn1Constants.MIN,
                                        "MIN",
-                                       TokenPattern.PatternType.STRING,
+                                       TokenPattern.PatternType.String,
                                        "MIN");
             AddPattern(pattern);
 
             pattern = new TokenPattern((int)Asn1Constants.MAX,
                                        "MAX",
-                                       TokenPattern.PatternType.STRING,
+                                       TokenPattern.PatternType.String,
                                        "MAX");
             AddPattern(pattern);
 
             pattern = new TokenPattern((int)Asn1Constants.SIZE,
                                        "SIZE",
-                                       TokenPattern.PatternType.STRING,
+                                       TokenPattern.PatternType.String,
                                        "SIZE");
             AddPattern(pattern);
 
             pattern = new TokenPattern((int)Asn1Constants.WITH,
                                        "WITH",
-                                       TokenPattern.PatternType.STRING,
+                                       TokenPattern.PatternType.String,
                                        "WITH");
             AddPattern(pattern);
 
             pattern = new TokenPattern((int)Asn1Constants.COMPONENT,
                                        "COMPONENT",
-                                       TokenPattern.PatternType.STRING,
+                                       TokenPattern.PatternType.String,
                                        "COMPONENT");
             AddPattern(pattern);
 
             pattern = new TokenPattern((int)Asn1Constants.COMPONENTS,
                                        "COMPONENTS",
-                                       TokenPattern.PatternType.STRING,
+                                       TokenPattern.PatternType.String,
                                        "COMPONENTS");
             AddPattern(pattern);
 
             pattern = new TokenPattern((int)Asn1Constants.PRESENT,
                                        "PRESENT",
-                                       TokenPattern.PatternType.STRING,
+                                       TokenPattern.PatternType.String,
                                        "PRESENT");
             AddPattern(pattern);
 
             pattern = new TokenPattern((int)Asn1Constants.ABSENT,
                                        "ABSENT",
-                                       TokenPattern.PatternType.STRING,
+                                       TokenPattern.PatternType.String,
                                        "ABSENT");
             AddPattern(pattern);
 
             pattern = new TokenPattern((int)Asn1Constants.OPTIONAL,
                                        "OPTIONAL",
-                                       TokenPattern.PatternType.STRING,
+                                       TokenPattern.PatternType.String,
                                        "OPTIONAL");
             AddPattern(pattern);
 
             pattern = new TokenPattern((int)Asn1Constants.DEFAULT,
                                        "DEFAULT",
-                                       TokenPattern.PatternType.STRING,
+                                       TokenPattern.PatternType.String,
                                        "DEFAULT");
             AddPattern(pattern);
 
             pattern = new TokenPattern((int)Asn1Constants.TRUE,
                                        "TRUE",
-                                       TokenPattern.PatternType.STRING,
+                                       TokenPattern.PatternType.String,
                                        "TRUE");
             AddPattern(pattern);
 
             pattern = new TokenPattern((int)Asn1Constants.FALSE,
                                        "FALSE",
-                                       TokenPattern.PatternType.STRING,
+                                       TokenPattern.PatternType.String,
                                        "FALSE");
             AddPattern(pattern);
 
             pattern = new TokenPattern((int)Asn1Constants.PLUS_INFINITY,
                                        "PLUS_INFINITY",
-                                       TokenPattern.PatternType.STRING,
+                                       TokenPattern.PatternType.String,
                                        "PLUS-INFINITY");
             AddPattern(pattern);
 
             pattern = new TokenPattern((int)Asn1Constants.MINUS_INFINITY,
                                        "MINUS_INFINITY",
-                                       TokenPattern.PatternType.STRING,
+                                       TokenPattern.PatternType.String,
                                        "MINUS-INFINITY");
             AddPattern(pattern);
 
             pattern = new TokenPattern((int)Asn1Constants.MODULE_IDENTITY,
                                        "MODULE_IDENTITY",
-                                       TokenPattern.PatternType.STRING,
+                                       TokenPattern.PatternType.String,
                                        "MODULE-IDENTITY");
             AddPattern(pattern);
 
             pattern = new TokenPattern((int)Asn1Constants.OBJECT_IDENTITY,
                                        "OBJECT_IDENTITY",
-                                       TokenPattern.PatternType.STRING,
+                                       TokenPattern.PatternType.String,
                                        "OBJECT-IDENTITY");
             AddPattern(pattern);
 
             pattern = new TokenPattern((int)Asn1Constants.OBJECT_TYPE,
                                        "OBJECT_TYPE",
-                                       TokenPattern.PatternType.STRING,
+                                       TokenPattern.PatternType.String,
                                        "OBJECT-TYPE");
             AddPattern(pattern);
 
             pattern = new TokenPattern((int)Asn1Constants.NOTIFICATION_TYPE,
                                        "NOTIFICATION_TYPE",
-                                       TokenPattern.PatternType.STRING,
+                                       TokenPattern.PatternType.String,
                                        "NOTIFICATION-TYPE");
             AddPattern(pattern);
 
             pattern = new TokenPattern((int)Asn1Constants.TRAP_TYPE,
                                        "TRAP_TYPE",
-                                       TokenPattern.PatternType.STRING,
+                                       TokenPattern.PatternType.String,
                                        "TRAP-TYPE");
             AddPattern(pattern);
 
             pattern = new TokenPattern((int)Asn1Constants.TEXTUAL_CONVENTION,
                                        "TEXTUAL_CONVENTION",
-                                       TokenPattern.PatternType.STRING,
+                                       TokenPattern.PatternType.String,
                                        "TEXTUAL-CONVENTION");
             AddPattern(pattern);
 
             pattern = new TokenPattern((int)Asn1Constants.OBJECT_GROUP,
                                        "OBJECT_GROUP",
-                                       TokenPattern.PatternType.STRING,
+                                       TokenPattern.PatternType.String,
                                        "OBJECT-GROUP");
             AddPattern(pattern);
 
             pattern = new TokenPattern((int)Asn1Constants.NOTIFICATION_GROUP,
                                        "NOTIFICATION_GROUP",
-                                       TokenPattern.PatternType.STRING,
+                                       TokenPattern.PatternType.String,
                                        "NOTIFICATION-GROUP");
             AddPattern(pattern);
 
             pattern = new TokenPattern((int)Asn1Constants.MODULE_COMPLIANCE,
                                        "MODULE_COMPLIANCE",
-                                       TokenPattern.PatternType.STRING,
+                                       TokenPattern.PatternType.String,
                                        "MODULE-COMPLIANCE");
             AddPattern(pattern);
 
             pattern = new TokenPattern((int)Asn1Constants.AGENT_CAPABILITIES,
                                        "AGENT_CAPABILITIES",
-                                       TokenPattern.PatternType.STRING,
+                                       TokenPattern.PatternType.String,
                                        "AGENT-CAPABILITIES");
             AddPattern(pattern);
 
             pattern = new TokenPattern((int)Asn1Constants.LAST_UPDATED,
                                        "LAST_UPDATED",
-                                       TokenPattern.PatternType.STRING,
+                                       TokenPattern.PatternType.String,
                                        "LAST-UPDATED");
             AddPattern(pattern);
 
             pattern = new TokenPattern((int)Asn1Constants.ORGANIZATION,
                                        "ORGANIZATION",
-                                       TokenPattern.PatternType.STRING,
+                                       TokenPattern.PatternType.String,
                                        "ORGANIZATION");
             AddPattern(pattern);
 
             pattern = new TokenPattern((int)Asn1Constants.CONTACT_INFO,
                                        "CONTACT_INFO",
-                                       TokenPattern.PatternType.STRING,
+                                       TokenPattern.PatternType.String,
                                        "CONTACT-INFO");
             AddPattern(pattern);
 
             pattern = new TokenPattern((int)Asn1Constants.DESCRIPTION,
                                        "DESCRIPTION",
-                                       TokenPattern.PatternType.STRING,
+                                       TokenPattern.PatternType.String,
                                        "DESCRIPTION");
             AddPattern(pattern);
 
             pattern = new TokenPattern((int)Asn1Constants.REVISION,
                                        "REVISION",
-                                       TokenPattern.PatternType.STRING,
+                                       TokenPattern.PatternType.String,
                                        "REVISION");
             AddPattern(pattern);
 
             pattern = new TokenPattern((int)Asn1Constants.STATUS,
                                        "STATUS",
-                                       TokenPattern.PatternType.STRING,
+                                       TokenPattern.PatternType.String,
                                        "STATUS");
             AddPattern(pattern);
 
             pattern = new TokenPattern((int)Asn1Constants.REFERENCE,
                                        "REFERENCE",
-                                       TokenPattern.PatternType.STRING,
+                                       TokenPattern.PatternType.String,
                                        "REFERENCE");
             AddPattern(pattern);
 
             pattern = new TokenPattern((int)Asn1Constants.SYNTAX,
                                        "SYNTAX",
-                                       TokenPattern.PatternType.STRING,
+                                       TokenPattern.PatternType.String,
                                        "SYNTAX");
             AddPattern(pattern);
 
             pattern = new TokenPattern((int)Asn1Constants.BITS,
                                        "BITS",
-                                       TokenPattern.PatternType.STRING,
+                                       TokenPattern.PatternType.String,
                                        "BITS");
             AddPattern(pattern);
 
             pattern = new TokenPattern((int)Asn1Constants.UNITS,
                                        "UNITS",
-                                       TokenPattern.PatternType.STRING,
+                                       TokenPattern.PatternType.String,
                                        "UNITS");
             AddPattern(pattern);
 
             pattern = new TokenPattern((int)Asn1Constants.ACCESS,
                                        "ACCESS",
-                                       TokenPattern.PatternType.STRING,
+                                       TokenPattern.PatternType.String,
                                        "ACCESS");
             AddPattern(pattern);
 
             pattern = new TokenPattern((int)Asn1Constants.MAX_ACCESS,
                                        "MAX_ACCESS",
-                                       TokenPattern.PatternType.STRING,
+                                       TokenPattern.PatternType.String,
                                        "MAX-ACCESS");
             AddPattern(pattern);
 
             pattern = new TokenPattern((int)Asn1Constants.MIN_ACCESS,
                                        "MIN_ACCESS",
-                                       TokenPattern.PatternType.STRING,
+                                       TokenPattern.PatternType.String,
                                        "MIN-ACCESS");
             AddPattern(pattern);
 
             pattern = new TokenPattern((int)Asn1Constants.INDEX,
                                        "INDEX",
-                                       TokenPattern.PatternType.STRING,
+                                       TokenPattern.PatternType.String,
                                        "INDEX");
             AddPattern(pattern);
 
             pattern = new TokenPattern((int)Asn1Constants.AUGMENTS,
                                        "AUGMENTS",
-                                       TokenPattern.PatternType.STRING,
+                                       TokenPattern.PatternType.String,
                                        "AUGMENTS");
             AddPattern(pattern);
 
             pattern = new TokenPattern((int)Asn1Constants.IMPLIED,
                                        "IMPLIED",
-                                       TokenPattern.PatternType.STRING,
+                                       TokenPattern.PatternType.String,
                                        "IMPLIED");
             AddPattern(pattern);
 
             pattern = new TokenPattern((int)Asn1Constants.DEFVAL,
                                        "DEFVAL",
-                                       TokenPattern.PatternType.STRING,
+                                       TokenPattern.PatternType.String,
                                        "DEFVAL");
             AddPattern(pattern);
 
             pattern = new TokenPattern((int)Asn1Constants.OBJECTS,
                                        "OBJECTS",
-                                       TokenPattern.PatternType.STRING,
+                                       TokenPattern.PatternType.String,
                                        "OBJECTS");
             AddPattern(pattern);
 
             pattern = new TokenPattern((int)Asn1Constants.ENTERPRISE,
                                        "ENTERPRISE",
-                                       TokenPattern.PatternType.STRING,
+                                       TokenPattern.PatternType.String,
                                        "ENTERPRISE");
             AddPattern(pattern);
 
             pattern = new TokenPattern((int)Asn1Constants.VARIABLES,
                                        "VARIABLES",
-                                       TokenPattern.PatternType.STRING,
+                                       TokenPattern.PatternType.String,
                                        "VARIABLES");
             AddPattern(pattern);
 
             pattern = new TokenPattern((int)Asn1Constants.DISPLAY_HINT,
                                        "DISPLAY_HINT",
-                                       TokenPattern.PatternType.STRING,
+                                       TokenPattern.PatternType.String,
                                        "DISPLAY-HINT");
             AddPattern(pattern);
 
             pattern = new TokenPattern((int)Asn1Constants.NOTIFICATIONS,
                                        "NOTIFICATIONS",
-                                       TokenPattern.PatternType.STRING,
+                                       TokenPattern.PatternType.String,
                                        "NOTIFICATIONS");
             AddPattern(pattern);
 
             pattern = new TokenPattern((int)Asn1Constants.MODULE,
                                        "MODULE",
-                                       TokenPattern.PatternType.STRING,
+                                       TokenPattern.PatternType.String,
                                        "MODULE");
             AddPattern(pattern);
 
             pattern = new TokenPattern((int)Asn1Constants.MANDATORY_GROUPS,
                                        "MANDATORY_GROUPS",
-                                       TokenPattern.PatternType.STRING,
+                                       TokenPattern.PatternType.String,
                                        "MANDATORY-GROUPS");
             AddPattern(pattern);
 
             pattern = new TokenPattern((int)Asn1Constants.GROUP,
                                        "GROUP",
-                                       TokenPattern.PatternType.STRING,
+                                       TokenPattern.PatternType.String,
                                        "GROUP");
             AddPattern(pattern);
 
             pattern = new TokenPattern((int)Asn1Constants.WRITE_SYNTAX,
                                        "WRITE_SYNTAX",
-                                       TokenPattern.PatternType.STRING,
+                                       TokenPattern.PatternType.String,
                                        "WRITE-SYNTAX");
             AddPattern(pattern);
 
             pattern = new TokenPattern((int)Asn1Constants.PRODUCT_RELEASE,
                                        "PRODUCT_RELEASE",
-                                       TokenPattern.PatternType.STRING,
+                                       TokenPattern.PatternType.String,
                                        "PRODUCT-RELEASE");
             AddPattern(pattern);
 
             pattern = new TokenPattern((int)Asn1Constants.SUPPORTS,
                                        "SUPPORTS",
-                                       TokenPattern.PatternType.STRING,
+                                       TokenPattern.PatternType.String,
                                        "SUPPORTS");
             AddPattern(pattern);
 
             pattern = new TokenPattern((int)Asn1Constants.VARIATION,
                                        "VARIATION",
-                                       TokenPattern.PatternType.STRING,
+                                       TokenPattern.PatternType.String,
                                        "VARIATION");
             AddPattern(pattern);
 
             pattern = new TokenPattern((int)Asn1Constants.CREATION_REQUIRES,
                                        "CREATION_REQUIRES",
-                                       TokenPattern.PatternType.STRING,
+                                       TokenPattern.PatternType.String,
                                        "CREATION-REQUIRES");
             AddPattern(pattern);
 
             pattern = new TokenPattern((int)Asn1Constants.BINARY_STRING,
                                        "BINARY_STRING",
-                                       TokenPattern.PatternType.REGEXP,
+                                       TokenPattern.PatternType.RegExp,
                                        "'[0-1]*'(B|b)");
             AddPattern(pattern);
 
             pattern = new TokenPattern((int)Asn1Constants.HEXADECIMAL_STRING,
                                        "HEXADECIMAL_STRING",
-                                       TokenPattern.PatternType.REGEXP,
+                                       TokenPattern.PatternType.RegExp,
                                        "'[0-9A-Fa-f]*'(H|h)");
             AddPattern(pattern);
 
             pattern = new TokenPattern((int)Asn1Constants.QUOTED_STRING,
                                        "QUOTED_STRING",
-                                       TokenPattern.PatternType.REGEXP,
+                                       TokenPattern.PatternType.RegExp,
                                        "\"([^\"]|\"\")*\"");
             AddPattern(pattern);
 
             pattern = new TokenPattern((int)Asn1Constants.IDENTIFIER_STRING,
                                        "IDENTIFIER_STRING",
-                                       TokenPattern.PatternType.REGEXP,
+                                       TokenPattern.PatternType.RegExp,
                                        //"[a-zA-Z][a-zA-Z0-9-_]*");
                                        "[a-zA-Z][-_a-zA-Z0-9]*");
             AddPattern(pattern);
 
             pattern = new TokenPattern((int)Asn1Constants.NUMBER_STRING,
                                        "NUMBER_STRING",
-                                       TokenPattern.PatternType.REGEXP,
+                                       TokenPattern.PatternType.RegExp,
                                        "[0-9]+");
             AddPattern(pattern);
 
             pattern = new TokenPattern((int)Asn1Constants.WHITESPACE,
                                        "WHITESPACE",
-                                       TokenPattern.PatternType.REGEXP,
+                                       TokenPattern.PatternType.RegExp,
                                        "[ \\t\\n\\r\\f\\x0b\\x17\\x18\\x19\\x1a]+");
             pattern.Ignore = true;
             AddPattern(pattern);
 
             pattern = new TokenPattern((int)Asn1Constants.COMMENT,
                                        "COMMENT",
-                                       TokenPattern.PatternType.REGEXP,
+                                       TokenPattern.PatternType.RegExp,
                                        "--([^\\n\\r-]|-[^\\n\\r-])*(--|-?[\\n\\r])");
             pattern.Ignore = true;
             AddPattern(pattern);

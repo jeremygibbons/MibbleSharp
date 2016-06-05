@@ -1,47 +1,52 @@
-﻿//
-// MibValidator.cs
-// 
-// This work is free software; you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published
-// by the Free Software Foundation; either version 2 of the License,
-// or (at your option) any later version.
-//
-// This work is distributed in the hope that it will be useful, but
-// WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
-// General Public License for more details.
-// 
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
-// USA
-// 
-// Original Java code Copyright (c) 2004-2016 Per Cederberg. All
-// rights reserved.
-// C# conversion Copyright (c) 2016 Jeremy Gibbons. All rights reserved
-//
-
-using System;
-using System.Collections;
-using System.IO;
-using System.Collections.Generic;
-using System.Text;
-using MibbleSharp;
+﻿// <copyright file="Program.cs" company="None">
+//    <para>
+//    This work is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published
+//    by the Free Software Foundation; either version 2 of the License,
+//    or (at your option) any later version.</para>
+//    <para>
+//    This work is distributed in the hope that it will be useful, but
+//    WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+//    General Public License for more details.</para>
+//    <para>
+//    You should have received a copy of the GNU General Public License
+//    along with this program; if not, write to the Free Software
+//    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
+//    USA</para>
+//    Original Java code Copyright (c) 2004-2016 Per Cederberg. All
+//    rights reserved.
+//    C# conversion Copyright (c) 2016 Jeremy Gibbons. All rights reserved
+// </copyright>
 
 namespace MibbleValidator
 {
-    class Program
+    using System;
+    using System.Collections;
+    using System.Collections.Generic;
+    using System.IO;
+    using System.Text;
+    using MibbleSharp;
+
+    /// <summary>
+    /// A test program for validating MIBs
+    /// </summary>
+    public class Program
     {
-        /**
-         * The command-line help output.
-         */
-        private static readonly string COMMAND_HELP =
+        /// <summary>
+        /// The command-line help output.
+        /// </summary>
+        private static readonly string CommandHelp =
         "Validates a set of SNMP MIB files. This program comes with\n" +
         "ABSOLUTELY NO WARRANTY; for details see the LICENSE.txt file.\n" +
         "\n" +
         "Syntax: MibbleValidator <file(s) or URL(s)>";
 
-        static void Main(string[] args)
+        /// <summary>
+        /// The main program function
+        /// </summary>
+        /// <param name="args">The array of program arguments</param>
+        public static void Main(string[] args)
         {
             MibLoader loader = new MibLoader();
             Mib mib = null;
@@ -53,9 +58,10 @@ namespace MibbleValidator
             // Check command-line arguments
             if (args.Length < 1)
             {
-                printHelp("No file(s) specified");
+                PrintHelp("No file(s) specified");
                 return;
             }
+
             foreach (string arg in args)
             {
                 try
@@ -68,23 +74,24 @@ namespace MibbleValidator
                     {
                         if (Directory.Exists(arg))
                         {
-                            addMibs(arg, queue);
+                            AddMibs(arg, queue);
                             continue;
                         }
+
                         if (!File.Exists(arg))
                         {
                             Console.Out.WriteLine("Warning: Skipping " + arg +
                                                ": file not found");
                             continue;
                         }
-                        queue.Add(arg);
 
+                        queue.Add(arg);
                     }
                 }
                 catch (UriFormatException e)
                 {
-                    System.Console.Out.WriteLine("Warning: Skipping " + arg +
-                                       ": " + e.Message);
+                    System.Console.Out.WriteLine(
+                        "Warning: Skipping " + arg + ": " + e.Message);
                 }
             }
 
@@ -113,12 +120,15 @@ namespace MibbleValidator
                             loader.RemoveAllDirs();
                             loader.AddDir(Directory.GetParent(file).FullName);
                         }
+
                         using (StreamReader sr = new StreamReader(file))
                         {
                             mib = loader.Load(sr);
                         }
                     }
+
                     Console.Out.WriteLine("[OK]");
+
                     if (mib.Log.WarningCount > 0)
                     {
                         mib.Log.PrintTo(Console.Out);
@@ -128,13 +138,13 @@ namespace MibbleValidator
                 catch (FileNotFoundException e)
                 {
                     Console.Out.WriteLine("[FAILED]");
-                    printError(src.ToString(), e);
+                    PrintError(src.ToString(), e);
                     errors++;
                 }
                 catch (IOException e)
                 {
                     Console.Out.WriteLine("[FAILED]");
-                    printError(src.ToString(), e);
+                    PrintError(src.ToString(), e);
                     errors++;
                 }
                 catch (MibLoaderException e)
@@ -143,6 +153,7 @@ namespace MibbleValidator
                     e.Log.PrintTo(Console.Out);
                     errors++;
                 }
+
                 i++;
             }
 
@@ -162,14 +173,13 @@ namespace MibbleValidator
             return;
         }
 
-        /**
-      * Prints command-line help information.
-      *
-      * @param error          an optional error message, or null
-      */
-        private static void printHelp(string error)
+        /// <summary>
+        /// Prints command line help information
+        /// </summary>
+        /// <param name="error">An optional error message</param>
+        private static void PrintHelp(string error)
         {
-            Console.Error.WriteLine(COMMAND_HELP);
+            Console.Error.WriteLine(CommandHelp);
             Console.Error.WriteLine();
             if (error != null)
             {
@@ -179,13 +189,12 @@ namespace MibbleValidator
             }
         }
 
-        /**
-         * Prints a URL not found error message.
-         *
-         * @param url            the URL not found
-         * @param e              the detailed exception
-         */
-        private static void printError(string url, IOException e)
+        /// <summary>
+        /// Prints a URL not found error message
+        /// </summary>
+        /// <param name="url">The URL that was not found</param>
+        /// <param name="e">The detailed exception</param>
+        private static void PrintError(string url, IOException e)
         {
             StringBuilder builder = new StringBuilder();
 
@@ -195,16 +204,13 @@ namespace MibbleValidator
             Console.Out.WriteLine(builder.ToString());
         }
 
-
-        /**
-         * Adds all MIB files from a directory to the specified queue.
-         *
-         * @param dir            the directory to check
-         * @param queue          the queue to add files to
-         *
-         * @since 2.9
-         */
-        private static void addMibs(string dir, ArrayList queue)
+        /// <summary>
+        /// Adds all MIB files from a directory to the
+        /// specified queue
+        /// </summary>
+        /// <param name="dir">The directory to check</param>
+        /// <param name="queue">The queue to add the files to</param>
+        private static void AddMibs(string dir, ArrayList queue)
         {
             IEnumerable<string> files = Directory.EnumerateFiles(dir);
 
@@ -216,21 +222,29 @@ namespace MibbleValidator
                 }
                 else if (Directory.Exists(file))
                 {
-                    addMibs(file, queue);
+                    AddMibs(file, queue);
                 }
-                else if (isMib(file))
+                else if (IsMib(file))
                 {
                     queue.Add(file);
                 }
             }
         }
 
-        private static bool isMib(string file)
+        /// <summary>
+        /// Checks if a file is likely a MIB by looking at the first few lines 
+        /// of the file and searching for the beginnings of a MIB definition.
+        /// </summary>
+        /// <param name="file">The file to check</param>
+        /// <returns>True if the file is likely a MIB, false if not.</returns>
+        private static bool IsMib(string file)
         {
             StringBuilder buffer = new StringBuilder();
 
             if (!File.Exists(file))
+            {
                 return false;
+            }
 
             try
             {
@@ -256,4 +270,3 @@ namespace MibbleValidator
         }
     }
 }
-

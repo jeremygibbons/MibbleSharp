@@ -188,7 +188,7 @@ namespace PerCederberg.Grammatica.Runtime
         {
             switch (pattern.Type)
             {
-                case TokenPattern.PatternType.STRING:
+                case TokenPattern.PatternType.String:
                     try
                     {
                         this.stringDfaMatcher.AddPattern(pattern);
@@ -203,7 +203,7 @@ namespace PerCederberg.Grammatica.Runtime
                     }
 
                     break;
-                case TokenPattern.PatternType.REGEXP:
+                case TokenPattern.PatternType.RegExp:
                     try
                     {
                         this.nfaMatcher.AddPattern(pattern);
@@ -571,7 +571,7 @@ namespace PerCederberg.Grammatica.Runtime
             /// </exception>
             public override void AddPattern(TokenPattern pattern)
             {
-                if (pattern.Type == TokenPattern.PatternType.STRING)
+                if (pattern.Type == TokenPattern.PatternType.String)
                 {
                     this.automaton.AddTextMatch(pattern.Pattern, this.IgnoreCase, pattern);
                 }
