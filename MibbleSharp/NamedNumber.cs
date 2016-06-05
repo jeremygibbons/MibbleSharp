@@ -146,16 +146,17 @@ namespace MibbleSharp
         /// <summary>
         /// Gets an integer value of the number
         /// </summary>
-        /// <exception cref="System.OverflowException">
-        /// If the number is larger than can fit in an <c>Int32</c>
-        /// </exception>
+        /// <remarks>
+        /// The property will return <c>int.MaxValue</c> if the value
+        /// of number is larger than that.
+        /// </remarks>
         public int IntValue
         {
             get
             {
                 if (this.number > int.MaxValue)
                 {
-                    throw new System.OverflowException();
+                    return int.MaxValue;
                 }
                     
                 return (int)this.number;
