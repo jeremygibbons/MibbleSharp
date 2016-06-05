@@ -142,7 +142,7 @@ namespace MibbleSharp
         /// <returns>The node to add to the parse tree</returns>
         public override Node ExitBinaryString(Token node)
         {
-            string str = node.GetImage();
+            string str = node.Image;
 
             str = str.Substring(1, str.Length - 2);
             long value = Convert.ToInt64(str, 2);
@@ -160,7 +160,7 @@ namespace MibbleSharp
         /// <returns>The node to add to the parse tree</returns>
         public override Node ExitHexadecimalString(Token node)
         {
-            string str = node.GetImage();
+            string str = node.Image;
 
             str = str.Substring(1, str.Length - 2);
             long value = Convert.ToInt64(str, 16);
@@ -178,7 +178,7 @@ namespace MibbleSharp
         /// <returns>The node to add to the parse tree</returns>
         public override Node ExitQuotedString(Token node)
         {
-            string str = node.GetImage();
+            string str = node.Image;
             int pos;
 
             str = str.Substring(1, str.Length - 1);
@@ -203,7 +203,7 @@ namespace MibbleSharp
         /// <returns>The node to add to the parse tree</returns>
         public override Node ExitIdentifierString(Token node)
         {
-            node.Values.Add(node.GetImage());
+            node.Values.Add(node.Image);
             return node;
         }
 
@@ -215,7 +215,7 @@ namespace MibbleSharp
         /// <returns>The node to add to the parse tree</returns>
         public override Node ExitNumberString(Token node)
         {
-            string str = node.GetImage();
+            string str = node.Image;
             BigInteger value = BigInteger.Parse(str);
             node.Values.Add(value);
             return node;
@@ -1747,7 +1747,7 @@ namespace MibbleSharp
         /// <returns>The node to add to the parse tree</returns>
         public override Node ExitDefinedMacroName(Production node)
         {
-            node.Values.Add(((Token)node[0]).GetImage());
+            node.Values.Add(((Token)node[0]).Image);
             return node;
         }
 

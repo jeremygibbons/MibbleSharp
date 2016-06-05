@@ -490,8 +490,8 @@ namespace PerCederberg.Grammatica.Runtime
                 throw new ParseException(
                     ParseException.ErrorType.UnexpectedEOF,
                     null,
-                    this.tokenizer.GetCurrentLine(),
-                    this.tokenizer.GetCurrentColumn());
+                    this.tokenizer.CurrentLine,
+                    this.tokenizer.CurrentColumn);
             }
         }
 
@@ -677,7 +677,7 @@ namespace PerCederberg.Grammatica.Runtime
             string name,
             ProductionPatternElement elem)
         {
-            if (elem.IsProduction() && this.GetPattern(elem.Id) == null)
+            if (elem.IsProduction && this.GetPattern(elem.Id) == null)
             {
                 string msg = "an undefined production pattern id (" + elem.Id +
                     ") is referenced";
@@ -787,7 +787,7 @@ namespace PerCederberg.Grammatica.Runtime
                 buffer.Append("[");
             }
 
-            if (elem.IsToken())
+            if (elem.IsToken)
             {
                 buffer.Append(this.GetTokenDescription(elem.Id));
             }

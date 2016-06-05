@@ -1,6 +1,9 @@
 <StyleCopSettings Version="105">
   <GlobalSettings>
     <CollectionProperty Name="RecognizedWords">
+      <Value>Grammatica</Value>
+      <Value>look-ahead</Value>
+      <Value>look-aheads</Value>
       <Value>regexp</Value>
       <Value>tokenizer</Value>
     </CollectionProperty>

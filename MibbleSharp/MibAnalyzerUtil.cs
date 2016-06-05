@@ -112,7 +112,7 @@ namespace MibbleSharp
                     comment += "\n\n";
                 }
 
-                token = token.GetPreviousToken();
+                token = token.Previous;
                 comment += GetCommentsAfter(token);
             }
 
@@ -151,27 +151,27 @@ namespace MibbleSharp
 
             if (token != null)
             {
-                token = token.GetPreviousToken();
+                token = token.Previous;
             }
 
             while (token != null)
             {
                 if (token.Id == (int)Asn1Constants.WHITESPACE)
                 {
-                    comments.Add(GetLineBreaks(token.GetImage()));
+                    comments.Add(GetLineBreaks(token.Image));
                 }
                 else if (token.Id == (int)Asn1Constants.COMMENT &&
                     !commentTokens.Contains(token))
                 {
                     commentTokens.Add(token);
-                    comments.Add(token.GetImage().Substring(2).Trim());
+                    comments.Add(token.Image.Substring(2).Trim());
                 }
                 else
                 {
                     break;
                 }
 
-                token = token.GetPreviousToken();
+                token = token.Previous;
             }
 
             for (int i = comments.Count - 1; i >= 0; i--)
@@ -198,27 +198,27 @@ namespace MibbleSharp
 
             if (token != null)
             {
-                token = token.GetNextToken();
+                token = token.Next;
             }
 
             while (token != null)
             {
                 if (token.Id == (int)Asn1Constants.WHITESPACE)
                 {
-                    comment.Append(GetLineBreaks(token.GetImage()));
+                    comment.Append(GetLineBreaks(token.Image));
                 }
                 else if (token.Id == (int)Asn1Constants.COMMENT &&
                     !commentTokens.Contains(token))
                 {
                     commentTokens.Add(token);
-                    comment.Append(token.GetImage().Substring(2).Trim());
+                    comment.Append(token.Image.Substring(2).Trim());
                 }
                 else
                 {
                     break;
                 }
 
-                token = token.GetNextToken();
+                token = token.Next;
             }
 
             res = comment.ToString().Trim();
@@ -245,11 +245,11 @@ namespace MibbleSharp
                     !commentTokens.Contains(token))
                 {
                     commentTokens.Add(token);
-                    comment.Append(token.GetImage().Substring(2).Trim());
+                    comment.Append(token.Image.Substring(2).Trim());
                     comment.Append("\n");
                 }
 
-                token = token.GetNextToken();
+                token = token.Next;
             }
 
             res = comment.ToString().Trim();
@@ -270,7 +270,7 @@ namespace MibbleSharp
                 return null;
             }
 
-            token = last.GetNextToken();
+            token = last.Next;
             while (token != null)
             {
                 switch ((Asn1Constants)token.Id)
@@ -293,7 +293,7 @@ namespace MibbleSharp
                         return null;
                 }
 
-                token = token.GetNextToken();
+                token = token.Next;
             }
 
             return null;
