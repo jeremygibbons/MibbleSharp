@@ -142,7 +142,7 @@ namespace MibbleBrowser
             }
 
             // Create new node
-            string name = oiv.Symbol.Name + " (" + oiv.Value + ")";
+            string name = oiv.Name + " (" + oiv.Value + ")";
             MibNode newNode = new MibNode(name, oiv);
             parent.Nodes.Add(newNode);
             nodes.Add(oiv.Symbol, newNode);

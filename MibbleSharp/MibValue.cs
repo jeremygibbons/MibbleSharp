@@ -52,7 +52,7 @@ namespace MibbleSharp
         /// <summary>
         /// Gets the value name
         /// </summary>
-        public string Name
+        public virtual string Name
         {
             get
             {

@@ -617,13 +617,15 @@ namespace MibbleSharp
             this.sourceQueue.Clear();
             this.sourceQueue.Add(src);
 
+            int position = mibs.Count;
+
             log = this.LoadQueue();
             if (log.ErrorCount > 0)
             {
                 throw new MibLoaderException(log);
             }
 
-            return this.mibs.Last();
+            return this.mibs[position];
         }
 
         /// <summary>

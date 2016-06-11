@@ -185,6 +185,17 @@ namespace MibbleSharp.Value
         }
         
         /// <summary>
+        /// Gets the name of the OIV
+        /// </summary>
+        public override string Name
+        {
+            get
+            {
+                return this.name;
+            }
+        }
+
+        /// <summary>
         /// Gets the number of child object identifier values.
         /// </summary>
         public int ChildCount
