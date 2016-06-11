@@ -1223,7 +1223,15 @@ namespace MibbleSharp
 
             // Add upper end point (or null)
             child = this.GetChildAt(node, node.ChildCount - 1);
-            node.Values.Add(child.Values[0]);
+            if(child.Values.Count == 0)
+            {
+                node.Values.Add(null);
+            }
+            else
+            {
+                node.Values.Add(child.Values[0]);
+            }
+            
 
             // Check for strict upper end point
             child = this.GetChildAt(node, node.ChildCount - 2);

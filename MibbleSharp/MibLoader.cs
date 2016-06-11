@@ -96,8 +96,8 @@ namespace MibbleSharp
         /// </summary>
         public MibLoader()
         {
-            this.AddDir("mibs/iana");
-            this.AddDir("mibs/ietf");
+            this.AddDir("..\\..\\..\\MibbleSharp\\mibs\\iana");
+            this.AddDir("..\\..\\..\\MibbleSharp\\mibs\\ietf");
         }
 
         /// <summary>
@@ -503,8 +503,9 @@ namespace MibbleSharp
 
             this.sourceQueue.Clear();
 
-            foreach (var name in this.nameQueue)
+            for(int i = 0; i < nameQueue.Count; i++)
             {
+                string name = nameQueue[i];
                 MibSource src = this.Locate(name);
                 if (src == null)
                 {

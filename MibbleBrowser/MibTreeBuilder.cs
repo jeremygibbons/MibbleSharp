@@ -47,11 +47,11 @@ namespace MibbleBrowser
             Mib mib;
 
             this.Initialize();
-
+            /*
             if(!File.Exists(filename))
             {
                 throw new FileNotFoundException();
-            }
+            }*/
 
             if (!loader.HasDir(Directory.GetParent(filename).FullName))
             {
@@ -59,9 +59,16 @@ namespace MibbleBrowser
                 loader.AddDir(Directory.GetParent(filename).FullName);
             }
 
-            using (StreamReader sr = new StreamReader(filename))
+            if(File.Exists(filename))
             {
-                mib = loader.Load(sr);
+                using (StreamReader sr = new StreamReader(filename))
+                {
+                    mib = loader.Load(sr);
+                }
+            }
+            else
+            {
+                mib = loader.Load(filename);
             }
 
             this.treeView.BeginUpdate();

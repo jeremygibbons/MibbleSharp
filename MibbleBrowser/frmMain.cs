@@ -16,6 +16,8 @@ namespace MibbleBrowser
         {
             InitializeComponent();
             mibTreeBuilder = new MibTreeBuilder(treeMibs);
+            mibTreeBuilder.LoadMibFile("RFC1213-MIB");
+            mibTreeBuilder.LoadMibFile("HOST-RESOURCES-MIB");
         }
 
         private void splitContainer1_Panel1_Paint(object sender, PaintEventArgs e)
