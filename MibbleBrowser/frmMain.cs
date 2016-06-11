@@ -44,5 +44,22 @@ namespace MibbleBrowser
                 mibTreeBuilder.LoadMibFile(file);
             }
         }
+
+        private void treeMibs_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
+        {
+            MibNode n = e.Node as MibNode;
+            if (n == null)
+            {
+                return;
+            }
+
+            string t = string.Join(
+                "\r\n", 
+                n.Description
+                .Split(new char[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries)
+                .Select(s => s.Trim()));
+
+            txtNodeInfo.Text = t;
+        }
     }
 }

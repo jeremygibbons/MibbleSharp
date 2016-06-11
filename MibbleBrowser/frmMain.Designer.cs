@@ -42,6 +42,7 @@
             this.colOID = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.colValue = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.openFileDialogMain = new System.Windows.Forms.OpenFileDialog();
+            this.txtNodeInfo = new System.Windows.Forms.TextBox();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -106,6 +107,7 @@
             // 
             // splitContainer1.Panel1
             // 
+            this.splitContainer1.Panel1.Controls.Add(this.txtNodeInfo);
             this.splitContainer1.Panel1.Controls.Add(this.treeMibs);
             // 
             // splitContainer1.Panel2
@@ -119,8 +121,9 @@
             // 
             this.treeMibs.Location = new System.Drawing.Point(3, 3);
             this.treeMibs.Name = "treeMibs";
-            this.treeMibs.Size = new System.Drawing.Size(262, 419);
+            this.treeMibs.Size = new System.Drawing.Size(262, 284);
             this.treeMibs.TabIndex = 0;
+            this.treeMibs.NodeMouseClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.treeMibs_NodeMouseClick);
             // 
             // dataGridView1
             // 
@@ -150,6 +153,15 @@
             // 
             this.openFileDialogMain.FileName = "openFileDialogMain";
             // 
+            // txtNodeInfo
+            // 
+            this.txtNodeInfo.Location = new System.Drawing.Point(2, 293);
+            this.txtNodeInfo.Multiline = true;
+            this.txtNodeInfo.Name = "txtNodeInfo";
+            this.txtNodeInfo.ReadOnly = true;
+            this.txtNodeInfo.Size = new System.Drawing.Size(262, 129);
+            this.txtNodeInfo.TabIndex = 1;
+            // 
             // frmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -162,6 +174,7 @@
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             this.splitContainer1.Panel1.ResumeLayout(false);
+            this.splitContainer1.Panel1.PerformLayout();
             this.splitContainer1.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
@@ -185,6 +198,7 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn colOID;
         private System.Windows.Forms.DataGridViewTextBoxColumn colValue;
         private System.Windows.Forms.OpenFileDialog openFileDialogMain;
+        private System.Windows.Forms.TextBox txtNodeInfo;
     }
 }
 
