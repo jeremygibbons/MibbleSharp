@@ -29,6 +29,7 @@ namespace MibbleSharp
     using MibbleSharp.Asn1;
     using MibbleSharp.Snmp;
     using MibbleSharp.Type;
+    using MibbleSharp.Util;
     using MibbleSharp.Value;
     using PerCederberg.Grammatica.Runtime;
 
@@ -500,7 +501,17 @@ namespace MibbleSharp
             }
 
             // Create type symbol
-            type = (MibType)this.GetValue(this.GetChildAt(node, 2), 0);
+            type = this.GetValue(this.GetChildAt(node, 2), 0) as MibType;
+
+            if (type == null)
+            {
+                throw new ParseException(
+                    ParseException.ErrorType.Analysis,
+                    "Expecting MibType",
+                    node.StartLine,
+                    node.StartColumn);
+            }
+
             symbol = new MibTypeSymbol(
                 this.GetLocation(node),
                 this.currentMib,
@@ -736,11 +747,30 @@ namespace MibbleSharp
             Node child;
 
             child = this.GetChildAt(node, node.ChildCount - 1);
-            type = (MibType)this.GetValue(child, 0);
+            type = this.GetValue(child, 0) as MibType;
+
+            if (type == null)
+            {
+                throw new ParseException(
+                    ParseException.ErrorType.Analysis, 
+                    "Expecting MibType", 
+                    node.StartLine, 
+                    node.StartColumn);
+            }
+
             if (node.ChildCount == 4)
             {
                 child = this.GetChildAt(node, 1);
-                c = (IConstraint)this.GetValue(child, 0);
+                c = this.GetValue(child, 0) as IConstraint;
+
+                if (c == null)
+                {
+                    throw new ParseException(
+                        ParseException.ErrorType.Analysis,
+                        "Expecting constraint",
+                        child.StartLine,
+                        child.StartColumn);
+                }
             }
 
             node.Values.Add(new SequenceOfType(type, c));
@@ -1162,6 +1192,7 @@ namespace MibbleSharp
                     strictLower,
                     upper,
                     strictUpper);
+                node.Values.Add(vrc);
             }
 
             node.Values.Add(constraint);
@@ -1540,9 +1571,18 @@ namespace MibbleSharp
             IList<ValueReference> values = new List<ValueReference>();
             NamedNumber number;
 
-            for (int i = 0; i < components.Count; i++)
+            foreach (var comp in components)
             {
-                number = (NamedNumber)components[i];
+                number = comp as NamedNumber;
+                if(number == null)
+                {
+                    throw new ParseException(
+                        ParseException.ErrorType.UnexpectedToken, 
+                        "Expecting NamedNumber", 
+                        node.StartLine, 
+                        node.StartColumn);
+                }
+
                 if (number.HasNumber)
                 {
                     bits.Set((int)number.Number, true);
@@ -1842,11 +1882,9 @@ namespace MibbleSharp
             string sref = null;
             object index = null;
             MibValue defVal = null;
-            Node child;
 
-            for (int i = 0; i < node.ChildCount; i++)
+            foreach (var child in node.Children)
             {
-                child = node[i];
                 switch ((Asn1Constants)child.Id)
                 {
                     case Asn1Constants.SNMP_SYNTAX_PART:
@@ -1921,12 +1959,10 @@ namespace MibbleSharp
             SnmpStatus status = null;
             string desc = null;
             string sref = null;
-            Node child;
 
             this.currentMib.SmiVersion = 2;
-            for (int i = 0; i < node.ChildCount; i++)
+            foreach (var child in node.Children)
             {
-                child = node[i];
                 switch ((Asn1Constants)child.Id)
                 {
                     case Asn1Constants.SNMP_OBJECTS_PART:
@@ -1963,11 +1999,9 @@ namespace MibbleSharp
             System.Collections.ArrayList vars = new System.Collections.ArrayList();
             string desc = null;
             string sref = null;
-            Node child;
 
-            for (int i = 0; i < node.ChildCount; i++)
+            foreach (var child in node.Children)
             {
-                child = node[i];
                 switch ((Asn1Constants)child.Id)
                 {
                     case Asn1Constants.SNMP_ENTERPRISE_PART:
@@ -2000,12 +2034,10 @@ namespace MibbleSharp
             string desc = null;
             string sref = null;
             MibType syntax = null;
-            Node child;
 
             this.currentMib.SmiVersion = 2;
-            for (int i = 0; i < node.ChildCount; i++)
+            foreach (var child in node.Children)
             {
-                child = node[i];
                 switch ((Asn1Constants)child.Id)
                 {
                     case Asn1Constants.SNMP_DISPLAY_PART:
@@ -2114,12 +2146,10 @@ namespace MibbleSharp
             string desc = null;
             string sref = null;
             System.Collections.ArrayList modules = new System.Collections.ArrayList();
-            Node child;
 
             this.currentMib.SmiVersion = 2;
-            for (int i = 0; i < node.ChildCount; i++)
+            foreach (var child in node.Children)
             {
-                child = node[i];
                 switch ((Asn1Constants)child.Id)
                 {
                     case Asn1Constants.SNMP_STATUS_PART:
@@ -2157,12 +2187,10 @@ namespace MibbleSharp
             string desc = null;
             string sref = null;
             System.Collections.ArrayList modules = new System.Collections.ArrayList();
-            Node child;
 
             this.currentMib.SmiVersion = 2;
-            for (int i = 0; i < node.ChildCount; i++)
+            foreach (var child in node.Children)
             {
-                child = node[i];
                 switch ((Asn1Constants)child.Id)
                 {
                     case Asn1Constants.SNMP_PRODUCT_RELEASE_PART:
@@ -2513,11 +2541,9 @@ namespace MibbleSharp
             System.Collections.ArrayList groups = new System.Collections.ArrayList();
             System.Collections.ArrayList modules = new System.Collections.ArrayList();
             string comment = null;
-            Node child;
 
-            for (int i = 0; i < node.ChildCount; i++)
+            foreach (var child in node.Children)
             {
-                child = node[i];
                 switch ((Asn1Constants)child.Id)
                 {
                     case Asn1Constants.MODULE:
@@ -2618,11 +2644,9 @@ namespace MibbleSharp
             MibType write = null;
             SnmpAccess access = null;
             string desc = null;
-            Node child;
 
-            for (int i = 0; i < node.ChildCount; i++)
+            foreach (var child in node.Children)
             {
-                child = node[i];
                 switch ((Asn1Constants)child.Id)
                 {
                     case Asn1Constants.VALUE:
@@ -2678,11 +2702,9 @@ namespace MibbleSharp
             string module = null;
             System.Collections.ArrayList groups = null;
             System.Collections.ArrayList vars = new System.Collections.ArrayList();
-            Node child;
 
-            for (int i = 0; i < node.ChildCount; i++)
+            foreach (var child in node.Children)
             {
-                child = node[i];
                 switch ((Asn1Constants)child.Id)
                 {
                     case Asn1Constants.SNMP_MODULE_IMPORT:
@@ -2744,11 +2766,9 @@ namespace MibbleSharp
             ArrayList reqs = new ArrayList();
             MibValue defVal = null;
             string desc = null;
-            Node child;
 
-            for (int i = 0; i < node.ChildCount; i++)
+            foreach (var child in node.Children)
             {
-                child = node[i];
                 switch ((Asn1Constants)child.Id)
                 {
                     case Asn1Constants.VALUE:

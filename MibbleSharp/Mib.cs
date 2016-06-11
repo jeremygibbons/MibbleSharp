@@ -538,6 +538,8 @@ namespace MibbleSharp
             MibValueSymbol root = null;
             MibValueSymbol parent;
 
+            root = this.symbolList.Where(s => s is MibValueSymbol).FirstOrDefault() as MibValueSymbol;
+            /*
             foreach (MibSymbol m in this.symbolList)
             {
                 root = m as MibValueSymbol;
@@ -546,7 +548,7 @@ namespace MibbleSharp
                     break;
                 }
             }
-
+            */
             while (root != null && (parent = root.Parent) != null)
             {
                 if (!root.Mib.Equals(parent.Mib))

@@ -159,7 +159,7 @@ namespace MibbleSharp.Type
                     }
                     else
                     {
-                        val = 0; // TODO: need to handle this diferently
+                        val = 0; // TODO: need to handle this differently
                     }
                 }
                 else
