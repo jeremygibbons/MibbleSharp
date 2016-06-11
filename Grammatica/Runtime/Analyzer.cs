@@ -233,7 +233,7 @@ namespace PerCederberg.Grammatica.Runtime
         /// <exception cref="ParseException">
         /// If either the node or the value was null
         /// </exception>
-        protected object GetValue(Node node, int pos)
+        public object GetValue(Node node, int pos)
         {
             object value;
 
