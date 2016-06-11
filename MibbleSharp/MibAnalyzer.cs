@@ -530,11 +530,9 @@ namespace MibbleSharp
             string name = null;
             object value = null;
             FileLocation loc = this.GetLocation(node);
-            Node child;
 
-            for (int i = 0; i < node.ChildCount; i++)
+            foreach(var child in node.Children)
             {
-                child = node[i];
                 switch ((Asn1Constants)child.Id)
                 {
                     case Asn1Constants.MODULE_REFERENCE:
@@ -1017,11 +1015,9 @@ namespace MibbleSharp
         public override Node ExitNamedNumberList(Production node)
         {
             MibValueSymbol symbol;
-            Node child;
 
-            for (int i = 0; i < node.ChildCount; i++)
+            foreach (var child in node.Children)
             {
-                child = node[i];
                 if (child.Id == (int)Asn1Constants.NAMED_NUMBER)
                 {
                     symbol = (MibValueSymbol)child.Values[0];
@@ -1123,7 +1119,7 @@ namespace MibbleSharp
             NumberValue upper = null;
             bool strictLower = false;
             bool strictUpper = false;
-            object obj;
+            IConstraint constraint;
 
             if (list.Count == 0)
             {
@@ -1136,32 +1132,31 @@ namespace MibbleSharp
             else if (list.Count == 1)
             {
                 lower = (NumberValue)list[0];
-                obj = new ValueConstraint(this.GetLocation(node), lower);
+                constraint = new ValueConstraint(this.GetLocation(node), lower);
             }
             else
             {
-                for (int i = 0; i < list.Count; i++)
+                foreach (var item in list )
                 {
-                    obj = list[i];
-                    if (obj is bool && strictLower == false)
+                    if (item is bool && strictLower == false)
                     {
-                        strictLower = (bool)obj;
+                        strictLower = (bool)item;
                     }
-                    else if (obj is bool)
+                    else if (item is bool)
                     {
-                        strictUpper = (bool)obj;
+                        strictUpper = (bool)item;
                     }
                     else if (strictLower == false)
                     {
-                        lower = (NumberValue)obj;
+                        lower = (NumberValue)item;
                     }
                     else
                     {
-                        upper = (NumberValue)obj;
+                        upper = (NumberValue)item;
                     }
                 }
 
-                obj = new ValueRangeConstraint(
+                constraint = new ValueRangeConstraint(
                     this.GetLocation(node),
                     lower,
                     strictLower,
@@ -1169,7 +1164,7 @@ namespace MibbleSharp
                     strictUpper);
             }
 
-            node.Values.Add(obj);
+            node.Values.Add(constraint);
             return node;
         }
 
