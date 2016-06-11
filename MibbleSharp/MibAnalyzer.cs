@@ -1192,7 +1192,7 @@ namespace MibbleSharp
                     strictLower,
                     upper,
                     strictUpper);
-                node.Values.Add(vrc);
+                node.Values.Add(constraint);
             }
 
             node.Values.Add(constraint);
