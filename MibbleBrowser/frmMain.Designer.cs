@@ -37,12 +37,16 @@
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.txtNodeInfo = new System.Windows.Forms.TextBox();
             this.treeMibs = new System.Windows.Forms.TreeView();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
             this.colOID = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.colValue = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.openFileDialogMain = new System.Windows.Forms.OpenFileDialog();
-            this.txtNodeInfo = new System.Windows.Forms.TextBox();
+            this.devicesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.addNewDeviceToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.manageDevicesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.comboBox1 = new System.Windows.Forms.ComboBox();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -55,6 +59,7 @@
             // 
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fIleToolStripMenuItem,
+            this.devicesToolStripMenuItem,
             this.optionsToolStripMenuItem,
             this.helpToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
@@ -101,8 +106,10 @@
             // 
             // splitContainer1
             // 
-            this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.splitContainer1.Location = new System.Drawing.Point(0, 24);
+            this.splitContainer1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.splitContainer1.Location = new System.Drawing.Point(0, 55);
             this.splitContainer1.Name = "splitContainer1";
             // 
             // splitContainer1.Panel1
@@ -113,12 +120,26 @@
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.dataGridView1);
-            this.splitContainer1.Size = new System.Drawing.Size(799, 425);
+            this.splitContainer1.Size = new System.Drawing.Size(799, 394);
             this.splitContainer1.SplitterDistance = 266;
             this.splitContainer1.TabIndex = 1;
             // 
+            // txtNodeInfo
+            // 
+            this.txtNodeInfo.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtNodeInfo.Location = new System.Drawing.Point(2, 293);
+            this.txtNodeInfo.Multiline = true;
+            this.txtNodeInfo.Name = "txtNodeInfo";
+            this.txtNodeInfo.ReadOnly = true;
+            this.txtNodeInfo.Size = new System.Drawing.Size(262, 129);
+            this.txtNodeInfo.TabIndex = 1;
+            // 
             // treeMibs
             // 
+            this.treeMibs.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.treeMibs.Location = new System.Drawing.Point(3, 3);
             this.treeMibs.Name = "treeMibs";
             this.treeMibs.Size = new System.Drawing.Size(262, 284);
@@ -127,6 +148,9 @@
             // 
             // dataGridView1
             // 
+            this.dataGridView1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.dataGridView1.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
             this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridView1.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
@@ -153,20 +177,41 @@
             // 
             this.openFileDialogMain.FileName = "openFileDialogMain";
             // 
-            // txtNodeInfo
+            // devicesToolStripMenuItem
             // 
-            this.txtNodeInfo.Location = new System.Drawing.Point(2, 293);
-            this.txtNodeInfo.Multiline = true;
-            this.txtNodeInfo.Name = "txtNodeInfo";
-            this.txtNodeInfo.ReadOnly = true;
-            this.txtNodeInfo.Size = new System.Drawing.Size(262, 129);
-            this.txtNodeInfo.TabIndex = 1;
+            this.devicesToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.addNewDeviceToolStripMenuItem,
+            this.manageDevicesToolStripMenuItem});
+            this.devicesToolStripMenuItem.Name = "devicesToolStripMenuItem";
+            this.devicesToolStripMenuItem.Size = new System.Drawing.Size(59, 20);
+            this.devicesToolStripMenuItem.Text = "Devices";
+            // 
+            // addNewDeviceToolStripMenuItem
+            // 
+            this.addNewDeviceToolStripMenuItem.Name = "addNewDeviceToolStripMenuItem";
+            this.addNewDeviceToolStripMenuItem.Size = new System.Drawing.Size(168, 22);
+            this.addNewDeviceToolStripMenuItem.Text = "Add new device";
+            // 
+            // manageDevicesToolStripMenuItem
+            // 
+            this.manageDevicesToolStripMenuItem.Name = "manageDevicesToolStripMenuItem";
+            this.manageDevicesToolStripMenuItem.Size = new System.Drawing.Size(168, 22);
+            this.manageDevicesToolStripMenuItem.Text = "Manage devices...";
+            // 
+            // comboBox1
+            // 
+            this.comboBox1.FormattingEnabled = true;
+            this.comboBox1.Location = new System.Drawing.Point(3, 27);
+            this.comboBox1.Name = "comboBox1";
+            this.comboBox1.Size = new System.Drawing.Size(264, 21);
+            this.comboBox1.TabIndex = 2;
             // 
             // frmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(799, 449);
+            this.Controls.Add(this.comboBox1);
             this.Controls.Add(this.splitContainer1);
             this.Controls.Add(this.menuStrip1);
             this.Name = "frmMain";
@@ -199,6 +244,10 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn colValue;
         private System.Windows.Forms.OpenFileDialog openFileDialogMain;
         private System.Windows.Forms.TextBox txtNodeInfo;
+        private System.Windows.Forms.ToolStripMenuItem devicesToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem addNewDeviceToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem manageDevicesToolStripMenuItem;
+        private System.Windows.Forms.ComboBox comboBox1;
     }
 }
 

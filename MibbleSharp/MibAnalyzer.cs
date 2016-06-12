@@ -163,7 +163,7 @@ namespace MibbleSharp
         {
             string str = node.Image;
 
-            str = str.Substring(1, str.Length - 2);
+            str = str.Substring(1, str.Length - 3);
             long value = Convert.ToInt64(str, 16);
             node.Values.Add((BigInteger)value);
             node.Values.Add(str);
