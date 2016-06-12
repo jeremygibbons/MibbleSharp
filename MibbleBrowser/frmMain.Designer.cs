@@ -37,8 +37,6 @@
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this.txtNodeInfo = new System.Windows.Forms.TextBox();
-            this.treeMibs = new System.Windows.Forms.TreeView();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
             this.colOID = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.colValue = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -47,12 +45,19 @@
             this.addNewDeviceToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.manageDevicesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.comboBox1 = new System.Windows.Forms.ComboBox();
+            this.splitContainer2 = new System.Windows.Forms.SplitContainer();
+            this.treeMibs = new System.Windows.Forms.TreeView();
+            this.txtNodeInfo = new System.Windows.Forms.TextBox();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).BeginInit();
+            this.splitContainer2.Panel1.SuspendLayout();
+            this.splitContainer2.Panel2.SuspendLayout();
+            this.splitContainer2.SuspendLayout();
             this.SuspendLayout();
             // 
             // menuStrip1
@@ -114,8 +119,7 @@
             // 
             // splitContainer1.Panel1
             // 
-            this.splitContainer1.Panel1.Controls.Add(this.txtNodeInfo);
-            this.splitContainer1.Panel1.Controls.Add(this.treeMibs);
+            this.splitContainer1.Panel1.Controls.Add(this.splitContainer2);
             // 
             // splitContainer1.Panel2
             // 
@@ -123,28 +127,6 @@
             this.splitContainer1.Size = new System.Drawing.Size(799, 394);
             this.splitContainer1.SplitterDistance = 266;
             this.splitContainer1.TabIndex = 1;
-            // 
-            // txtNodeInfo
-            // 
-            this.txtNodeInfo.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtNodeInfo.Location = new System.Drawing.Point(2, 293);
-            this.txtNodeInfo.Multiline = true;
-            this.txtNodeInfo.Name = "txtNodeInfo";
-            this.txtNodeInfo.ReadOnly = true;
-            this.txtNodeInfo.Size = new System.Drawing.Size(262, 129);
-            this.txtNodeInfo.TabIndex = 1;
-            // 
-            // treeMibs
-            // 
-            this.treeMibs.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.treeMibs.Location = new System.Drawing.Point(3, 3);
-            this.treeMibs.Name = "treeMibs";
-            this.treeMibs.Size = new System.Drawing.Size(262, 284);
-            this.treeMibs.TabIndex = 0;
-            this.treeMibs.NodeMouseClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.treeMibs_NodeMouseClick);
             // 
             // dataGridView1
             // 
@@ -206,6 +188,49 @@
             this.comboBox1.Size = new System.Drawing.Size(264, 21);
             this.comboBox1.TabIndex = 2;
             // 
+            // splitContainer2
+            // 
+            this.splitContainer2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.splitContainer2.Location = new System.Drawing.Point(3, 3);
+            this.splitContainer2.Name = "splitContainer2";
+            this.splitContainer2.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            // 
+            // splitContainer2.Panel1
+            // 
+            this.splitContainer2.Panel1.Controls.Add(this.treeMibs);
+            // 
+            // splitContainer2.Panel2
+            // 
+            this.splitContainer2.Panel2.Controls.Add(this.txtNodeInfo);
+            this.splitContainer2.Size = new System.Drawing.Size(260, 388);
+            this.splitContainer2.SplitterDistance = 242;
+            this.splitContainer2.TabIndex = 2;
+            // 
+            // treeMibs
+            // 
+            this.treeMibs.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.treeMibs.Location = new System.Drawing.Point(-1, 3);
+            this.treeMibs.Name = "treeMibs";
+            this.treeMibs.Size = new System.Drawing.Size(262, 236);
+            this.treeMibs.TabIndex = 1;
+            this.treeMibs.NodeMouseClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.treeMibs_NodeMouseClick);
+            // 
+            // txtNodeInfo
+            // 
+            this.txtNodeInfo.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtNodeInfo.Location = new System.Drawing.Point(-1, 3);
+            this.txtNodeInfo.Multiline = true;
+            this.txtNodeInfo.Name = "txtNodeInfo";
+            this.txtNodeInfo.ReadOnly = true;
+            this.txtNodeInfo.Size = new System.Drawing.Size(262, 136);
+            this.txtNodeInfo.TabIndex = 2;
+            // 
             // frmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -219,11 +244,15 @@
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             this.splitContainer1.Panel1.ResumeLayout(false);
-            this.splitContainer1.Panel1.PerformLayout();
             this.splitContainer1.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
+            this.splitContainer2.Panel1.ResumeLayout(false);
+            this.splitContainer2.Panel2.ResumeLayout(false);
+            this.splitContainer2.Panel2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).EndInit();
+            this.splitContainer2.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -238,16 +267,17 @@
         private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem loadMIBToolStripMenuItem;
         private System.Windows.Forms.SplitContainer splitContainer1;
-        private System.Windows.Forms.TreeView treeMibs;
         private System.Windows.Forms.DataGridView dataGridView1;
         private System.Windows.Forms.DataGridViewTextBoxColumn colOID;
         private System.Windows.Forms.DataGridViewTextBoxColumn colValue;
         private System.Windows.Forms.OpenFileDialog openFileDialogMain;
-        private System.Windows.Forms.TextBox txtNodeInfo;
         private System.Windows.Forms.ToolStripMenuItem devicesToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem addNewDeviceToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem manageDevicesToolStripMenuItem;
         private System.Windows.Forms.ComboBox comboBox1;
+        private System.Windows.Forms.SplitContainer splitContainer2;
+        private System.Windows.Forms.TreeView treeMibs;
+        private System.Windows.Forms.TextBox txtNodeInfo;
     }
 }
 
