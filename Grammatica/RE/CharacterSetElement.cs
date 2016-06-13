@@ -15,9 +15,9 @@
 
 namespace PerCederberg.Grammatica.Runtime.RE
 {
-    using System;
-    using System.Collections;
+    using System.Collections.Generic;
     using System.IO;
+    using System.Linq;
     using System.Text;
     using PerCederberg.Grammatica.Runtime;
 
@@ -85,10 +85,19 @@ namespace PerCederberg.Grammatica.Runtime.RE
         private bool inverted;
 
         /// <summary>
-        /// The character set content. This array may contain either
-        /// range objects or Character objects.
+        /// The character set content, for individual characters.
         /// </summary>
-        private ArrayList contents = new ArrayList();
+        private List<char> charContents = new List<char>();
+
+        /// <summary>
+        /// The character set content, for character ranges.
+        /// </summary>
+        private List<Range> rangeContents = new List<Range>();
+
+        /// <summary>
+        /// The character set content, for special character sets
+        /// </summary>
+        private List<CharacterSetElement> charSetContents = new List<CharacterSetElement>();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CharacterSetElement"/> class.
@@ -107,7 +116,7 @@ namespace PerCederberg.Grammatica.Runtime.RE
         /// <param name="c">The character to add</param>
         public void AddCharacter(char c)
         {
-            this.contents.Add(c);
+            this.charContents.Add(c);
         }
 
         /// <summary>
@@ -138,7 +147,7 @@ namespace PerCederberg.Grammatica.Runtime.RE
         /// <param name="max">The maximum character value</param>
         public void AddRange(char min, char max)
         {
-            this.contents.Add(new Range(min, max));
+            this.rangeContents.Add(new Range(min, max));
         }
 
         /// <summary>
@@ -147,7 +156,7 @@ namespace PerCederberg.Grammatica.Runtime.RE
         /// <param name="elem">The character set to add</param>
         public void AddCharacterSet(CharacterSetElement elem)
         {
-            this.contents.Add(elem);
+            this.charSetContents.Add(elem);
         }
 
         /// <summary>
@@ -263,9 +272,19 @@ namespace PerCederberg.Grammatica.Runtime.RE
                 buffer.Append("[");
             }
 
-            foreach (var obj in this.contents)
+            foreach(var c in this.charContents)
             {
-                buffer.Append(obj);
+                buffer.Append(c);
+            }
+
+            foreach (var r in this.rangeContents)
+            {
+                buffer.Append(r);
+            }
+
+            foreach (var cs in this.charSetContents)
+            {
+                buffer.Append(cs);
             }
 
             buffer.Append("]");
@@ -383,32 +402,18 @@ namespace PerCederberg.Grammatica.Runtime.RE
         /// <returns>True if the character is in the set, false if not</returns>
         private bool InUserSet(char value)
         {
-            char c;
-            Range r;
-            CharacterSetElement e;
+            if (this.charContents.Where(c => c == value).Any()) {
+                return true;
+            }
 
-            foreach (var obj in this.contents)
+            if (this.rangeContents.Where(r => r.Inside(value)).Any())
             {
-                if (obj is char)
-                {
-                    c = (char)obj;
-                    if (c == value)
-                    {
-                        return true;
-                    }
-                }
+                return true;
+            }
 
-                r = obj as Range;
-                if (r != null && r.Inside(value))
-                {
-                    return true;
-                }
-
-                e = obj as CharacterSetElement;
-                if (e != null && e.InSet(value))
-                {
-                    return true;
-                }
+            if (this.charSetContents.Where(cs => cs.InSet(value)).Any())
+            {
+                return true;
             }
 
             return false;

@@ -16,6 +16,8 @@
 namespace PerCederberg.Grammatica.Runtime
 {
     using System.Collections;
+    using System.Collections.Generic;
+    using System.Linq;
     using System.Text;
 
     /// <summary>
@@ -48,7 +50,7 @@ namespace PerCederberg.Grammatica.Runtime
         /// <summary>
         /// The list of production pattern alternatives.
         /// </summary>
-        private ArrayList alternatives;
+        private List<ProductionPatternAlternative> alternatives;
 
         /// <summary>
         /// The default production pattern alternative. This alternative
@@ -72,7 +74,7 @@ namespace PerCederberg.Grammatica.Runtime
             this.id = id;
             this.name = name;
             this.synthetic = false;
-            this.alternatives = new ArrayList();
+            this.alternatives = new List<ProductionPatternAlternative>();
             this.defaultAlt = -1;
             this.lookAhead = null;
         }
@@ -145,18 +147,7 @@ namespace PerCederberg.Grammatica.Runtime
         {
             get
             {
-                ProductionPatternAlternative alt;
-
-                for (int i = 0; i < this.alternatives.Count; i++)
-                {
-                    alt = (ProductionPatternAlternative)this.alternatives[i];
-                    if (alt.IsLeftRecursive)
-                    {
-                        return true;
-                    }
-                }
-
-                return false;
+                return this.alternatives.Where(a => a.IsLeftRecursive).Any();
             }
         }
 
@@ -169,18 +160,7 @@ namespace PerCederberg.Grammatica.Runtime
         {
             get
             {
-                ProductionPatternAlternative alt;
-
-                for (int i = 0; i < this.alternatives.Count; i++)
-                {
-                    alt = (ProductionPatternAlternative)this.alternatives[i];
-                    if (alt.IsRightRecursive)
-                    {
-                        return true;
-                    }
-                }
-
-                return false;
+                return this.alternatives.Where(a => a.IsRightRecursive).Any();
             }
         }
 
@@ -193,18 +173,7 @@ namespace PerCederberg.Grammatica.Runtime
         {
             get
             {
-                ProductionPatternAlternative alt;
-
-                for (int i = 0; i < this.alternatives.Count; i++)
-                {
-                    alt = (ProductionPatternAlternative)this.alternatives[i];
-                    if (alt.IsMatchingEmpty)
-                    {
-                        return true;
-                    }
-                }
-
-                return false;
+                return this.alternatives.Where(a => a.IsMatchingEmpty).Any();
             }
         }
 
@@ -238,8 +207,7 @@ namespace PerCederberg.Grammatica.Runtime
             {
                 if (this.defaultAlt >= 0)
                 {
-                    object obj = this.alternatives[this.defaultAlt];
-                    return (ProductionPatternAlternative)obj;
+                    return this.alternatives[this.defaultAlt];
                 }
                 else
                 {
@@ -269,7 +237,7 @@ namespace PerCederberg.Grammatica.Runtime
         {
             get
             {
-                return (ProductionPatternAlternative)this.alternatives[index];
+                return this.alternatives[index];
             }
         }
 
