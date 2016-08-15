@@ -503,9 +503,9 @@ namespace MibbleSharp
 
             this.sourceQueue.Clear();
 
-            for(int i = 0; i < nameQueue.Count; i++)
+            for (int i = 0; i < this.nameQueue.Count; i++)
             {
-                string name = nameQueue[i];
+                string name = this.nameQueue[i];
                 MibSource src = this.Locate(name);
                 if (src == null)
                 {
@@ -617,7 +617,7 @@ namespace MibbleSharp
             this.sourceQueue.Clear();
             this.sourceQueue.Add(src);
 
-            int position = mibs.Count;
+            int position = this.mibs.Count;
 
             log = this.LoadQueue();
             if (log.ErrorCount > 0)

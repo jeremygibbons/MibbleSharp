@@ -142,6 +142,46 @@ namespace PerCederberg.Grammatica.Runtime
         }
 
         /// <summary>
+        /// Returns the node value at the specified position. If either
+        /// the node or the value is null, this method will throw a parse
+        /// exception with the internal error type.
+        /// </summary>
+        /// <param name="node">The parse tree node</param>
+        /// <param name="pos">The child position</param>
+        /// <returns>The value object</returns>
+        /// <exception cref="ParseException">
+        /// If either the node or the value was null
+        /// </exception>
+        public object GetValue(Node node, int pos)
+        {
+            object value;
+
+            if (node == null)
+            {
+                throw new ParseException(
+                    ParseException.ErrorType.Internal,
+                    "attempt to read 'null' parse tree node",
+                    -1,
+                    -1);
+            }
+
+            value = node.Values[pos];
+
+            if (value == null)
+            {
+                string msg = "node '" + node.Name + "' has no value at " +
+                    "position " + pos;
+                throw new ParseException(
+                    ParseException.ErrorType.Internal,
+                    msg,
+                    node.StartLine,
+                    node.StartColumn);
+            }
+
+            return value;
+        }
+
+        /// <summary>
         /// Returns a child at the specified position. If either the node
         /// or the child node is null, this method will throw a parse
         /// exception with the internal error type.
@@ -220,46 +260,6 @@ namespace PerCederberg.Grammatica.Runtime
                 "node '" + node.Name + "' has no child with id " + id,
                 node.StartLine,
                 node.StartColumn);
-        }
-
-        /// <summary>
-        /// Returns the node value at the specified position. If either
-        /// the node or the value is null, this method will throw a parse
-        /// exception with the internal error type.
-        /// </summary>
-        /// <param name="node">The parse tree node</param>
-        /// <param name="pos">The child position</param>
-        /// <returns>The value object</returns>
-        /// <exception cref="ParseException">
-        /// If either the node or the value was null
-        /// </exception>
-        public object GetValue(Node node, int pos)
-        {
-            object value;
-
-            if (node == null)
-            {
-                throw new ParseException(
-                    ParseException.ErrorType.Internal,
-                    "attempt to read 'null' parse tree node",
-                    -1,
-                    -1);
-            }
-
-            value = node.Values[pos];
-
-            if (value == null)
-            {
-                string msg = "node '" + node.Name + "' has no value at " +
-                    "position " + pos;
-                throw new ParseException(
-                    ParseException.ErrorType.Internal,
-                    msg,
-                    node.StartLine,
-                    node.StartColumn);
-            }
-
-            return value;
         }
 
         /// <summary>

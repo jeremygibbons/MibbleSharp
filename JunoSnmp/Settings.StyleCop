@@ -1,0 +1,23 @@
+<StyleCopSettings Version="105">
+  <GlobalSettings>
+    <CollectionProperty Name="RecognizedWords">
+      <Value>auth</Value>
+      <Value>hashcode</Value>
+      <Value>oid</Value>
+      <Value>OID</Value>
+      <Value>Passphrase</Value>
+      <Value>Priv</Value>
+      <Value>snmp</Value>
+      <Value>Snmp</Value>
+      <Value>SNMPv1</Value>
+      <Value>Usm</Value>
+    </CollectionProperty>
+  </GlobalSettings>
+  <Analyzers>
+    <Analyzer AnalyzerId="StyleCop.CSharp.DocumentationRules">
+      <AnalyzerSettings>
+        <BooleanProperty Name="IncludeFields">False</BooleanProperty>
+      </AnalyzerSettings>
+    </Analyzer>
+  </Analyzers>
+</StyleCopSettings>

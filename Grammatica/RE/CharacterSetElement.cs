@@ -272,7 +272,7 @@ namespace PerCederberg.Grammatica.Runtime.RE
                 buffer.Append("[");
             }
 
-            foreach(var c in this.charContents)
+            foreach (var c in this.charContents)
             {
                 buffer.Append(c);
             }
@@ -402,7 +402,8 @@ namespace PerCederberg.Grammatica.Runtime.RE
         /// <returns>True if the character is in the set, false if not</returns>
         private bool InUserSet(char value)
         {
-            if (this.charContents.Where(c => c == value).Any()) {
+            if (this.charContents.Where(c => c == value).Any())
+            {
                 return true;
             }
 

@@ -542,7 +542,7 @@ namespace MibbleSharp
             object value = null;
             FileLocation loc = this.GetLocation(node);
 
-            foreach(var child in node.Children)
+            foreach (var child in node.Children)
             {
                 switch ((Asn1Constants)child.Id)
                 {
@@ -1166,7 +1166,7 @@ namespace MibbleSharp
             }
             else
             {
-                foreach (var item in list )
+                foreach (var item in list)
                 {
                     if (item is bool && strictLower == false)
                     {
@@ -1223,7 +1223,7 @@ namespace MibbleSharp
 
             // Add upper end point (or null)
             child = this.GetChildAt(node, node.ChildCount - 1);
-            if(child.Values.Count == 0)
+            if (child.Values.Count == 0)
             {
                 node.Values.Add(null);
             }
@@ -1232,7 +1232,6 @@ namespace MibbleSharp
                 node.Values.Add(child.Values[0]);
             }
             
-
             // Check for strict upper end point
             child = this.GetChildAt(node, node.ChildCount - 2);
             if (child.Id == (int)Asn1Constants.LESS_THAN)
@@ -1582,7 +1581,7 @@ namespace MibbleSharp
             foreach (var comp in components)
             {
                 number = comp as NamedNumber;
-                if(number == null)
+                if (number == null)
                 {
                     throw new ParseException(
                         ParseException.ErrorType.UnexpectedToken, 

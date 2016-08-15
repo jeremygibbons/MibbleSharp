@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.25123.0
+VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MibbleSharp", "MibbleSharp\MibbleSharp.csproj", "{0BA94C64-91DA-4501-A795-2E57DCF58B15}"
 EndProject
@@ -10,6 +10,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MibbleValidator", "MibbleValidator\MibbleValidator.csproj", "{92BBDED0-17E2-4DC6-8382-68387CAD4327}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MibbleBrowser", "MibbleBrowser\MibbleBrowser.csproj", "{4364D765-1B10-409D-82C7-51C32201D238}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JunoSnmp", "JunoSnmp\JunoSnmp.csproj", "{99F62C7B-883C-43DD-8224-9B74C76B5621}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{4364D765-1B10-409D-82C7-51C32201D238}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4364D765-1B10-409D-82C7-51C32201D238}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4364D765-1B10-409D-82C7-51C32201D238}.Release|Any CPU.Build.0 = Release|Any CPU
+		{99F62C7B-883C-43DD-8224-9B74C76B5621}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{99F62C7B-883C-43DD-8224-9B74C76B5621}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{99F62C7B-883C-43DD-8224-9B74C76B5621}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{99F62C7B-883C-43DD-8224-9B74C76B5621}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

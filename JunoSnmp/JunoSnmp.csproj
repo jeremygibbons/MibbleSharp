@@ -1,0 +1,215 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{99F62C7B-883C-43DD-8224-9B74C76B5621}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>JunoSnmp</RootNamespace>
+    <AssemblyName>JunoSnmp</AssemblyName>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="log4net, Version=1.2.15.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
+      <HintPath>..\packages\log4net.2.0.5\lib\net45-full\log4net.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Mono.Cecil, Version=0.9.6.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL">
+      <HintPath>..\packages\NUnit3TestAdapter.3.4.1\lib\Mono.Cecil.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Mono.Cecil.Mdb, Version=0.9.6.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL">
+      <HintPath>..\packages\NUnit3TestAdapter.3.4.1\lib\Mono.Cecil.Mdb.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Mono.Cecil.Pdb, Version=0.9.6.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL">
+      <HintPath>..\packages\NUnit3TestAdapter.3.4.1\lib\Mono.Cecil.Pdb.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Mono.Cecil.Rocks, Version=0.9.6.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL">
+      <HintPath>..\packages\NUnit3TestAdapter.3.4.1\lib\Mono.Cecil.Rocks.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="nunit.engine, Version=3.4.1.0, Culture=neutral, PublicKeyToken=2638cd05610744eb, processorArchitecture=MSIL">
+      <HintPath>..\packages\NUnit3TestAdapter.3.4.1\lib\nunit.engine.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="nunit.engine.api, Version=3.0.0.0, Culture=neutral, PublicKeyToken=2638cd05610744eb, processorArchitecture=MSIL">
+      <HintPath>..\packages\NUnit3TestAdapter.3.4.1\lib\nunit.engine.api.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="nunit.framework, Version=3.4.1.0, Culture=neutral, PublicKeyToken=2638cd05610744eb, processorArchitecture=MSIL">
+      <HintPath>..\packages\NUnit.3.4.1\lib\net45\nunit.framework.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="NUnit3.TestAdapter, Version=3.4.1.0, Culture=neutral, PublicKeyToken=4cb40d35494691ac, processorArchitecture=MSIL">
+      <HintPath>..\packages\NUnit3TestAdapter.3.4.1\lib\NUnit3.TestAdapter.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Numerics" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AbstractTarget.cs" />
+    <Compile Include="ASN1\BER.cs" />
+    <Compile Include="ASN1\BERInputStream.cs" />
+    <Compile Include="ASN1\BEROutputStream.cs" />
+    <Compile Include="ASN1\IBERSerializable.cs" />
+    <Compile Include="Event\CounterIncrArgs.cs" />
+    <Compile Include="Event\CounterSupport.cs" />
+    <Compile Include="Event\EngineChangeArgs.cs" />
+    <Compile Include="Event\UsmUserChangeArgs.cs" />
+    <Compile Include="ICertifiedIdentity.cs" />
+    <Compile Include="ICommandResponder.cs" />
+    <Compile Include="IMessageDispatcher.cs" />
+    <Compile Include="ITarget.cs" />
+    <Compile Include="ITransportMapping.cs" />
+    <Compile Include="IUser.cs" />
+    <Compile Include="JunoSnmpSettings.cs" />
+    <Compile Include="MessageException.cs" />
+    <Compile Include="MP\IPduHandleCallback.cs" />
+    <Compile Include="MP\IRequestStatistics.cs" />
+    <Compile Include="MP\MessageProcessingModel.cs" />
+    <Compile Include="MP\IEngineIdCacheSize.cs" />
+    <Compile Include="MP\MessageId.cs" />
+    <Compile Include="MP\MPv1.cs" />
+    <Compile Include="MP\MPv2.cs" />
+    <Compile Include="MP\MPv3.cs" />
+    <Compile Include="MP\MutableStateReference.cs" />
+    <Compile Include="MP\PduHandle.cs" />
+    <Compile Include="MP\SimpleMessageID.cs" />
+    <Compile Include="MP\SnmpConstants.cs" />
+    <Compile Include="MP\StateReference.cs" />
+    <Compile Include="MP\StatusInformation.cs" />
+    <Compile Include="MP\TimedMessageID.cs" />
+    <Compile Include="MutablePDU.cs" />
+    <Compile Include="PDU.cs" />
+    <Compile Include="PDUv1.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ScopedPDU.cs" />
+    <Compile Include="Security\AuthHMAC192SHA256.cs" />
+    <Compile Include="Security\AuthHMAC256SHA384.cs" />
+    <Compile Include="Security\AuthHMAC384SHA512.cs" />
+    <Compile Include="Security\AuthMD5.cs" />
+    <Compile Include="Security\AuthSHA.cs" />
+    <Compile Include="Security\AuthSHA2.cs" />
+    <Compile Include="Security\DecryptParams.cs" />
+    <Compile Include="Security\IAuthenticationProtocol.cs" />
+    <Compile Include="Security\AuthGeneric.cs" />
+    <Compile Include="Security\ByteArrayWindow.cs" />
+    <Compile Include="Security\IPrivacyProtocol.cs" />
+    <Compile Include="Security\ISecurityProtocol.cs" />
+    <Compile Include="Security\ISecurityStateReference.cs" />
+    <Compile Include="Security\NonStandard\INonStandardSecurityProtocol.cs" />
+    <Compile Include="Security\PrivacyGeneric.cs" />
+    <Compile Include="Security\PrivAES.cs" />
+    <Compile Include="Security\PrivAES128.cs" />
+    <Compile Include="Security\PrivAES192.cs" />
+    <Compile Include="Security\PrivAES256.cs" />
+    <Compile Include="Security\PrivDES.cs" />
+    <Compile Include="Security\Salt.cs" />
+    <Compile Include="Security\SecurityLevel.cs" />
+    <Compile Include="Security\SecurityModel.cs" />
+    <Compile Include="Security\ISecurityParameters.cs" />
+    <Compile Include="Security\SecurityModels.cs" />
+    <Compile Include="Security\SecurityProtocols.cs" />
+    <Compile Include="Security\SNMPv3SecurityModel.cs" />
+    <Compile Include="Security\TSM.cs" />
+    <Compile Include="Security\TsmSecurityParameters.cs" />
+    <Compile Include="Security\TsmSecurityStateReference.cs" />
+    <Compile Include="Security\USM.cs" />
+    <Compile Include="Security\UsmSecurityParameters.cs" />
+    <Compile Include="Security\UsmSecurityStateReference.cs" />
+    <Compile Include="Security\UsmTimeEntry.cs" />
+    <Compile Include="Security\UsmTimeTable.cs" />
+    <Compile Include="Security\UsmUser.cs" />
+    <Compile Include="Security\UsmUserEntry.cs" />
+    <Compile Include="Security\UsmUserTable.cs" />
+    <Compile Include="SMI\AbstractVariable.cs" />
+    <Compile Include="SMI\BitString.cs" />
+    <Compile Include="SMI\GenericAddress.cs" />
+    <Compile Include="SMI\SMIAddress.cs" />
+    <Compile Include="SMI\Configuration\AddressSection.cs" />
+    <Compile Include="SMI\Counter32.cs" />
+    <Compile Include="SMI\Counter64.cs" />
+    <Compile Include="SMI\Gauge32.cs" />
+    <Compile Include="SMI\IAddress.cs" />
+    <Compile Include="SMI\IAssignableFrom.cs" />
+    <Compile Include="SMI\Integer32.cs" />
+    <Compile Include="SMI\IpAddress.cs" />
+    <Compile Include="SMI\IVariable.cs" />
+    <Compile Include="SMI\Null.cs" />
+    <Compile Include="SMI\OctetString.cs" />
+    <Compile Include="SMI\OID.cs" />
+    <Compile Include="SMI\Opaque.cs" />
+    <Compile Include="SMI\ReadonlyVariableCallback.cs" />
+    <Compile Include="SMI\SMIConstants.cs" />
+    <Compile Include="SMI\SshAddress.cs" />
+    <Compile Include="SMI\SubIndexInfoImpl.cs" />
+    <Compile Include="SMI\ISubIndexInfo.cs" />
+    <Compile Include="SMI\TcpAddress.cs" />
+    <Compile Include="SMI\TimeTicks.cs" />
+    <Compile Include="SMI\TlsAddress.cs" />
+    <Compile Include="SMI\TransportIpAddress.cs" />
+    <Compile Include="SMI\UdpAddress.cs" />
+    <Compile Include="SMI\UnsignedInteger32.cs" />
+    <Compile Include="SMI\VariableBinding.cs" />
+    <Compile Include="SMI\VariantVariable.cs" />
+    <Compile Include="SMI\IVariantVariableCallback.cs" />
+    <Compile Include="Test\TestBER.cs" />
+    <Compile Include="TransportStateReference.cs" />
+    <Compile Include="Transport\ITransportListener.cs" />
+    <Compile Include="Util\OIDTextFormat.cs" />
+    <Compile Include="Util\ParseException.cs" />
+    <Compile Include="Util\IPDUFactory.cs" />
+    <Compile Include="Util\SimpleOIDTextFormat.cs" />
+    <Compile Include="Util\SimpleVariableTextFormat.cs" />
+    <Compile Include="Util\ArrayUtils.cs" />
+    <Compile Include="Util\VariableTextFormat.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Security\AuthHMAC128SHA224.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Log\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

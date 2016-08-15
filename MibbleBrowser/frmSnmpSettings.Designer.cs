@@ -1,6 +1,6 @@
 ﻿namespace MibbleBrowser
 {
-    partial class frmSnmpSettings
+    partial class FrmSnmpSettings
     {
         /// <summary>
         /// Required designer variable.
