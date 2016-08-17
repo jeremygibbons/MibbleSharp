@@ -22,6 +22,7 @@
 namespace JunoSnmp.Security
 {
     using System;
+    using System.Runtime.Serialization;
     using JunoSnmp.SMI;
 
     /// <summary>
@@ -59,7 +60,7 @@ namespace JunoSnmp.Security
             this.cipherPool = new CipherPool();
         }
 
-        public byte[] encrypt(byte[] unencryptedData,
+        public override byte[] Encrypt(byte[] unencryptedData,
                               int offset,
                               int length,
                               byte[] encryptionKey,
@@ -153,7 +154,7 @@ namespace JunoSnmp.Security
          * @return
          *    the decrypted data, or <code>null</code> if decryption failed.
          */
-        public byte[] decrypt(byte[] cryptedData,
+        public override byte[] Decrypt(byte[] cryptedData,
                               int offset,
                               int length,
                               byte[] decryptionKey,
@@ -197,7 +198,7 @@ namespace JunoSnmp.Security
          * @return
          *    an <code>OID</code> instance.
          */
-        public OID ID
+        public override OID ID
         {
             get
             {
@@ -230,7 +231,7 @@ namespace JunoSnmp.Security
             }
         }
 
-        public int GetEncryptedLength(int scopedPDULength)
+        public override int GetEncryptedLength(int scopedPDULength)
         {
             if (scopedPDULength % 8 == 0)
             {
@@ -239,7 +240,7 @@ namespace JunoSnmp.Security
             return 8 * ((scopedPDULength / 8) + 1);
         }
 
-        public int MinKeyLength
+        public override int MinKeyLength
         {
             get
             {
@@ -247,7 +248,7 @@ namespace JunoSnmp.Security
             }
         }
 
-        public int DecryptParamsLength
+        public override int DecryptParamsLength
         {
             get
             {
@@ -255,7 +256,7 @@ namespace JunoSnmp.Security
             }
         }
 
-        public int MaxKeyLength
+        public override int MaxKeyLength
         {
             get
             {
@@ -263,11 +264,16 @@ namespace JunoSnmp.Security
             }
         }
 
-        public byte[] ExtendShortKey(byte[] shortKey, OctetString password,
+        public override byte[] ExtendShortKey(byte[] shortKey, OctetString password,
                                      byte[] engineID,
                                      IAuthenticationProtocol authProtocol)
         {
             return shortKey;
+        }
+
+        public override void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            throw new NotImplementedException();
         }
     }
 }

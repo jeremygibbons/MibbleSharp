@@ -51,7 +51,7 @@ namespace JunoSnmp.Security
          * @return
          *    an <code>OID</code> instance.
          */
-        public OID ID
+        public override OID ID
         {
             get
             {

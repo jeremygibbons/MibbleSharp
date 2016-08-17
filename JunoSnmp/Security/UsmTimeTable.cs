@@ -38,10 +38,10 @@ namespace JunoSnmp.Security
         private static readonly log4net.ILog log = log4net.LogManager
             .GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
-        static readonly long TIME_PRECISION = 1000000000L;
+        public static readonly long TIME_PRECISION = 1000000000L;
 
         private IDictionary<IVariable, UsmTimeEntry> table = new Dictionary<IVariable, UsmTimeEntry>(10);
-        private long lastLocalTimeChange = System.nanoTime();
+        private long lastLocalTimeChange = System.DateTime.Now.Ticks;
         private UsmTimeEntry localTime;
 
         public UsmTimeTable(OctetString localEngineID, int engineBoots)
@@ -63,7 +63,7 @@ namespace JunoSnmp.Security
         {
             UsmTimeEntry entry = new UsmTimeEntry(localTime.EngineID,
                                                   localTime.EngineBoots,
-                                                  getEngineTime());
+                                                  EngineTime);
             entry.TimeDiff = entry.TimeDiff * (-1) + localTime.TimeDiff;
             return entry;
         }
@@ -71,7 +71,7 @@ namespace JunoSnmp.Security
         public void setLocalTime(UsmTimeEntry localTime)
         {
             this.localTime = localTime;
-            lastLocalTimeChange = System.nanoTime();
+            lastLocalTimeChange = System.DateTime.Now.Ticks;
         }
 
         /**
@@ -98,7 +98,8 @@ namespace JunoSnmp.Security
         {
             get
             {
-                return (int)((((System.nanoTime() - lastLocalTimeChange) / TIME_PRECISION) +
+                //TODO: check that correct time dividor is used
+                return (int)((((System.DateTime.Now.Ticks - lastLocalTimeChange) / TIME_PRECISION) +
                   localTime.LatestReceivedTime) %
                          2147483648L);
             }
@@ -140,7 +141,7 @@ namespace JunoSnmp.Security
 
             return new UsmTimeEntry(engineID, found.EngineBoots,
                                     found.TimeDiff +
-                                    (int)(System.nanoTime() / TIME_PRECISION));
+                                    (int)(System.DateTime.Now.Ticks / TIME_PRECISION));
         }
 
         /**
@@ -175,7 +176,7 @@ namespace JunoSnmp.Security
         [MethodImpl(MethodImplOptions.Synchronized)]
         public int CheckTime(UsmTimeEntry entry)
         {
-            int now = (int)(System.nanoTime() / TIME_PRECISION);
+            int now = (int)(System.DateTime.Now.Ticks / TIME_PRECISION);
             if (localTime.EngineID.Equals(entry.EngineID))
             {
                 /* Entry found, we are authoritative */
@@ -249,6 +250,11 @@ namespace JunoSnmp.Security
 
         public void Reset()
         {
+        }
+
+        public void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            throw new NotImplementedException();
         }
     }
 }

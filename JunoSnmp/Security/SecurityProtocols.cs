@@ -50,9 +50,10 @@ namespace JunoSnmp.Security
           "org.snmp4j.securityProtocols";
         private static readonly string SECURITY_PROTOCOLS_PROPERTIES_DEFAULT =
             "SecurityProtocols.properties";
-        private static readonly LogAdapter logger = LogFactory.getLogger(SecurityProtocols.getclass);
+        private static readonly log4net.ILog log = log4net.LogManager
+            .GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
-  private static SecurityProtocols instance = null;
+        private static SecurityProtocols instance = null;
         private int maxAuthDigestLength = 0;
         private int maxPrivDecryptParamsLength = 0;
 
@@ -101,87 +102,87 @@ namespace JunoSnmp.Security
         [MethodImpl(MethodImplOptions.Synchronized)]
         public SecurityProtocols AddDefaultProtocols()
         {
-            if (JunoSnmpSettings.ExtensibilityEnabled)
-            {
-                string secProtocols =
-                    System.getProperty(SECURITY_PROTOCOLS_PROPERTIES,
-                                       SECURITY_PROTOCOLS_PROPERTIES_DEFAULT);
-                Stream ins =
-                    SecurityProtocols.getclass.getResourceAsStream(secProtocols);
-                if (ins == null)
-                {
-                    throw new InternalError("Could not read '" + secProtocols +
-                                            "' from classpath!");
-                }
-                Properties props = new Properties();
-                try
-                {
-                    props.load(ins);
-                    for (Enumeration en = props.propertyNames(); en.hasMoreElements();)
-                    {
-                        string className = en.nextElement().toString();
-                        string customOidString = props.getProperty(className);
-                        OID customOID = null;
-                        if (customOidString != null)
-                        {
-                            customOID = new OID(customOidString);
-                        }
-                        try
-                        {
-                            Class c = Class.forName(className);
-                            object proto = c.newInstance();
-                            if ((proto is NonStandardSecurityProtocol) && (customOID != null))
-                            {
-                                if (logger.isInfoEnabled())
-                                {
-                                    logger.info("Assigning custom ID '" + customOID + "' to security protocol " + className);
-                                }
-                              ((NonStandardSecurityProtocol)proto).setID(customOID);
-                            }
-                            if (proto is IAuthenticationProtocol)
-                            {
-                                AddAuthenticationProtocol((IAuthenticationProtocol)proto);
-                            }
-                            else if (proto is IPrivacyProtocol)
-                            {
-                                AddPrivacyProtocol((IPrivacyProtocol)proto);
-                            }
-                            else
-                            {
-                                logger.error(
-                                    "Failed to register security protocol because it does " +
-                                    "not implement required interfaces: " + className);
-                            }
-                        }
-                        catch (Exception cnfe)
-                        {
-                            logger.error(cnfe);
-                            throw new InternalError(cnfe.Message);
-                        }
-                    }
-                }
-                catch (IOException iox)
-                {
-                    string txt = "Could not read '" + secProtocols + "': " +
-                        iox.Message;
-                    logger.error(txt);
-                    throw new InternalError(txt);
-                }
-                finally
-                {
-                    try
-                    {
-                        ins.Close();
-                    }
-                    catch (IOException ex)
-                    {
-                        // ignore
-                        logger.warn(ex);
-                    }
-                }
-            }
-            else
-            {
+            //if (JunoSnmpSettings.ExtensibilityEnabled)
+            //{
+            //    string secProtocols =
+            //        System.getProperty(SECURITY_PROTOCOLS_PROPERTIES,
+            //                           SECURITY_PROTOCOLS_PROPERTIES_DEFAULT);
+            //    Stream ins =
+            //        SecurityProtocols.getclass.getResourceAsStream(secProtocols);
+            //    if (ins == null)
+            //    {
+            //        throw new InternalError("Could not read '" + secProtocols +
+            //                                "' from classpath!");
+            //    }
+            //    Properties props = new Properties();
+            //    try
+            //    {
+            //        props.load(ins);
+            //        for (Enumeration en = props.propertyNames(); en.hasMoreElements();)
+            //        {
+            //            string className = en.nextElement().toString();
+            //            string customOidString = props.getProperty(className);
+            //            OID customOID = null;
+            //            if (customOidString != null)
+            //            {
+            //                customOID = new OID(customOidString);
+            //            }
+            //            try
+            //            {
+            //                Class c = Class.forName(className);
+            //                object proto = c.newInstance();
+            //                if ((proto is NonStandardSecurityProtocol) && (customOID != null))
+            //                {
+            //                    if (logger.isInfoEnabled())
+            //                    {
+            //                        logger.info("Assigning custom ID '" + customOID + "' to security protocol " + className);
+            //                    }
+            //                  ((NonStandardSecurityProtocol)proto).setID(customOID);
+            //                }
+            //                if (proto is IAuthenticationProtocol)
+            //                {
+            //                    AddAuthenticationProtocol((IAuthenticationProtocol)proto);
+            //                }
+            //                else if (proto is IPrivacyProtocol)
+            //                {
+            //                    AddPrivacyProtocol((IPrivacyProtocol)proto);
+            //                }
+            //                else
+            //                {
+            //                    logger.error(
+            //                        "Failed to register security protocol because it does " +
+            //                        "not implement required interfaces: " + className);
+            //                }
+            //            }
+            //            catch (Exception cnfe)
+            //            {
+            //                logger.error(cnfe);
+            //                throw new InternalError(cnfe.Message);
+            //            }
+            //        }
+            //    }
+            //    catch (IOException iox)
+            //    {
+            //        string txt = "Could not read '" + secProtocols + "': " +
+            //            iox.Message;
+            //        logger.error(txt);
+            //        throw new InternalError(txt);
+            //    }
+            //    finally
+            //    {
+            //        try
+            //        {
+            //            ins.Close();
+            //        }
+            //        catch (IOException ex)
+            //        {
+            //            // ignore
+            //            logger.warn(ex);
+            //        }
+            //    }
+            //}
+            //else
+            //{
                 AddAuthenticationProtocol(new AuthMD5());
                 AddAuthenticationProtocol(new AuthSHA());
                 AddAuthenticationProtocol(new AuthHMAC192SHA256());
@@ -190,7 +191,7 @@ namespace JunoSnmp.Security
                 AddPrivacyProtocol(new PrivAES128());
                 AddPrivacyProtocol(new PrivAES192());
                 AddPrivacyProtocol(new PrivAES256());
-            }
+            //}
 
             return this;
         }
@@ -210,9 +211,9 @@ namespace JunoSnmp.Security
             if (authProtocols[auth.ID] == null)
             {
                 authProtocols.Add(auth.ID, auth);
-                if (auth.DigestLength > maxAuthDigestLength)
+                if (auth.HashLength > maxAuthDigestLength)
                 {
-                    maxAuthDigestLength = auth.DigestLength;
+                    maxAuthDigestLength = auth.HashLength;
                 }
             }
         }
@@ -434,6 +435,11 @@ namespace JunoSnmp.Security
             byte[] truncatedNewKey = new byte[Math.Min(maxKeyLength, key.Length)];
             System.Array.Copy(key, 0, truncatedNewKey, 0, truncatedNewKey.Length);
             return truncatedNewKey;
+        }
+
+        public void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            throw new NotImplementedException();
         }
     }
 }

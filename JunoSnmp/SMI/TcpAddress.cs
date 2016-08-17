@@ -91,7 +91,7 @@ namespace JunoSnmp.SMI
             }
             catch (Exception ex)
             {
-                logger.error(ex);
+                log.Error(ex);
             }
 
             return null;

@@ -24,7 +24,7 @@ namespace JunoSnmp.SMI
     using System;
     using System.Collections.Generic;
     using System.IO;
-    using System.Runtime.CompilerServices;
+    ////using System.Runtime.CompilerServices;
     using System.Runtime.Serialization;
     using JunoSnmp.ASN1;
 
@@ -136,52 +136,46 @@ namespace JunoSnmp.SMI
          */
         public static IVariable CreateFromBER(BERInputStream inputStream)
         {
-            if (!inputStream.markSupported())
-            {
-                throw new IOException(
-                    "InputStream for decoding a Variable must support marks");
-            }
+            ////if (JunoSnmpSettings.ExtensibilityEnabled &&
+            ////    (registeredSyntaxes == null))
+            ////{
+            ////AbstractVariable.RegisterSyntaxes();
+            ////}
 
-            if (JunoSnmpSettings.ExtensibilityEnabled &&
-                (registeredSyntaxes == null))
-            {
-                AbstractVariable.RegisterSyntaxes();
-            }
-
-            inputStream.Mark(2);
-            int type = inputStream.Read();
+            long startPos = inputStream.Position;
+            int type = inputStream.ReadByte();
             IVariable variable;
-            if (JunoSnmpSettings.ExtensibilityEnabled)
-            {
-                IVariable c = registeredSyntaxes[type];
-                if (c == null)
-                {
-                    throw new IOException("Encountered unsupported variable syntax: " +
-                                          type);
-                }
+            ////if (JunoSnmpSettings.ExtensibilityEnabled)
+            ////{
+            ////IVariable c = registeredSyntaxes[type];
+            //// if (c == null)
+            ////{
+            ////throw new IOException("Encountered unsupported variable syntax: " +
+            ////type);
+            ////}
+            ////
+            ////try
+            ////{
 
-                try
-                {
-                    
-                    variable = c.NewInstance();
-                }
-                catch (IllegalAccessException aex)
-                {
-                    throw new IOException("Could not access variable syntax class for: " +
-                                          c.getName());
-                }
-                catch (InstantiationException iex)
-                {
-                    throw new IOException(
-                        "Could not instantiate variable syntax class for: " +
-                        c.getName);
-                }
-            }
-            else
-            {
-                variable = CreateVariable(type);
-            }
-            inputStream.reset();
+            ////variable = c.NewInstance();
+            ////}
+            ////catch (IllegalAccessException aex)
+            ////{
+            ////throw new IOException("Could not access variable syntax class for: " +
+            ////c.getName());
+            ////}
+            ////catch (InstantiationException iex)
+            ////{
+            ////throw new IOException(
+            ////"Could not instantiate variable syntax class for: " +
+            ////c.getName);
+            ////}
+            ////}
+            ////else
+            ////{
+            variable = CreateVariable(type);
+            ////}
+            inputStream.Position = startPos;
             variable.DecodeBER(inputStream);
             return variable;
         }
@@ -264,36 +258,36 @@ namespace JunoSnmp.SMI
          */
         public static IVariable CreateFromSyntax(int smiSyntax)
         {
-            if (!JunoSnmpSettings.ExtensibilityEnabled)
-            {
-                return CreateVariable(smiSyntax);
-            }
-            if (registeredSyntaxes == null)
-            {
-                RegisterSyntaxes();
-            }
+            ////if (!JunoSnmpSettings.ExtensibilityEnabled)
+            ////{
+            return CreateVariable(smiSyntax);
+            ////}
+            ////if (registeredSyntaxes == null)
+            ////{
+            ////RegisterSyntaxes();
+            ////}
             ///Class <? extends Variable > c = registeredSyntaxes.get(new Integer(smiSyntax));
-            if (c == null)
-            {
-                throw new ArgumentException("Unsupported variable syntax: " +
-                                                   smiSyntax);
-            }
-            try
-            {
-                IVariable variable = c.newInstance();
-                return variable;
-            }
-            catch (IllegalAccessException aex)
-            {
-                throw new RuntimeException("Could not access variable syntax class for: " +
-                                           c.getName());
-            }
-            catch (InstantiationException iex)
-            {
-                throw new RuntimeException(
-                    "Could not instantiate variable syntax class for: " +
-                    c.getName());
-            }
+            ////if (c == null)
+            ////{
+            //// throw new ArgumentException("Unsupported variable syntax: " +
+            ////smiSyntax);
+            ////}
+            ////try
+            ////{
+            ////IVariable variable = c.newInstance();
+            ////return variable;
+            ////}
+            ////catch (IllegalAccessException aex)
+            ////{
+            ////throw new RuntimeException("Could not access variable syntax class for: " +
+            ////c.getName());
+            ////}
+            ////catch (InstantiationException iex)
+            ////{
+            ////throw new RuntimeException(
+            ////"Could not instantiate variable syntax class for: " +
+            ////c.getName());
+            ////}
         }
 
         /**
@@ -302,62 +296,62 @@ namespace JunoSnmp.SMI
          * instantiate sub-classes from <code>Variable</code> from an BER encoded
          * <code>InputStream</code>.
          */
-        [MethodImpl(MethodImplOptions.Synchronized)]
-        private static void RegisterSyntaxes()
-        {
-            string syntaxes = System.getProperty(SMISyntaxesProperties,
-                                                 SMISyntaxesPropertiesDefault);
-            InputStream ins = Variable.getclass.getResourceAsStream(syntaxes);
-            if (ins == null)
-            {
-                throw new InternalError("Could not read '" + syntaxes +
-                                        "' from classpath!");
-            }
-            Properties props = new Properties();
-            try
-            {
-                props.load(ins);
-                ///Hashtable<Integer, Class<? extends Variable>> regSyntaxes = new Hashtable<Integer, Class<? extends Variable>>(props.size());
-                for (Enumeration en = props.propertyNames(); en.hasMoreElements();)
-                {
-                    string id = en.nextElement().toString();
-                    string className = props.getProperty(id);
-                    try
-                    {
-                        //Class<? extends Variable> c = (Class <? extends Variable >) Class.forName(className);
-                        regSyntaxes.put(new Integer(id), c);
-                    }
-                    catch (ClassNotFoundException cnfe)
-                    {
-                        logger.error(cnfe);
-                    }
-                    catch (ClassCastException ccex)
-                    {
-                        log.Error(ccex);
-                    }
-                }
-                // atomic syntax registration
-                registeredSyntaxes = regSyntaxes;
-            }
-            catch (IOException iox)
-            {
-                string txt = "Could not read '" + syntaxes + "': " +
-                    iox.Message;
-                log.Error(txt);
-                throw new InternalError(txt);
-            }
-            finally
-            {
-                try
-                {
-                    ins.close();
-                }
-                catch (IOException ex)
-                {
-                    log.Warn(ex);
-                }
-            }
-        }
+        //[MethodImpl(MethodImplOptions.Synchronized)]
+        //private static void RegisterSyntaxes()
+        //{
+        //    string syntaxes = System.getProperty(SMISyntaxesProperties,
+        //                                         SMISyntaxesPropertiesDefault);
+        //    InputStream ins = Variable.getclass.getResourceAsStream(syntaxes);
+        //    if (ins == null)
+        //    {
+        //        throw new InternalError("Could not read '" + syntaxes +
+        //                                "' from classpath!");
+        //    }
+        //    Properties props = new Properties();
+        //    try
+        //    {
+        //        props.load(ins);
+        //        ///Hashtable<Integer, Class<? extends Variable>> regSyntaxes = new Hashtable<Integer, Class<? extends Variable>>(props.size());
+        //        for (Enumeration en = props.propertyNames(); en.hasMoreElements();)
+        //        {
+        //            string id = en.nextElement().toString();
+        //            string className = props.getProperty(id);
+        //            try
+        //            {
+        //                //Class<? extends Variable> c = (Class <? extends Variable >) Class.forName(className);
+        //                regSyntaxes.put(new Integer(id), c);
+        //            }
+        //            catch (ClassNotFoundException cnfe)
+        //            {
+        //                logger.error(cnfe);
+        //            }
+        //            catch (ClassCastException ccex)
+        //            {
+        //                log.Error(ccex);
+        //            }
+        //        }
+        //        // atomic syntax registration
+        //        registeredSyntaxes = regSyntaxes;
+        //    }
+        //    catch (IOException iox)
+        //    {
+        //        string txt = "Could not read '" + syntaxes + "': " +
+        //            iox.Message;
+        //        log.Error(txt);
+        //        throw new InternalError(txt);
+        //    }
+        //    finally
+        //    {
+        //        try
+        //        {
+        //            ins.close();
+        //        }
+        //        catch (IOException ex)
+        //        {
+        //            log.Warn(ex);
+        //        }
+        //    }
+        //}
 
         /**
          * Gets the ASN.1 syntax identifier value of this SNMP variable.

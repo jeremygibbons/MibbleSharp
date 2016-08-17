@@ -233,5 +233,10 @@ namespace JunoSnmp.Security
         {
             return "UsmUserEntry[userName=" + userName + ",usmUser=" + usmUser + "]";
         }
+
+        public void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -56,7 +56,7 @@ namespace JunoSnmp.Util
         public string Format(OID instanceOID, IVariable variable, bool withOID)
         {
             return (withOID) ?
-                JunoSnmpSettings.OIDTextFormat.Format(instanceOID.Value) +
+                JunoSnmpSettings.OIDTextFormat.Format(instanceOID.GetValue()) +
                 " = " + variable
                 : variable.ToString();
         }
@@ -75,9 +75,9 @@ namespace JunoSnmp.Util
         public IVariable Parse(int smiSyntax, string text)
         {
             IVariable v = AbstractVariable.CreateFromSyntax(smiSyntax);
-            if (v is AssignableFromString)
+            if (v is IAssignableFrom<string>)
             {
-                ((AssignableFromString)v).setValue(text);
+                ((IAssignableFrom<string>)v).SetValue(text);
             }
 
             return v;
@@ -109,9 +109,7 @@ namespace JunoSnmp.Util
             int assignmentPos = text.IndexOf(" = ");
             if (assignmentPos <= 0)
             {
-                throw new ParseException(
-                    "Could not locate assignment ' = ' string in '" + text,
-                    0);
+                throw new ParseException(0, "Could not locate assignment ' = ' string in '" + text);
             }
 
             OID oid = new OID(
