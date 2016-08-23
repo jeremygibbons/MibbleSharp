@@ -56,7 +56,7 @@ namespace JunoSnmp.SMI
         public static readonly string TYPE_TLS = "tls";
 
         public static readonly string ADDRESS_TYPES_PROPERTIES =
-            "org.snmp4j.addresses";
+            "org.junosnmp.addresses";
 
         private static readonly string ADDRESS_TYPES_PROPERTIES_DEFAULT =
             "address.properties";

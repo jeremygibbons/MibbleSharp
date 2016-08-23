@@ -102,7 +102,7 @@ namespace JunoSnmp
          *    an <code>int</code> value as defined in the {@link org.snmp4j.security.SecurityModel}
          *    interface or any third party subclass thereof.
          */
-        JunoSnmp.Security.SecurityModel.SecurityModels SecurityModel { get; set; }
+        JunoSnmp.Security.SecurityModel.SecurityModelID SecurityModel { get; set; }
 
         /**
          * Gets the security name associated with this target. The security name

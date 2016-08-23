@@ -18,6 +18,8 @@
 
 namespace JunoSnmp
 {
+    using JunoSnmp.Event;
+
     /// <summary>
     /// <c>ICommandResponder</c> implementations process incoming requests, report and
     /// notification PDUs. An event may only processed once. A command responder
@@ -25,7 +27,7 @@ namespace JunoSnmp
     /// <c>CommandResponderEvent</c> object to <c>true</c> when it has
     /// processed the PDU.
     /// </summary>
-    public interface ICommandResponder : EventListener
+    public interface ICommandResponder ////: EventListener
     {
         /// <summary>
         /// Process an incoming request, report or notification PDU.
@@ -35,6 +37,6 @@ namespace JunoSnmp
         /// process and some additional information returned by the message
         /// processing model that decoded the SNMP message.
         /// </param>
-        void ProcessPdu(CommandResponderEvent ev);
+        void ProcessPdu(CommandResponderArgs ev);
     }
 }

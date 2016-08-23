@@ -65,7 +65,6 @@ namespace JunoSnmp.Security
             }
             this.keyBytes = keyBytes;
             this.salt = Salt.GetInstance();
-            cipherPool = new CipherPool();
         }
 
         public override byte[] Encrypt(byte[] unencryptedData, int offset, int length,
@@ -115,9 +114,7 @@ namespace JunoSnmp.Security
             byte[] encryptedData = null;
             try
             {
-                Cipher alg = doInit(encryptionKey, initVect);
-                encryptedData = alg.doFinal(unencryptedData, offset, length);
-                cipherPool.offerCipher(alg);
+                encryptedData = DoEncrypt(encryptionKey, initVect, unencryptedData, offset, length);
 
                 if (log.IsDebugEnabled)
                 {

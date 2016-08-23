@@ -97,7 +97,7 @@ namespace JunoSnmp.MP
             IAddress transportAddress,
             int maxMsgSize,
             MessageProcessingModels messageProcessingModel,
-            SecurityModel.SecurityModels securityModel,
+            SecurityModel.SecurityModelID securityModel,
             byte[] securityName,
             SecurityLevel securityLevel,
             /* the following parameters are given in ScopedPDU
@@ -158,7 +158,7 @@ namespace JunoSnmp.MP
         public abstract int PrepareResponseMessage(
             MessageProcessingModels messageProcessingModel,
             int maxMsgSize,
-            SecurityModel.SecurityModels securityModel,
+            SecurityModel.SecurityModelID securityModel,
             byte[] securityName,
             SecurityLevel securityLevel,
             /* the following parameters are given in ScopedPDU
@@ -229,7 +229,7 @@ namespace JunoSnmp.MP
             BERInputStream wholeMsg,
             TransportStateReference tmStateReference,
             MessageProcessingModels messageProcessingModel,
-            SecurityModel.SecurityModels securityModel,
+            SecurityModel.SecurityModelID securityModel,
             OctetString securityName,
             SecurityLevel securityLevel,
             /* the following parameters are given in ScopedPDU

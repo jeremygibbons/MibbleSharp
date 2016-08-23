@@ -261,11 +261,11 @@ namespace JunoSnmp.Security
          * @return
          *    {@link USM#getID()}
          */
-        public SecurityModel.SecurityModels SecurityModel
+        public SecurityModel.SecurityModelID SecurityModel
         {
             get
             {
-                return JunoSnmp.Security.SecurityModel.SecurityModels.SECURITY_MODEL_USM;
+                return JunoSnmp.Security.SecurityModel.SecurityModelID.SECURITY_MODEL_USM;
             }
         }
 

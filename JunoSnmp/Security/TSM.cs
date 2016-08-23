@@ -72,11 +72,11 @@ namespace JunoSnmp.Security
             counterSupport.IncrementCounter(this, e);
         }
 
-        public override int ID
+        public override SecurityModelID ID
         {
             get
             {
-                return SecurityModel.SecurityModels.SECURITY_MODEL_TSM;
+                return SecurityModel.SecurityModelID.SECURITY_MODEL_TSM;
             }
 
         }
@@ -109,10 +109,10 @@ namespace JunoSnmp.Security
             return new TsmSecurityStateReference();
         }
 
-        public override int GenerateRequestMessage(int messageProcessingModel,
+        public override int GenerateRequestMessage(MessageProcessingModel.MessageProcessingModels messageProcessingModel,
                                           byte[] globalData,
                                           int maxMessageSize,
-                                          SecurityModel.SecurityModels securityModel,
+                                          SecurityModel.SecurityModelID securityModel,
                                           byte[] securityEngineID,
                                           byte[] securityName,
                                           SecurityLevel securityLevel,
@@ -146,7 +146,7 @@ namespace JunoSnmp.Security
         private int GenerateMessage(MessageProcessingModel.MessageProcessingModels messageProcessingModel,
                                     byte[] globalData,
                                     int maxMessageSize,
-                                    SecurityModel.SecurityModels securityModel,
+                                    SecurityModel.SecurityModelID securityModel,
                                     byte[] securityEngineID,
                                     byte[] securityName,
                                     SecurityLevel securityLevel,
@@ -160,7 +160,7 @@ namespace JunoSnmp.Security
             TsmSecurityStateReference tsmSecurityStateReference =
         (TsmSecurityStateReference)securityStateReference;
             if ((tsmSecurityStateReference != null) &&
-                (tsmSecurityStateReference.TmStateReference!= null))
+                (tsmSecurityStateReference.TmStateReference != null))
             {
                 activeTmStateReference = tsmSecurityStateReference.TmStateReference;
                 activeTmStateReference.RequestedSecurityLevel = activeTmStateReference.TransportSecurityLevel;
@@ -190,8 +190,8 @@ namespace JunoSnmp.Security
                             return SnmpConstants.SNMPv3_TSM_UNKNOWN_PREFIXES;
                         }
                         // remove prefix and assign tmSecurityName
-                        activeTmStateReference.SecurityName = 
-                                        new OctetString(new string(securityName).Substring(secNamePrefix.Length + 1));
+                        activeTmStateReference.SecurityName =
+                                        new OctetString(System.Text.Encoding.UTF8.GetString(securityName).Substring(secNamePrefix.Length + 1));
                     }
                 }
                 else
@@ -205,18 +205,17 @@ namespace JunoSnmp.Security
                 scopedPduBytes = BuildMessageBuffer(scopedPDU);
             byte[]
                 wholeMessage =
-              BuildWholeMessage(new Integer32(messageProcessingModel),
+              BuildWholeMessage(new Integer32((int)messageProcessingModel),
                                 scopedPduBytes, globalData, securityParameters);
-            ByteBuffer buf =
-                (ByteBuffer)ByteBuffer.wrap(wholeMessage).position(wholeMessage.length);
-            wholeMsg.setBuffer(buf);
+
+            wholeMsg.Write(wholeMessage, 0, wholeMessage.Length);
             return SnmpConstants.SNMPv3_TSM_OK;
         }
 
         protected string GetSecurityNamePrefix(byte[] securityName)
         {
             OctetString secName = new OctetString(securityName);
-            string prefix = new string(secName.GetValue());
+            string prefix = System.Text.Encoding.UTF8.GetString(secName.GetValue());
             int colonPos = prefix.IndexOf(':');
             if ((colonPos <= 0) || (colonPos > MAX_PREFIX_LENGTH))
             {
@@ -228,13 +227,13 @@ namespace JunoSnmp.Security
 
         protected string GetTransportDomainPrefix(IAddress address)
         {
-            return GenericAddress.GetTDomainPrefix(address.getClass());
+            return GenericAddress.GetTDomainPrefix(address.GetType());
         }
 
         public override int GenerateResponseMessage(MessageProcessingModel.MessageProcessingModels messageProcessingModel,
                                            byte[] globalData,
                                            int maxMessageSize,
-                                           SecurityModel.SecurityModels securityModel,
+                                           SecurityModel.SecurityModelID securityModel,
                                            byte[] securityEngineID,
                                            byte[] securityName,
                                            SecurityLevel securityLevel,
@@ -253,14 +252,14 @@ namespace JunoSnmp.Security
         public override int ProcessIncomingMsg(MessageProcessingModel.MessageProcessingModels messageProcessingModel,
                                       int maxMessageSize,
                                       ISecurityParameters securityParameters,
-                                      SecurityModel.SecurityModels securityModel,
+                                      SecurityModel.SecurityModelID securityModel,
                                       SecurityLevel securityLevel,
                                       BERInputStream wholeMsg,
                                       TransportStateReference tmStateReference,
                                       OctetString securityEngineID,
                                       OctetString securityName,
                                       BEROutputStream scopedPDU,
-                                      Integer32 maxSizeResponseScopedPDU,
+                                      int maxSizeResponseScopedPDU,
                                       ISecurityStateReference securityStateReference,
                                       StatusInformation statusInfo)
         {
@@ -278,7 +277,7 @@ namespace JunoSnmp.Security
             if (usePrefix)
             {
                 string prefix =
-                    GenericAddress.GetTDomainPrefix(tmStateReference.Address.getClass());
+                    GenericAddress.GetTDomainPrefix(tmStateReference.Address.GetType());
                 if (prefix == null)
                 {
                     CounterIncrArgs evt = new CounterIncrArgs(SnmpConstants.snmpTsmUnknownPrefixes);
@@ -305,8 +304,9 @@ namespace JunoSnmp.Security
             {
                 securityName.SetValue(tmStateReference.SecurityName.GetValue());
             }
+
             // 4. Compare the value of tmTransportSecurityLevel:
-            if (securityLevel > tmStateReference.TransportSecurityLevel.SnmpValue)
+            if (securityLevel > tmStateReference.TransportSecurityLevel)
             {
                 CounterIncrArgs evt = new CounterIncrArgs(SnmpConstants.snmpTsmInadequateSecurityLevels);
                 FireIncrementCounter(evt);
@@ -322,14 +322,13 @@ namespace JunoSnmp.Security
             byte[]
             message = BuildMessageBuffer(wholeMsg);
             int scopedPduLength = message.Length - scopedPDUPosition;
-            ByteBuffer buf =
-                ByteBuffer.wrap(message, scopedPDUPosition, scopedPduLength);
-            scopedPDU.setFilledBuffer(buf);
+            scopedPDU.Write(message, scopedPDUPosition, scopedPduLength);
+            
             // 7. The maxSizeResponseScopedPDU is calculated.
             //    Compute real max size response pdu according  to RFC3414 §3.2.9
-            int maxSecParamsOverhead = tsmSecurityParameters.GetBERMaxLength(securityLevel);
-            maxSizeResponseScopedPDU.SetValue(maxMessageSize -
-                                                  maxSecParamsOverhead);
+            int maxSecParamsOverhead = tsmSecurityParameters.GetBERMaxLength((int)securityLevel);
+            maxSizeResponseScopedPDU = maxMessageSize - maxSecParamsOverhead;
+
             // 8. The statusInformation is set to success.
             return SnmpConstants.SNMPv3_TSM_OK;
         }
@@ -338,7 +337,7 @@ namespace JunoSnmp.Security
         {
             if (statusInfo != null)
             {
-                statusInfo.SecurityLevel = new Integer32((int)securityLevel);
+                statusInfo.SecurityLevel = securityLevel;
                 statusInfo.ErrorIndication = new VariableBinding(evt.Oid, evt.CurrentValue);
             }
         }

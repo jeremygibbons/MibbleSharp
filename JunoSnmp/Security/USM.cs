@@ -23,6 +23,7 @@ namespace JunoSnmp.Security
 {
     using System;
     using System.Collections.Generic;
+    using System.IO;
     using System.Runtime.CompilerServices;
     using JunoSnmp.ASN1;
     using JunoSnmp.Event;
@@ -104,11 +105,11 @@ namespace JunoSnmp.Security
             return new OctetString(randomID);
         }
 
-        public SecurityModel.SecurityModels ID
+        public override SecurityModel.SecurityModelID ID
         {
             get
             {
-                return SecurityModel.SecurityModels.SECURITY_MODEL_USM;
+                return SecurityModel.SecurityModelID.SECURITY_MODEL_USM;
             }
         }
 
@@ -202,7 +203,7 @@ namespace JunoSnmp.Security
         public override int GenerateRequestMessage(MessageProcessingModel.MessageProcessingModels snmpVersion,
                                           byte[] globalData,
                                           int maxMessageSize,
-                                          SecurityModel.SecurityModels securityModel,
+                                          SecurityModel.SecurityModelID securityModel,
                                           byte[] securityEngineID,
                                           byte[] securityName,
                                           SecurityLevel securityLevel,
@@ -352,7 +353,7 @@ namespace JunoSnmp.Security
         public override int GenerateResponseMessage(MessageProcessingModel.MessageProcessingModels snmpVersion,
                                            byte[] globalData,
                                            int maxMessageSize,
-                                           SecurityModel.SecurityModels securityModel,
+                                           SecurityModel.SecurityModelID securityModel,
                                            byte[] securityEngineID,
                                            byte[] securityName,
                                            SecurityLevel securityLevel,
@@ -618,9 +619,8 @@ namespace JunoSnmp.Security
                     usmSecurityParams);
             }
 
-            ByteBuffer buf = (ByteBuffer)ByteBuffer.wrap(wholeMessage).position(wholeMessage.Length);
-            wholeMsg.setBuffer(buf);
-            // not necessary: wholeMsg.write(wholeMessage);
+            wholeMsg.Write(wholeMessage, 0, wholeMessage.Length);
+            
             return SnmpConstants.SNMPv3_USM_OK;
         }
 
@@ -653,7 +653,7 @@ namespace JunoSnmp.Security
         public override int ProcessIncomingMsg(MessageProcessingModel.MessageProcessingModels snmpVersion, // typically, SNMP version
                                       int maxMessageSize, // of the sending SNMP entity - maxHeaderLength of the MP
                                       ISecurityParameters securityParameters, // for the received message
-                                      SecurityModel securityModel, // for the received message
+                                      SecurityModel.SecurityModelID securityModel, // for the received message
                                       SecurityLevel securityLevel, // Level of Security
                                       BERInputStream wholeMsg, // as received on the wire
                                       TransportStateReference tmStateReference,
@@ -661,7 +661,7 @@ namespace JunoSnmp.Security
                                       OctetString securityEngineID, // authoritative SNMP entity
                                       OctetString securityName, // identification of the principal
                                       BEROutputStream scopedPDU, // message (plaintext) payload
-                                      Integer32 maxSizeResponseScopedPDU, // maximum size of the Response PDU
+                                      int maxSizeResponseScopedPDU, // maximum size of the Response PDU
                                       ISecurityStateReference securityStateReference, // reference to security state information, needed for response
                                       StatusInformation statusInfo
                                       )
@@ -693,7 +693,7 @@ namespace JunoSnmp.Security
                     CounterIncrArgs evt = new CounterIncrArgs(SnmpConstants.usmStatsUnknownEngineIDs);
                     FireIncrementCounter(evt);
 
-                    statusInfo.SecurityLevel = new Integer32((int)securityLevel);
+                    statusInfo.SecurityLevel = securityLevel;
                     statusInfo.ErrorIndication = new VariableBinding(evt.Oid, evt.CurrentValue);
                 }
 
@@ -721,7 +721,7 @@ namespace JunoSnmp.Security
                         CounterIncrArgs evt = new CounterIncrArgs(SnmpConstants.usmStatsUnknownUserNames);
                         FireIncrementCounter(evt);
 
-                        statusInfo.SecurityLevel = new Integer32((int)SecurityLevel.NoAuthNoPriv);
+                        statusInfo.SecurityLevel = SecurityLevel.NoAuthNoPriv;
                         statusInfo.ErrorIndication = new VariableBinding(evt.Oid, evt.CurrentValue);
                     }
                     return SnmpConstants.SNMPv3_USM_UNKNOWN_SECURITY_NAME;
@@ -757,7 +757,7 @@ namespace JunoSnmp.Security
                         if (JunoSnmpSettings.ReportSecurityLevelStrategy ==
                             JunoSnmpSettings.ReportSecurityLevelOption.noAuthNoPrivIfNeeded)
                         {
-                            statusInfo.SecurityLevel = new Integer32((int)SecurityLevel.NoAuthNoPriv);
+                            statusInfo.SecurityLevel = SecurityLevel.NoAuthNoPriv;
                         }
 
                         statusInfo.ErrorIndication = new VariableBinding(evt.Oid, evt.CurrentValue);
@@ -795,7 +795,7 @@ namespace JunoSnmp.Security
                     if (JunoSnmpSettings.ReportSecurityLevelStrategy ==
                         JunoSnmpSettings.ReportSecurityLevelOption.noAuthNoPrivIfNeeded)
                     {
-                        statusInfo.SecurityLevel = new Integer32((int)SecurityLevel.NoAuthNoPriv);
+                        statusInfo.SecurityLevel = SecurityLevel.NoAuthNoPriv;
                     }
 
                     statusInfo.ErrorIndication = new VariableBinding(evt.Oid, evt.CurrentValue);
@@ -829,7 +829,7 @@ namespace JunoSnmp.Security
                             if (JunoSnmpSettings.ReportSecurityLevelStrategy ==
                                 JunoSnmpSettings.ReportSecurityLevelOption.noAuthNoPrivIfNeeded)
                             {
-                                statusInfo.SecurityLevel = new Integer32((int)SecurityLevel.NoAuthNoPriv);
+                                statusInfo.SecurityLevel = SecurityLevel.NoAuthNoPriv;
                             }
 
                             statusInfo.ErrorIndication = new VariableBinding(evt.Oid, evt.CurrentValue);
@@ -855,7 +855,7 @@ namespace JunoSnmp.Security
                                     CounterIncrArgs evt = new CounterIncrArgs(SnmpConstants.usmStatsNotInTimeWindows);
                                     FireIncrementCounter(evt);
 
-                                    statusInfo.SecurityLevel = new Integer32((int)SecurityLevel.AuthNoPriv);
+                                    statusInfo.SecurityLevel = SecurityLevel.AuthNoPriv;
                                     statusInfo.ErrorIndication = new VariableBinding(evt.Oid, evt.CurrentValue);
                                     return status;
                                 }
@@ -872,7 +872,7 @@ namespace JunoSnmp.Security
                                     if (JunoSnmpSettings.ReportSecurityLevelStrategy ==
                                         JunoSnmpSettings.ReportSecurityLevelOption.noAuthNoPrivIfNeeded)
                                     {
-                                        statusInfo.SecurityLevel = new Integer32((int)SecurityLevel.NoAuthNoPriv);
+                                        statusInfo.SecurityLevel = SecurityLevel.NoAuthNoPriv;
                                     }
 
                                     statusInfo.ErrorIndication = new VariableBinding(evt.Oid, evt.CurrentValue);
@@ -890,9 +890,10 @@ namespace JunoSnmp.Security
                         try
                         {
                             int scopedPDUHeaderLength = message.Length - scopedPDUPosition;
-                            ByteBuffer bis = ByteBuffer.wrap(message, scopedPDUPosition,
-                                                             scopedPDUHeaderLength);
-                            BERInputStream scopedPDUHeader = new BERInputStream(bis);
+
+                            MemoryStream bis = new MemoryStream(message, (int)scopedPDU.Position, scopedPDUHeaderLength);
+                            
+                            BERInputStream scopedPDUHeader = new BERInputStream(bis.ToArray());
                             long headerStartingPosition = scopedPDUHeader.Position;
                             BER.MutableByte mb;
                             int scopedPDULength = BER.DecodeHeader(scopedPDUHeader, out mb);
@@ -907,8 +908,7 @@ namespace JunoSnmp.Security
                                              usmSecurityParameters.AuthoritativeEngineBoots,
                                              usmSecurityParameters.AuthoritativeEngineTime,
                                              decryptParams);
-                            ByteBuffer buf = ByteBuffer.wrap(scopedPduBytes);
-                            scopedPDU.SetFilledBuffer(buf);
+                            scopedPDU.Write(scopedPduBytes, 0, scopedPduBytes.Length);
                         }
                         catch (Exception ex)
                         {
@@ -919,31 +919,27 @@ namespace JunoSnmp.Security
                     else
                     {
                         int scopedPduLength = message.Length - scopedPDUPosition;
-                        ByteBuffer buf =
-                            ByteBuffer.wrap(message, scopedPDUPosition, scopedPduLength);
-                        scopedPDU.setFilledBuffer(buf);
+                        scopedPDU.Write(message, scopedPDUPosition, scopedPduLength);
                     }
                 }
                 else
                 {
                     int scopedPduLength = message.Length - scopedPDUPosition;
-                    ByteBuffer buf =
-                        ByteBuffer.wrap(message, scopedPDUPosition, scopedPduLength);
-                    scopedPDU.setFilledBuffer(buf);
+                    scopedPDU.Write(message, scopedPDUPosition, scopedPduLength);
                 }
             }
             else
             {
                 int scopedPduLength = message.Length - scopedPDUPosition;
-                ByteBuffer buf =
-                    ByteBuffer.wrap(message, scopedPDUPosition, scopedPduLength);
-                scopedPDU.setFilledBuffer(buf);
+                scopedPDU.Write(message, scopedPDUPosition, scopedPduLength);
             }
+
             // compute real max size response pdu according  to RFC3414 §3.2.9
             int maxSecParamsOverhead =
                 usmSecurityParameters.GetBERMaxLength((int)securityLevel);
-            maxSizeResponseScopedPDU.SetValue(maxMessageSize -
-                                              maxSecParamsOverhead);
+
+            maxSizeResponseScopedPDU = maxMessageSize -
+                                              maxSecParamsOverhead;
 
             usmSecurityStateReference.SecurityName = securityName.GetValue();
             return SnmpConstants.SNMPv3_USM_OK;

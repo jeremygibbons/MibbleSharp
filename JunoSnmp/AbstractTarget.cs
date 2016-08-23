@@ -46,7 +46,7 @@ namespace JunoSnmp
         private IList<ITransportMapping<IAddress>> preferredTransports;
 
         protected SecurityLevel securityLevel = SecurityLevel.NoAuthNoPriv;
-        protected JunoSnmp.Security.SecurityModel.SecurityModels securityModel = JunoSnmp.Security.SecurityModel.SecurityModels.SECURITY_MODEL_USM;
+        protected JunoSnmp.Security.SecurityModel.SecurityModelID securityModel = JunoSnmp.Security.SecurityModel.SecurityModelID.SECURITY_MODEL_USM;
         protected OctetString securityName = new OctetString();
 
         /// <summary>
@@ -201,7 +201,7 @@ namespace JunoSnmp
         /// <summary>
         /// Sets the security model for this target.
         /// </summary>
-        public JunoSnmp.Security.SecurityModel.SecurityModels SecurityModel
+        public JunoSnmp.Security.SecurityModel.SecurityModelID SecurityModel
         {
             get
             {

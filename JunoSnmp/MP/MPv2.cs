@@ -77,7 +77,7 @@ namespace JunoSnmp.MP
         public override int PrepareOutgoingMessage(IAddress transportAddress,
                                           int maxMessageSize,
                                           MessageProcessingModels messageProcessingModel,
-                                          SecurityModel.SecurityModels securityModel,
+                                          SecurityModel.SecurityModelID securityModel,
                                           byte[] securityName,
                                           SecurityLevel securityLevel,
                                           PDU pdu,
@@ -88,7 +88,7 @@ namespace JunoSnmp.MP
                                           TransportStateReference tmStateReference)
         {
             if ((securityLevel != SecurityLevel.NoAuthNoPriv) ||
-                (securityModel != SecurityModel.SecurityModels.SECURITY_MODEL_SNMPv2c))
+                (securityModel != SecurityModel.SecurityModelID.SECURITY_MODEL_SNMPv2c))
             {
                 log.Error("MPv2c used with unsupported security model");
                 return SnmpConstants.SNMP_MP_UNSUPPORTED_SECURITY_MODEL;
@@ -130,7 +130,7 @@ namespace JunoSnmp.MP
 
         public override int PrepareResponseMessage(MessageProcessingModels messageProcessingModel,
                                           int maxMessageSize,
-                                          SecurityModel.SecurityModels securityModel,
+                                          SecurityModel.SecurityModelID securityModel,
                                           byte[] securityName,
                                           SecurityLevel securityLevel,
                                           PDU pdu,
@@ -157,7 +157,7 @@ namespace JunoSnmp.MP
                                        BERInputStream wholeMsg,
                                        TransportStateReference tmStateReference,
                                        MessageProcessingModels messageProcessingModel,
-                                       SecurityModel.SecurityModels securityModel,
+                                       SecurityModel.SecurityModelID securityModel,
                                        OctetString securityName,
                                        SecurityLevel securityLevel,
                                        MutablePDU pdu,
@@ -182,7 +182,7 @@ namespace JunoSnmp.MP
 
             securityName.DecodeBER(wholeMsg);
             securityLevel = SecurityLevel.NoAuthNoPriv;
-            securityModel = SecurityModel.SecurityModels.SECURITY_MODEL_SNMPv2c;
+            securityModel = SecurityModel.SecurityModelID.SECURITY_MODEL_SNMPv2c;
             messageProcessingModel = this.ID;
 
             PDU v2cPDU = incomingPDUFactory.CreatePDU(this);

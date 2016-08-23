@@ -40,8 +40,8 @@ namespace JunoSnmp.Security
         /// </summary>
         private static readonly OID protocolOid = new OID("1.3.6.1.6.3.10.1.2.2");
 
-        private static readonly String PROTOCOL_ID = "DES/CBC/NoPadding";
-        private static readonly String PROTOCOL_CLASS = "DES";
+        private static readonly string PROTOCOL_ID = "DES/CBC/NoPadding";
+        private static readonly string PROTOCOL_CLASS = "DES";
         private static readonly int DECRYPT_PARAMS_LENGTH = 8;
         private static readonly int INIT_VECTOR_LENGTH = 8;
         private static readonly int INPUT_KEY_LENGTH = 16;
@@ -57,7 +57,6 @@ namespace JunoSnmp.Security
             this.protocolClass = PROTOCOL_CLASS;
             this.keyBytes = KEY_LENGTH;
             this.salt = Salt.GetInstance();
-            this.cipherPool = new CipherPool();
         }
 
         public override byte[] Encrypt(byte[] unencryptedData,
@@ -84,6 +83,7 @@ namespace JunoSnmp.Security
             {
                 decryptParams.Array = new byte[8];
             }
+
             decryptParams.Length = 8;
             decryptParams.Offset = 0;
 
@@ -92,6 +92,7 @@ namespace JunoSnmp.Security
             {
                 log.Debug("Preparing decrypt_params.");
             }
+
             for (int i = 0; i < 4; ++i)
             {
                 decryptParams.Array[3 - i] = (byte)(0xFF & (engineBoots >> (8 * i)));
@@ -105,9 +106,10 @@ namespace JunoSnmp.Security
             {
                 log.Debug("Preparing iv for encryption.");
             }
+
             for (int i = 0; i < 8; ++i)
             {
-                iv[i] = (byte)(encryptionKey[8 + i] ^ decryptParams.array[i]);
+                iv[i] = (byte)(encryptionKey[8 + i] ^ decryptParams.Array[i]);
             }
 
             byte[] encryptedData = null;
@@ -115,9 +117,7 @@ namespace JunoSnmp.Security
             try
             {
                 // now do CBC encryption of the plaintext
-                Cipher alg = doInit(encryptionKey, iv);
-                encryptedData = DoFinalWithPadding(unencryptedData, offset, length, alg);
-                cipherPool.offerCipher(alg);
+                encryptedData = DoEncryptWithPadding(encryptionKey, iv, unencryptedData, offset, length);
             }
             catch (Exception e)
             {
@@ -189,7 +189,7 @@ namespace JunoSnmp.Security
                 iv[i] = (byte)(decryptionKey[8 + i] ^ decryptParams.Array[i]);
             }
 
-            byte[] decryptedData = doDecrypt(cryptedData, offset, length, decryptionKey, iv);
+            byte[] decryptedData = DoDecrypt(cryptedData, offset, length, decryptionKey, iv);
             return decryptedData;
         }
 
@@ -203,31 +203,6 @@ namespace JunoSnmp.Security
             get
             {
                 return (OID)protocolOid.Clone();
-            }
-        }
-
-        public bool IsSupported
-        {
-            get
-            {
-                Cipher alg;
-                try
-                {
-                    alg = cipherPool.reuseCipher();
-                    if (alg == null)
-                    {
-                        Cipher.getInstance("DESede/CBC/NoPadding");
-                    }
-                    return true;
-                }
-                catch (NoSuchPaddingException e)
-                {
-                    return false;
-                }
-                catch (NoSuchAlgorithmException e)
-                {
-                    return false;
-                }
             }
         }
 

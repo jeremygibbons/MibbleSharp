@@ -44,11 +44,45 @@ namespace JunoSnmp.Security
         protected string protocolClass;
         protected int keyBytes;
         protected Salt salt;
-        protected CipherPool cipherPool;
         protected int initVectorLength;
 
+        public bool Supported
+        {
+            get
+            {
+                try
+                {
 
-        protected Cipher DoInit(byte[] encryptionKey, byte[] initVect)
+
+                    using (SymmetricAlgorithm sa = SymmetricAlgorithm.Create(protocolId))
+                    {
+                        sa.Key = new byte[keyBytes]; ;
+                        sa.IV = new byte[initVectorLength]; ;
+
+                        // Create an encryptor to perform the stream transform.
+                        ICryptoTransform encryptor = sa.CreateEncryptor(sa.Key, sa.IV);
+                    }
+
+                    return true;
+                }
+                catch (Exception e)
+                {
+                    if (log.IsDebugEnabled)
+                    {
+                        log.Debug(protocolClass + " privacy not available. Error: " + e.Message);
+                    }
+
+                    return false;
+                }
+            }
+        }
+
+        public abstract int MinKeyLength { get; }
+        public abstract int MaxKeyLength { get; }
+        public abstract int DecryptParamsLength { get; }
+        public abstract OID ID { get; }
+
+        protected byte[] DoEncrypt(byte[] encryptionKey, byte[] initVect, byte[] unencryptedData, int offset, int length)
         {
             using (SymmetricAlgorithm sa = SymmetricAlgorithm.Create(protocolId))
             {
@@ -63,78 +97,72 @@ namespace JunoSnmp.Security
                 {
                     using (CryptoStream csEncrypt = new CryptoStream(msEncrypt, encryptor, CryptoStreamMode.Write))
                     {
-                        using (StreamWriter swEncrypt = new StreamWriter(csEncrypt))
-                        {
-                            //Write all data to the stream.
-                            swEncrypt.Write(plainText);
-                        }
-                        encrypted = msEncrypt.ToArray();
+                        csEncrypt.Write(unencryptedData, offset, length);
                     }
+
+                    return msEncrypt.ToArray();
                 }
             }
-
-
-            // Return the encrypted bytes from the memory stream. 
-            return encrypted;
         }
 
-        protected byte[] DoFinal(byte[] unencryptedData, int offset, int length, Cipher alg)
-        {
-            return alg.doFinal(unencryptedData, offset, length);
-        }
 
-        protected byte[] DoFinalWithPadding(byte[] unencryptedData, int offset, int length, Cipher alg)
-        {
-            byte[] encryptedData;
 
+        protected byte[] DoEncryptWithPadding(byte[] encryptionKey, byte[] initVect, byte[] unencryptedData, int offset, int length)
+        {
             if (length % 8 == 0)
             {
-                encryptedData = alg.doFinal(unencryptedData, offset, length);
+                return DoEncrypt(encryptionKey, initVect, unencryptedData, offset, length);
             }
-            else
+
+            using (SymmetricAlgorithm sa = SymmetricAlgorithm.Create(protocolId))
             {
+                sa.Key = encryptionKey;
+                sa.IV = initVect;
+
+                // Create a decrytor to perform the stream transform.
+                ICryptoTransform encryptor = sa.CreateEncryptor(sa.Key, sa.IV);
+
                 if (log.IsDebugEnabled)
                 {
                     log.Debug("Using padding.");
                 }
 
-                encryptedData = new byte[8 * ((length / 8) + 1)];
-                byte[] tmp = new byte[8];
+                // Create the streams used for encryption. 
+                using (MemoryStream msEncrypt = new MemoryStream())
+                {
+                    using (CryptoStream csEncrypt = new CryptoStream(msEncrypt, encryptor, CryptoStreamMode.Write))
+                    {
+                        csEncrypt.Write(unencryptedData, offset, length);
+                    }
 
-                int encryptedLength = alg.update(unencryptedData, offset, length,
-                    encryptedData);
-                alg.doFinal(tmp, 0, 8 - (length % 8), encryptedData, encryptedLength);
+                    return msEncrypt.ToArray();
+                }
             }
-
-            return encryptedData;
         }
 
         protected byte[] DoDecrypt(byte[] cryptedData, int offset, int length, byte[] decryptionKey, byte[] iv)
         {
             byte[] decryptedData = null;
 
-            try
+            using (SymmetricAlgorithm sa = SymmetricAlgorithm.Create(protocolId))
             {
-                Cipher alg = cipherPool.reuseCipher();
-                if (alg == null)
+                sa.Key = decryptionKey;
+                sa.IV = iv;
+
+                // Create a decrytor to perform the stream transform.
+                ICryptoTransform decryptor = sa.CreateDecryptor(sa.Key, sa.IV);
+
+                // Create the streams used for encryption. 
+                using (MemoryStream msDecrypt = new MemoryStream(cryptedData))
                 {
-                    alg = Cipher.getInstance(protocolId);
-                }
-                SecretKeySpec key = new SecretKeySpec(decryptionKey, 0, keyBytes, protocolClass);
-                IvParameterSpec ivSpec = new IvParameterSpec(iv);
-                alg.init(Cipher.DECRYPT_MODE, key, ivSpec);
-                decryptedData = alg.doFinal(cryptedData, offset, length);
-                cipherPool.offerCipher(alg);
-            }
-            catch (Exception e)
-            {
-                log.Error(e);
-                if (log.IsDebugEnabled)
-                {
-                    log.Debug(e.StackTrace);
+                    using (CryptoStream csDecrypt = new CryptoStream(msDecrypt, decryptor, CryptoStreamMode.Read))
+                    {
+                        decryptedData = new byte[cryptedData.Length];
+                        csDecrypt.Read(decryptedData, 0, decryptedData.Length);
+                        return decryptedData;
+                    }
                 }
             }
-            return decryptedData;
         }
 
         public abstract byte[] Encrypt(byte[] unencryptedData, int offset, int length, byte[] encryptionKey, long engineBoots, long engineTime, DecryptParams decryptParams);
@@ -143,70 +171,5 @@ namespace JunoSnmp.Security
         public abstract byte[] ExtendShortKey(byte[] shortKey, OctetString password, byte[] engineID, IAuthenticationProtocol authProtocol);
         public abstract void GetObjectData(SerializationInfo info, StreamingContext context);
 
-        public bool Supported
-        {
-            get
-            {
-                Cipher alg;
-
-                try
-                {
-                    alg = cipherPool.reuseCipher();
-
-                    if (alg == null)
-                    {
-                        alg = Cipher.getInstance(protocolId);
-                    }
-
-                    byte[] initVect = new byte[initVectorLength];
-                    byte[] encryptionKey = new byte[keyBytes];
-                    SecretKeySpec key = new SecretKeySpec(encryptionKey, 0, keyBytes, protocolClass);
-                    IvParameterSpec ivSpec = new IvParameterSpec(initVect);
-                    alg.init(Cipher.ENCRYPT_MODE, key, ivSpec);
-                    return true;
-                }
-                catch (NoSuchPaddingException e)
-                {
-                    if (log.IsDebugEnabled)
-                    {
-                        log.Debug(protocolClass + " privacy not available without padding");
-                    }
-
-                    return false;
-                }
-                catch (NoSuchAlgorithmException e)
-                {
-                    if (log.IsDebugEnabled)
-                    {
-                        log.Debug(protocolClass + " privacy not available");
-                    }
-
-                    return false;
-                }
-                catch (InvalidAlgorithmParameterException e)
-                {
-                    if (log.IsDebugEnabled)
-                    {
-                        log.Debug(protocolClass + " privacy not available due to invalid parameter: " + e.getMessage());
-                    }
-
-                    return false;
-                }
-                catch (InvalidKeyException e)
-                {
-                    if (log.IsDebugEnabled)
-                    {
-                        log.Debug(protocolClass + " privacy with key length " + keyBytes + " not supported");
-                    }
-
-                    return false;
-                }
-            }
-        }
-
-        public abstract int MinKeyLength { get; }
-        public abstract int MaxKeyLength { get; }
-        public abstract int DecryptParamsLength { get; }
-        public abstract OID ID { get; }
     }
 }

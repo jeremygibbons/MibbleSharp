@@ -272,7 +272,7 @@ namespace JunoSnmp.Security
 
         public int GetBERMaxLength(int securityLevel)
         {
-            SecurityProtocols secProtocol = SecurityProtocols.Instance;
+            SecurityProtocols secProtocol = SecurityProtocols.GetInstance();
             int securityParamsLength = 2;
             if (securityLevel > (int)SecurityLevel.NoAuthNoPriv)
             {

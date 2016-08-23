@@ -75,13 +75,13 @@ namespace JunoSnmp.Security
 
         protected static byte[] BuildMessageBuffer(BERInputStream scopedPDU)
         {
-            scopedPDU.mark(16);
+            long pos = scopedPDU.Position;
             int readLengthBytes = (int)scopedPDU.Position;
             BER.MutableByte mutableByte = new BER.MutableByte();
             int length = BER.DecodeHeader(scopedPDU, out mutableByte);
             readLengthBytes = (int)scopedPDU.Position - readLengthBytes;
             byte[] buf = new byte[length + readLengthBytes];
-            scopedPDU.reset();
+            scopedPDU.Position = pos;
 
             int offset = 0;
             long avail = scopedPDU.Available;

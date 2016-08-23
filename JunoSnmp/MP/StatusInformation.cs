@@ -23,6 +23,7 @@ namespace JunoSnmp.MP
 {
     using System;
     using System.Runtime.Serialization;
+    using JunoSnmp.Security;
     using JunoSnmp.SMI;
 
     /// <summary>
@@ -34,7 +35,7 @@ namespace JunoSnmp.MP
         private VariableBinding errorIndication;
         private byte[] contextName;
         private byte[] contextEngineID;
-        private Integer32 securityLevel;
+        private SecurityLevel securityLevel;
 
         public StatusInformation()
         {
@@ -44,7 +45,7 @@ namespace JunoSnmp.MP
             VariableBinding errorIndication,
             byte[] contextName,
             byte[] contextEngineID,
-            Integer32 securityLevel)
+            SecurityLevel securityLevel)
         {
             this.errorIndication = errorIndication;
             this.contextName = contextName;
@@ -91,7 +92,7 @@ namespace JunoSnmp.MP
             }
         }
 
-        public Integer32 SecurityLevel
+        public SecurityLevel SecurityLevel
         {
             get
             {

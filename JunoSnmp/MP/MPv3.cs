@@ -51,10 +51,9 @@ namespace JunoSnmp.MP
 
         private static readonly int INT_LOW_16BIT_MASK = 0x0000FFFF;
 
-        /**
-         * Local engine ID constant for context engineID discovery
-         * as defined by RFC 5343.
-         */
+        /// <summary>
+        /// Local engine ID constant for context engineID discovery as defined by RFC 5343.
+        /// </summary>
         public static readonly OctetString LOCAL_ENGINE_ID = OctetString.FromHexString("80:00:00:00:06");
 
         public static readonly int MAXLEN_ENGINE_ID = 32;
@@ -74,7 +73,8 @@ namespace JunoSnmp.MP
 
         private static readonly log4net.ILog log = log4net.LogManager
           .GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-        private JunoSnmp.Security.SecurityModel.SecurityModels securityModels;
+
+        private JunoSnmp.Security.SecurityModels securityModels;
 
         private Cache cache;
         private IDictionary<IAddress, OctetString> engineIDs;
@@ -125,7 +125,7 @@ namespace JunoSnmp.MP
          */
         public MPv3(byte[] localEngineID, IPDUFactory incomingPDUFactory) :
         this(localEngineID, incomingPDUFactory, SecurityProtocols.GetInstance(),
-                SecurityModels.Instance, CounterSupport.Instance)
+                JunoSnmp.Security.SecurityModels.Instance, CounterSupport.Instance)
         {
         }
 
@@ -137,9 +137,9 @@ namespace JunoSnmp.MP
          *    an USM instance.
          * @since 1.10
          */
-        public MPv3(USM usm) : this(usm.getLocalEngineID().getValue(), null,
+        public MPv3(USM usm) : this(usm.LocalEngineID.GetValue(), null,
                 SecurityProtocols.GetInstance(),
-                SecurityModels.GetCollection(new SecurityModel[] { usm }),
+                JunoSnmp.Security.SecurityModels.GetCollection(new SecurityModel[] { usm }),
                 CounterSupport.Instance)
         {
         }
@@ -172,7 +172,7 @@ namespace JunoSnmp.MP
          */
         public MPv3(byte[] localEngineID, IPDUFactory incomingPDUFactory,
             SecurityProtocols secProtocols,
-            SecurityModel.SecurityModels secModels,
+            JunoSnmp.Security.SecurityModels secModels,
             CounterSupport counterSupport)
         {
             if (incomingPDUFactory != null)
@@ -190,11 +190,6 @@ namespace JunoSnmp.MP
 
             securityProtocols = secProtocols;
 
-            if (secModels == null)
-            {
-                throw new ArgumentNullException();
-            }
-
             securityModels = secModels;
 
             if (counterSupport == null)
@@ -204,11 +199,11 @@ namespace JunoSnmp.MP
 
             this.counterSupport = counterSupport;
             LocalEngineID = localEngineID;
-            SecurityModel usm = secModels.getSecurityModel(new Integer32(USM.SECURITY_MODEL_USM));
+            SecurityModel usm = secModels[SecurityModel.SecurityModelID.SECURITY_MODEL_USM];
 
             if (usm is USM)
             {
-                setCurrentMsgID(this.RandomMsgID(((USM)usm).getEngineBoots()));
+                setCurrentMsgID(MPv3.RandomMsgID(((USM)usm).EngineBoots));
             }
         }
 
@@ -450,7 +445,12 @@ namespace JunoSnmp.MP
          */
         public SecurityModel GetSecurityModel(int id)
         {
-            return securityModels.GetSecurityModel(new Integer32(id));
+            if(Enum.IsDefined(typeof(JunoSnmp.Security.SecurityModel.SecurityModelID), id))
+            {
+                return securityModels[(JunoSnmp.Security.SecurityModel.SecurityModelID)id];
+            }
+
+            return null;
         }
 
         public MessageProcessingModels ID
@@ -623,9 +623,9 @@ namespace JunoSnmp.MP
          */
         protected class Cache
         {
-
-            private ConditionalWeakTable<PduHandle, StateReference> entries = new ConditionalWeakTable<PduHandle, StateReference>();
-
+            //TODO: this should be a weakreference-based collection
+            ////private ConditionalWeakTable<PduHandle, StateReference> entries = new ConditionalWeakTable<PduHandle, StateReference>();
+            private Dictionary<PduHandle, StateReference> entries = new Dictionary<PduHandle, StateReference>();
             /**
              * Adds a <code>StateReference</code> to the cache.
              * The <code>PduHandle</code> of the supplied entry will be set to
@@ -715,21 +715,29 @@ namespace JunoSnmp.MP
             [MethodImpl(MethodImplOptions.Synchronized)]
             public StateReference PopEntry(int msgID)
             {
-                foreach(PduHandle ph in entries.Keys)
+                StateReference e = null;
+                PduHandle p = null;
+                foreach (PduHandle ph in entries.Keys)
                 {
-                    StateReference e = null;
                     bool result = entries.TryGetValue(ph, out e);
                     if ((e != null) && (e.IsMatchingMessageID(msgID)))
                     {
-                        it.remove();
-                        e.PduHandle = ph;
-                        if (log.IsDebugEnabled)
-                        {
-                            log.Debug("Removed cache entry: " + e);
-                        }
-                        return e;
+                        p = ph;
+                        break;
                     }
                 }
+
+                if(p != null)
+                {
+                    entries.Remove(p);
+                    if (log.IsDebugEnabled)
+                    {
+                        log.Debug("Removed cache entry: " + e);
+                    }
+                    e.PduHandle = p;
+                    return e;
+                }
+
                 return null;
             }
         }
@@ -748,7 +756,7 @@ namespace JunoSnmp.MP
             Integer32 msgID = new Integer32(0);
             Integer32 msgMaxSize = new Integer32(int.MaxValue);
             OctetString msgFlags = new OctetString(new byte[1]);
-            SecurityModel.SecurityModels securityModel = JunoSnmp.Security.SecurityModel.SecurityModels.SECURITY_MODEL_ANY;
+            SecurityModel.SecurityModelID securityModel = JunoSnmp.Security.SecurityModel.SecurityModelID.SECURITY_MODEL_ANY;
 
             public int MsgID
             {
@@ -789,7 +797,7 @@ namespace JunoSnmp.MP
                 }
             }
 
-            public SecurityModel.SecurityModels SecurityModel
+            public SecurityModel.SecurityModelID SecurityModel
             {
                 get
                 {
@@ -809,7 +817,8 @@ namespace JunoSnmp.MP
                     int length = msgID.BERLength;
                     length += msgMaxSize.BERLength;
                     length += msgFlags.BERLength;
-                    length += securityModel.BERLength;
+                    Integer32 secMod = new Integer32((int)securityModel);
+                    length += secMod.BERLength;
                     return length;
                 }
             }
@@ -844,10 +853,13 @@ namespace JunoSnmp.MP
                 msgFlags.DecodeBER(message);
                 if (msgFlags.Length != 1)
                 {
-                    throw new IOException("Message flags length != 1: " + msgFlags.length());
+                    throw new IOException("Message flags length != 1: " + msgFlags.Length);
                 }
 
-                securityModel.DecodeBER(message);
+                Integer32 secMod = new Integer32();
+                secMod.DecodeBER(message);
+                securityModel = (JunoSnmp.Security.SecurityModel.SecurityModelID)secMod.IntValue;
+
                 if (log.IsDebugEnabled)
                 {
                     log.Debug("SNMPv3 header decoded: msgId=" + msgID +
@@ -865,7 +877,8 @@ namespace JunoSnmp.MP
                 msgID.EncodeBER(outputStream);
                 msgMaxSize.EncodeBER(outputStream);
                 msgFlags.EncodeBER(outputStream);
-                securityModel.EncodeBER(outputStream);
+                Integer32 secMod = new Integer32((int)securityModel);
+                secMod.EncodeBER(outputStream);
             }
         }
         
@@ -917,7 +930,7 @@ namespace JunoSnmp.MP
         public override int PrepareOutgoingMessage(IAddress transportAddress,
                                           int maxMessageSize,
                                           MessageProcessingModels messageProcessingModel,
-                                          SecurityModel.SecurityModels securityModel,
+                                          SecurityModel.SecurityModelID securityModel,
                                           byte[] securityName,
                                           SecurityLevel securityLevel,
                                           PDU pdu,
@@ -934,8 +947,7 @@ namespace JunoSnmp.MP
             }
 
             ScopedPDU scopedPDU = (ScopedPDU)pdu;
-            SecurityModel secModel =
-                securityModels.getSecurityModel(new Integer32(securityModel));
+            SecurityModel secModel = securityModels[securityModel];
 
             if (secModel == null)
             {
@@ -1070,7 +1082,7 @@ namespace JunoSnmp.MP
                 new BEROutputStream();
             headerData.EncodeBER(globalDataOutputStream);
 
-            BERInputStream scopedPDUInput = new BERInputStream(scopedPdu.Rewind());
+            BERInputStream scopedPDUInput = new BERInputStream(scopedPdu.ToArray());
 
             // output data
             ISecurityParameters securityParameters =
@@ -1078,7 +1090,7 @@ namespace JunoSnmp.MP
 
             int status =
                 secModel.GenerateRequestMessage(messageProcessingModel,
-                                                globalDataBuffer.array(),
+                                                globalDataOutputStream.ToArray(),
                                                 maxMessageSize,
                                                 securityModel,
                                                 secEngineID,
@@ -1098,7 +1110,7 @@ namespace JunoSnmp.MP
                                                       sendPduHandle,
                                                       transportAddress,
                                                       null,
-                                                      secEngineID, secModel,
+                                                      secEngineID, securityModel,
                                                       securityName, securityLevel,
                                                       scopedPDU.ContextEngineID.
                                                       GetValue(),
@@ -1112,7 +1124,7 @@ namespace JunoSnmp.MP
 
         public override int PrepareResponseMessage(MessageProcessingModels messageProcessingModel,
                                           int maxMessageSize,
-                                          SecurityModel.SecurityModels securityModel,
+                                          SecurityModel.SecurityModelID securityModel,
                                           byte[] securityName,
                                           SecurityLevel securityLevel,
                                           PDU pdu,
@@ -1189,17 +1201,16 @@ namespace JunoSnmp.MP
                     break;
             }
 
-            BERInputStream scopedPDUInput = new BERInputStream(scopedPDU.rewind());
+            BERInputStream scopedPDUInput = new BERInputStream(scopedPDU.ToArray());
 
-            SecurityModel secModel =
-                securityModels.getSecurityModel(new Integer32(securityModel));
+            SecurityModel secModel = securityModels[securityModel];
             // output data
             ISecurityParameters securityParameters =
                 secModel.NewSecurityParametersInstance();
 
             int status =
                 secModel.GenerateResponseMessage(this.ID,
-                    globalDataBuffer.array(),
+                    globalDataOutputStream.ToArray(),
                     maxMessageSize,
                     securityModel,
                     securityEngineID.GetValue(),
@@ -1239,7 +1250,7 @@ namespace JunoSnmp.MP
         public int SendReport(IMessageDispatcher messageDispatcher,
                               ScopedPDU pdu,
                               SecurityLevel securityLevel,
-                              SecurityModel.SecurityModels securityModel,
+                              SecurityModel.SecurityModelID securityModel,
                               OctetString securityName,
                               int maxSizeResponseScopedPDU,
                               StateReference stateReference,
@@ -1285,17 +1296,17 @@ namespace JunoSnmp.MP
             return SnmpConstants.SNMP_MP_OK;
         }
 
-        public int PrepareDataElements(IMessageDispatcher messageDispatcher,
+        public override int PrepareDataElements(IMessageDispatcher messageDispatcher,
                                        IAddress transportAddress,
                                        BERInputStream wholeMsg,
                                        TransportStateReference tmStateReference,
                                        MessageProcessingModels messageProcessingModel,
-                                       SecurityModel.SecurityModels securityModel,
+                                       SecurityModel.SecurityModelID securityModel,
                                        OctetString securityName,
                                        SecurityLevel securityLevel,
                                        MutablePDU pdu,
                                        PduHandle sendPduHandle,
-                                       Integer32 maxSizeResponseScopedPDU,
+                                       int maxSizeResponseScopedPDU,
                                        StatusInformation statusInformation,
                                        MutableStateReference mutableStateReference)
         {
@@ -1309,7 +1320,8 @@ namespace JunoSnmp.MP
                         mutableStateReference.StateReference.TransportMapping;
                 }
                 messageProcessingModel = MessageProcessingModels.MPv3;
-                wholeMsg.mark(16);
+
+                long pos = wholeMsg.Position;
 
                 BER.MutableByte type = new BER.MutableByte();
                 int length = BER.DecodeHeader(wholeMsg, out type);
@@ -1319,8 +1331,9 @@ namespace JunoSnmp.MP
                 }
 
                 long lengthOfLength = wholeMsg.Position;
-                wholeMsg.Reset();
-                wholeMsg.mark(length);
+
+                wholeMsg.Position = pos;
+
                 if (wholeMsg.Skip(lengthOfLength) != lengthOfLength)
                 {
                     return SnmpConstants.SNMP_MP_PARSE_ERROR;
@@ -1331,7 +1344,7 @@ namespace JunoSnmp.MP
                 if (snmpVersion.GetValue() != SnmpConstants.version3)
                 {
                     // internal error -> should not happen
-                    throw new RuntimeException(
+                    throw new InvalidDataException(
                         "Internal error unexpected SNMP version read");
                 }
                 // decode SNMPv3 header
@@ -1346,13 +1359,13 @@ namespace JunoSnmp.MP
                 mutableStateReference.StateReference = stateReference;
 
                 // the usm has to recalculate this value
-                maxSizeResponseScopedPDU.SetValue(header.MsgMaxSize -
-                                                  MAX_HEADER_LENGTH);
+                maxSizeResponseScopedPDU = header.MsgMaxSize -
+                                                  MAX_HEADER_LENGTH;
 
                 ScopedPDU scopedPdu = (ScopedPDU)incomingPDUFactory.CreatePDU(this);
                 pdu.Pdu = scopedPdu;
 
-                SecurityModel secModel = securityModels.getSecurityModel(securityModel);
+                SecurityModel secModel = securityModels[securityModel];
                 if (secModel == null)
                 {
                     log.Error("RFC3412 §7.2.4 - Unsupported security model: " +
@@ -1391,6 +1404,7 @@ namespace JunoSnmp.MP
                             return SnmpConstants.SNMP_MP_INVALID_MESSAGE;
                         }
                 }
+
                 statusInformation.SecurityLevel = securityLevel;
 
                 int secParametersPosition = (int)wholeMsg.Position;
@@ -1410,15 +1424,15 @@ namespace JunoSnmp.MP
                 // create output stream for scoped PDU
                 // may be optimized by an output stream that maps directly into the
                 // original input
-                wholeMsg.Reset();
+                wholeMsg.Position = pos;
 
                 BEROutputStream scopedPDU = new BEROutputStream();
                 int status =
-                    secModel.ProcessIncomingMsg(snmpVersion.GetValue(),
+                    secModel.ProcessIncomingMsg((MessageProcessingModels)snmpVersion.GetValue(),
                                                 header.MsgMaxSize-
                                                 MAX_HEADER_LENGTH,
                                                 secParameters,
-                                                secModel,
+                                                securityModel,
                                                 securityLevel,
                                                 wholeMsg,
                                                 tmStateReference,
@@ -1429,13 +1443,14 @@ namespace JunoSnmp.MP
                                                 maxSizeResponseScopedPDU,
                                                 secStateReference,
                                                 statusInformation);
-                wholeMsg.close();
+                wholeMsg.Close();
+
                 if (status == SnmpConstants.SNMPv3_USM_OK)
                 {
                     try
                     {
                         BERInputStream scopedPduStream =
-                            new BERInputStream(scopedPDU.rewind());
+                            new BERInputStream(scopedPDU.ToArray());
                         scopedPdu.DecodeBER(scopedPduStream);
                         sendPduHandle.TransactionID = scopedPdu.RequestID.GetValue();
 
@@ -1460,10 +1475,11 @@ namespace JunoSnmp.MP
                           (scopedPdu.ContextEngineID.Length == 0)) &&
                         ((scopedPdu.Type != PDU.RESPONSE) &&
                          (scopedPdu.Type != PDU.REPORT)))
-                    {                        
-                        counterSupport.IncrementCounter(this, new CounterIncrArgs(SnmpConstants.snmpUnknownPDUHandlers));
+                    {
+                        CounterIncrArgs evt = new CounterIncrArgs(SnmpConstants.snmpUnknownPDUHandlers);
+                        counterSupport.IncrementCounter(this, evt);
                         VariableBinding errorIndication =
-                            new VariableBinding(evt.getOid(), evt.getCurrentValue());
+                            new VariableBinding(evt.Oid, evt.CurrentValue);
                         statusInformation.ErrorIndication = errorIndication;
                         status = SnmpConstants.SNMP_MP_UNKNOWN_PDU_HANDLERS;
                     }
@@ -1472,7 +1488,7 @@ namespace JunoSnmp.MP
                 stateReference.SecurityName = securityName.GetValue();
                 stateReference.SecurityEngineID = securityEngineID.GetValue();
                 stateReference.SecurityLevel = securityLevel;
-                stateReference.SecurityModel = secModel;
+                stateReference.SecurityModel = securityModel;
                 stateReference.SecurityStateReference = secStateReference;
                 stateReference.PduHandle = sendPduHandle;
 
@@ -1484,10 +1500,10 @@ namespace JunoSnmp.MP
                         // RFC3412 §7.2.6.a - generate a report
                         try
                         {
-                            if (scopedPDU.getBuffer() != null)
+                            if (scopedPDU.Length != 0)
                             {
                                 BERInputStream scopedPduStream =
-                                    new BERInputStream(scopedPDU.rewind());
+                                    new BERInputStream(scopedPDU.ToArray());
                                 scopedPdu.DecodeBER(scopedPduStream);
                             }
                             else
@@ -1504,13 +1520,14 @@ namespace JunoSnmp.MP
                         StateReference cacheEntry =
                             new StateReference(header.MsgID,
                                                header.MsgFlags,
-                                               maxSizeResponseScopedPDU.GetValue(),
+                                               maxSizeResponseScopedPDU,
                                                sendPduHandle,
                                                transportAddress,
                                                null,
                                                securityEngineID.GetValue(),
-                                               secModel, securityName.GetValue(),
-                                               securityLevel.GetValue(),
+                                               securityModel, 
+                                               securityName.GetValue(),
+                                               securityLevel,
                                                (scopedPdu == null) ? new byte[0] :
                                                scopedPdu.ContextEngineID.GetValue(),
                                                (scopedPdu == null) ? new byte[0] :
@@ -1520,9 +1537,9 @@ namespace JunoSnmp.MP
 
                         int reportStatus =
                             SendReport(messageDispatcher, scopedPdu,
-                                       statusInformation.SecurityLevel.GetValue(),
+                                       statusInformation.SecurityLevel,
                                        secModel.ID, securityName,
-                                       maxSizeResponseScopedPDU.GetValue(),
+                                       maxSizeResponseScopedPDU,
                                        stateReference,
                                        statusInformation.ErrorIndication);
                         if (reportStatus != SnmpConstants.SNMP_MP_OK)
@@ -1536,12 +1553,12 @@ namespace JunoSnmp.MP
 
                 stateReference.ContextEngineID = scopedPdu.ContextEngineID.GetValue();
                 stateReference.ContextName = scopedPdu.ContextName.GetValue();
-                stateReference.MaxSizeResponseScopedPDU = maxSizeResponseScopedPDU.GetValue();
+                stateReference.MaxSizeResponseScopedPDU = maxSizeResponseScopedPDU;
 
                 if ((scopedPdu.Type == PDU.RESPONSE) ||
                     (scopedPdu.Type == PDU.REPORT))
                 {
-                    StateReference cacheEntry = cache.popEntry(header.MsgID);
+                    StateReference cacheEntry = cache.PopEntry(header.MsgID);
                     if (cacheEntry != null)
                     {
                         if (log.IsDebugEnabled)
@@ -1549,11 +1566,11 @@ namespace JunoSnmp.MP
                             log.Debug("RFC3412 §7.2.10 - Received PDU (msgID=" +
                                          header.MsgID+ ") is a response or " +
                                          "an internal class message. PduHandle.transactionID = " +
-                                         cacheEntry.getPduHandle().getTransactionID());
+                                         cacheEntry.PduHandle.TransactionID);
                         }
                         sendPduHandle.CopyFrom(cacheEntry.PduHandle);
 
-                        if (scopedPdu.getType() == PDU.REPORT)
+                        if (scopedPdu.Type == PDU.REPORT)
                         {
 
                             statusInformation.ContextEngineID = scopedPdu.ContextEngineID.GetValue();
@@ -1562,7 +1579,7 @@ namespace JunoSnmp.MP
 
                             if (((cacheEntry.SecurityEngineID.Length != 0) &&
                                   (!securityEngineID.EqualsValue(cacheEntry.SecurityEngineID))) ||
-                                (secModel.getID() != cacheEntry.SecurityModel.getID()) ||
+                                (secModel.ID != cacheEntry.SecurityModel) ||
                                 ((!securityName.EqualsValue(cacheEntry.SecurityName) &&
                                   (securityName.Length != 0))))
                             {
@@ -1577,13 +1594,13 @@ namespace JunoSnmp.MP
                                 mutableStateReference.StateReference = null;
                                 return SnmpConstants.SNMP_MP_MATCH_ERROR;
                             }
-                            if (!addEngineID(cacheEntry.Address, securityEngineID))
+                            if (!AddEngineID(cacheEntry.Address, securityEngineID))
                             {
                                 if (log.IsWarnEnabled)
                                 {
                                     log.Warn("Engine ID '" + securityEngineID +
                                                 "' could not be added to engine ID cache for " +
-                                                "target address '" + cacheEntry.getAddress() +
+                                                "target address '" + cacheEntry.Address +
                                                 "' because engine ID matches local engine ID or cache size limit is reached");
                                 }
                             }
@@ -1597,9 +1614,9 @@ namespace JunoSnmp.MP
                         {
                             if (((!securityEngineID.EqualsValue(cacheEntry.SecurityEngineID)) &&
                                  (cacheEntry.SecurityEngineID.Length != 0)) ||
-                                (secModel.ID != cacheEntry.SecurityModel.ID) ||
+                                (secModel.ID != cacheEntry.SecurityModel) ||
                                 (!securityName.EqualsValue(cacheEntry.SecurityName)) ||
-                                (securityLevel.GetValue() != cacheEntry.SecurityLevel) ||
+                                (securityLevel != cacheEntry.SecurityLevel) ||
                                 ((!scopedPdu.ContextEngineID.EqualsValue(cacheEntry.ContextEngineID)) &&
                                  (cacheEntry.ContextEngineID.Length != 0)) ||
                                 ((!scopedPdu.ContextName.EqualsValue(cacheEntry.ContextName) &&
@@ -1698,7 +1715,7 @@ namespace JunoSnmp.MP
          * @param securityModels
          *    a <code>SecurityModels</code> instance.
          */
-        public SecurityModel.SecurityModels SecurityModels
+        public SecurityModels SupportedSecurityModels
         {
             get
             {
@@ -1765,7 +1782,7 @@ namespace JunoSnmp.MP
             {
                 if (value == null)
                 {
-                    throw new NullPointerException();
+                    throw new ArgumentNullException();
                 }
                 this.counterSupport = value;
             }

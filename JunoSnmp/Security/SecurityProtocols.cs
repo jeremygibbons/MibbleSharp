@@ -23,23 +23,19 @@ namespace JunoSnmp.Security
 {
     using System;
     using System.Collections.Generic;
-    using System.IO;
     using System.Runtime.CompilerServices;
     using System.Runtime.Serialization;
     using JunoSnmp.SMI;
 
-    /**
- * The <code>SecurityProtocols</code> class holds all authentication and
- * privacy protocols for a SNMP entity.
- * <p>
- * To register security protocols other than the default, set the system
- * property {@link #SECURITY_PROTOCOLS_PROPERTIES} to a customized version
- * of the <code>SecurityProtocols.properties</code> file. The path has to
- * be specified relatively to this class.
- *
- * @author Jochen Katz & Frank Fock
- * @version 1.9
- */
+    /// <summary>
+    /// The <code>SecurityProtocols</code> class holds all authentication and
+    /// privacy protocols for a SNMP entity.<para>
+    /// To register security protocols other than the default, set the system
+    /// property <see cref="SECURITY_PROTOCOLS_PROPERTIES"/> to a customized version
+    /// of the <c>SecurityProtocols.properties</c> file. The path has to
+    /// be specified relatively to this class.
+    /// </para>
+    /// </summary>
     public class SecurityProtocols : ISerializable
     {
 
@@ -47,7 +43,7 @@ namespace JunoSnmp.Security
         private Dictionary<OID, IPrivacyProtocol> privProtocols;
 
         public static readonly string SECURITY_PROTOCOLS_PROPERTIES =
-          "org.snmp4j.securityProtocols";
+          "org.junosnmp.securityProtocols";
         private static readonly string SECURITY_PROTOCOLS_PROPERTIES_DEFAULT =
             "SecurityProtocols.properties";
         private static readonly log4net.ILog log = log4net.LogManager
@@ -57,17 +53,18 @@ namespace JunoSnmp.Security
         private int maxAuthDigestLength = 0;
         private int maxPrivDecryptParamsLength = 0;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SecurityProtocols"/> class. As the class
+        /// is a singleton, this should not be called by other code.
+        /// </summary>
         protected SecurityProtocols()
         {
             authProtocols = new Dictionary<OID, IAuthenticationProtocol>(5);
             privProtocols = new Dictionary<OID, IPrivacyProtocol>(5);
         }
-
-        /**
-         * Get an instance of class SecurityProtocols.
-         *
-         * @return the globally used SecurityProtocols object.
-         */
+        
+        /// <summary>Gets the global instance of the SecurityProtocols singleton</summary>
+        /// <returns>The global instance of the Security Protocols singleton</returns>
         public static SecurityProtocols GetInstance()
         {
             if (SecurityProtocols.instance == null)
@@ -77,28 +74,22 @@ namespace JunoSnmp.Security
 
             return SecurityProtocols.instance;
         }
-
-        /**
-         * Set the <code>SecurityProtocols</code>
-         * @param securityProtocols SecurityProtocols
-         */
-        public static void setSecurityProtocols(SecurityProtocols securityProtocols)
+        
+        /// <summary>
+        /// Set the <c>SecurityProtocols</c>
+        /// </summary>
+        /// <param name="securityProtocols">A <c>SecurityProtocols</c> object</param>
+        public static void SetSecurityProtocols(SecurityProtocols securityProtocols)
         {
             SecurityProtocols.instance = securityProtocols;
         }
-
-        /**
-         * Add the default SecurityProtocols.
-         *
-         * The names of the SecurityProtocols to add are read from a
-         * properties file.
-         *
-         * @return
-         *    this SecurityProtocols instance for chaining configuration.
-         *
-         * @throws InternalError if {@link SNMP4JSettings#isExtensibilityEnabled()} is <code>true</code>
-         * and corresponding properties file with the security protocols configuration cannot be opened/read.
-         */
+        
+        /// <summary>
+        /// Add the default SecurityProtocols.
+        /// The names of the SecurityProtocols to add are read from a
+        /// properties file.
+        /// </summary>
+        /// <returns>This SecurityProtocols instance, to aid in chaining</returns>
         [MethodImpl(MethodImplOptions.Synchronized)]
         public SecurityProtocols AddDefaultProtocols()
         {
@@ -268,16 +259,15 @@ namespace JunoSnmp.Security
                 }
             }
         }
-
-        /**
-         * Get the PrivacyProtocol with the given ID.
-         *
-         * @param id
-         *    The unique ID (specified as {@link OID}) of the PrivacyProtocol.
-         * @return
-         *    the {@link PrivacyProtocol} object if it was added before,
-         *    or null if not.
-         */
+        
+        /// <summary>
+        /// Get the <see cref="IPrivacyProtocol "/> with the given ID.
+        /// </summary>
+        /// <param name="id">The OID of the privacy protocol</param>
+        /// <returns>
+        /// The <see cref="IPrivacyProtocol"/> with the given ID if it exists,
+        /// null otherwise.
+        /// </returns>
         public IPrivacyProtocol GetPrivacyProtocol(OID id)
         {
             if (id == null)
@@ -288,61 +278,48 @@ namespace JunoSnmp.Security
             return privProtocols[id];
         }
 
-        /**
-         * Remove the given {@link PrivacyProtocol}.
-         *
-         * @param priv The protocol to remove
-         */
+        /// <summary>Remove the given privacy protocol</summary>
+        /// <param name="priv">The protocol to be removed</param>
         public void RemovePrivacyProtocol(IPrivacyProtocol priv)
         {
             privProtocols.Remove(priv.ID);
         }
-
-
-        /**
-         * Generates the localized key for the given password and engine id for the
-         * authentication protocol specified by the supplied OID.
-         *
-         * @param authProtocolID
-         *    an <code>OID</code> identifying the authentication protocol to
-         *    use.
-         * @param passwordString
-         *    the authentication pass phrase.
-         * @param engineID
-         *    the engine ID of the authoritative engine.
-         * @return
-         *    the localized authentication key.
-         */
+        
+        /// <summary>
+        /// Generates the localized key for the given password and engine id for the
+        /// authentication protocol specified by the supplied OID.
+        /// </summary>
+        /// <param name="authProtocolID">
+        /// An OID identifying the authentication protocol to use.
+        /// </param>
+        /// <param name="engineID">The engine ID of the authoritative engine</param>
+        /// <returns>The localized authentication key.</returns>
         public byte[] PasswordToKey(OID authProtocolID,
                                     OctetString passwordString,
                                     byte[] engineID)
         {
 
-            IAuthenticationProtocol protocol =
-                    authProtocols[authProtocolID];
+            IAuthenticationProtocol protocol = authProtocols[authProtocolID];
             if (protocol == null)
             {
                 return null;
             }
+
             return protocol.PasswordToKey(passwordString, engineID);
         }
-
-        /**
-         * Generates the localized key for the given password and engine id for the
-         * privacy protocol specified by the supplied OID.
-         *
-         * @param privProtocolID
-         *    an <code>OID</code> identifying the privacy protocol the key should
-         *    be created for.
-         * @param authProtocolID
-         *    an <code>OID</code> identifying the authentication protocol to use.
-         * @param passwordString
-         *    the authentication pass phrase.
-         * @param engineID
-         *    the engine ID of the authoritative engine.
-         * @return
-         *    the localized privacy key.
-         */
+        
+        /// <summary>
+        /// Generates the localized key for the given password and engine id for the
+        /// privacy protocol specified by the supplied OID.
+        /// </summary>
+        /// <param name="privProtocolID">
+        /// An OID identifying the privacy protocol the key should be created for.
+        /// </param>
+        /// <param name="authProtocolID">
+        /// An OID identifying the authentication protocol to use
+        /// </param>
+        /// <param name="passwordString">The authentication pass phrase</param>
+        /// <param name="engineID">The engine ID of the authoritative engine.</param>
         public byte[] PasswordToKey(OID privProtocolID,
                                     OID authProtocolID,
                                     OctetString passwordString,
@@ -386,15 +363,11 @@ namespace JunoSnmp.Security
                                                         authProtocol);
             return extKey;
         }
-
-        /**
-         * Gets the maximum authentication key length of the all known
-         * authentication protocols.
-         * @return
-         *    the maximum authentication key length of all authentication protocols
-         *    that have been added to this <code>SecurityProtocols</code>
-         *    instance.
-         */
+        
+        /// <summary>
+        /// Gets the maximum authentication key length of the all known
+        /// authentication protocols in this <see cref="SecurityProtocols"/> object
+        /// </summary>
         public int MaxAuthDigestLength
         {
             get
@@ -402,15 +375,11 @@ namespace JunoSnmp.Security
                 return this.maxAuthDigestLength;
             }
         }
-
-        /**
-         * Gets the maximum privacy key length of the currently known
-         * privacy protocols.
-         * @return
-         *    the maximum privacy key length of all privacy protocols
-         *    that have been added to this <code>SecurityProtocols</code>
-         *    instance.
-         */
+        
+        /// <summary>
+        /// Gets the maximum privacy key length of the all known
+        /// privacy protocols in this <see cref="SecurityProtocols"/> object
+        /// </summary>
         public int MaxPrivDecryptParamsLength
         {
             get
@@ -418,18 +387,16 @@ namespace JunoSnmp.Security
                 return this.maxPrivDecryptParamsLength;
             }
         }
-
-        /**
-         * Limits the supplied key value to the specified maximum length
-         * @param key
-         *    the key to truncate.
-         * @param maxKeyLength
-         *    the maximum length of the returned key.
-         * @return
-         *    the truncated key with a length of
-         *    <code>min(key.length, maxKeyLength)</code>.
-         * @since 1.9
-         */
+        
+        /// <summary>
+        /// Limits the supplied key value to the specified maximum length
+        /// </summary>
+        /// <param name="key">The key to truncate</param>
+        /// <param name="maxKeyLength">The maximum length of the key</param>
+        /// <returns>
+        /// The truncated key with a length equal to the smaller of <c>key.Length</c>
+        /// and <c>MaxKeyLength</c>
+        /// </returns>
         public byte[] TruncateKey(byte[] key, int maxKeyLength)
         {
             byte[] truncatedNewKey = new byte[Math.Min(maxKeyLength, key.Length)];

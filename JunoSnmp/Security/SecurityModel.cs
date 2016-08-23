@@ -31,7 +31,7 @@ namespace JunoSnmp.Security
     /// </summary>
     public abstract class SecurityModel
     {
-        public enum SecurityModels
+        public enum SecurityModelID
         {
             SECURITY_MODEL_ANY = 0,
             SECURITY_MODEL_SNMPv1 = 1,
@@ -50,7 +50,7 @@ namespace JunoSnmp.Security
          * @see SecurityModel#SECURITY_MODEL_SNMPv2c
          * @see SecurityModel#SECURITY_MODEL_USM
          */
-        public abstract int ID { get; }
+        public abstract SecurityModelID ID { get; }
 
         /**
          * Creates a new {@link SecurityParameters} instance that corresponds to this
@@ -106,7 +106,7 @@ namespace JunoSnmp.Security
         public abstract int GenerateRequestMessage(MessageProcessingModel.MessageProcessingModels messageProcessingModel,
                                    byte[] globalData,
                                    int maxMessageSize,
-                                   SecurityModels securityModel,
+                                   SecurityModelID securityModel,
                                    byte[] securityEngineID,
                                    byte[] securityName,
                                    SecurityLevel securityLevel,
@@ -155,7 +155,7 @@ namespace JunoSnmp.Security
         public abstract int GenerateResponseMessage(MessageProcessingModel.MessageProcessingModels messageProcessingModel,
                                     byte[] globalData,
                                     int maxMessageSize,
-                                    SecurityModels securityModel,
+                                    SecurityModelID securityModel,
                                     byte[] securityEngineID,
                                     byte[] securityName,
                                     SecurityLevel securityLevel,
@@ -213,7 +213,7 @@ namespace JunoSnmp.Security
         public abstract int ProcessIncomingMsg(MessageProcessingModel.MessageProcessingModels messageProcessingModel,
                                int maxMessageSize,
                                ISecurityParameters securityParameters,
-                               SecurityModel securityModel,
+                               SecurityModel.SecurityModelID securityModel,
                                SecurityLevel securityLevel,
                                BERInputStream wholeMsg,
                                TransportStateReference tmStateReference,
@@ -221,7 +221,7 @@ namespace JunoSnmp.Security
                                OctetString securityEngineID,
                                OctetString securityName,
                                BEROutputStream scopedPDU,
-                               Integer32 maxSizeResponseScopedPDU,
+                               int maxSizeResponseScopedPDU,
                                ISecurityStateReference securityStateReference,
                                StatusInformation statusInfo);
 

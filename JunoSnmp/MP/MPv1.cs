@@ -68,7 +68,7 @@ namespace JunoSnmp.MP
             IAddress transportAddress,
             int maxMessageSize,
             MessageProcessingModels messageProcessingModel,
-            SecurityModel.SecurityModels securityModel,
+            SecurityModel.SecurityModelID securityModel,
             byte[] securityName,
             SecurityLevel securityLevel,
             PDU pdu,
@@ -78,7 +78,7 @@ namespace JunoSnmp.MP
             BEROutputStream outgoingMessage, TransportStateReference tmStateReference)
         {
             if ((securityLevel != SecurityLevel.NoAuthNoPriv) ||
-                (securityModel != SecurityModel.SecurityModels.SECURITY_MODEL_SNMPv1))
+                (securityModel != SecurityModel.SecurityModelID.SECURITY_MODEL_SNMPv1))
             {
                 log.Error("MPv1 used with unsupported security model");
                 return SnmpConstants.SNMP_MP_UNSUPPORTED_SECURITY_MODEL;
@@ -123,7 +123,7 @@ namespace JunoSnmp.MP
         public override int PrepareResponseMessage(
             MessageProcessingModels messageProcessingModel,
             int maxMessageSize,
-            SecurityModel.SecurityModels securityModel,
+            SecurityModel.SecurityModelID securityModel,
             byte[] securityName,
             SecurityLevel securityLevel,
             PDU pdu,
@@ -153,7 +153,7 @@ namespace JunoSnmp.MP
             BERInputStream wholeMsg,
             TransportStateReference tmStateReference,
             MessageProcessingModels messageProcessingModel,
-            SecurityModel.SecurityModels securityModel,
+            SecurityModel.SecurityModelID securityModel,
             OctetString securityName,
             SecurityLevel securityLevel,
             MutablePDU pdu,
@@ -176,7 +176,7 @@ namespace JunoSnmp.MP
 
             securityName.DecodeBER(wholeMsg);
             securityLevel = SecurityLevel.NoAuthNoPriv;
-            securityModel = SecurityModel.SecurityModels.SECURITY_MODEL_SNMPv1;
+            securityModel = SecurityModel.SecurityModelID.SECURITY_MODEL_SNMPv1;
             messageProcessingModel = MPv1.Model;
 
             PDU v1PDU = incomingPDUFactory.CreatePDU(this);

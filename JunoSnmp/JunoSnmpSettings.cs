@@ -76,7 +76,8 @@ namespace JunoSnmp
         /// timed tasks. For environments with restricted thread management,
         /// a custom timer factory can be used.
         /// </summary>
-        private static TimerFactory timerFactory = new DefaultTimerFactory();
+        //TODO: Need to deal with TimerFactory
+        ////private static TimerFactory timerFactory = new DefaultTimerFactory();
 
         /// <summary>
         /// By default SNMP4J uses the <see cref="SimpleOIDTextFormat"/> to convert
@@ -263,23 +264,23 @@ namespace JunoSnmp
         /// <summary>
         /// Gets or sets the timer factory.
         /// </summary>
-        public static TimerFactory TimerFactory
-        {
-            get
-            {
-                return JunoSnmpSettings.timerFactory;
-            }
+        //public static TimerFactory TimerFactory
+        //{
+        //    get
+        //    {
+        //        return JunoSnmpSettings.timerFactory;
+        //    }
 
-            set
-            {
-                if (value == null)
-                {
-                    throw new ArgumentNullException();
-                }
+        //    set
+        //    {
+        //        if (value == null)
+        //        {
+        //            throw new ArgumentNullException();
+        //        }
 
-                JunoSnmpSettings.timerFactory = value;
-            }
-        }
+        //        JunoSnmpSettings.timerFactory = value;
+        //    }
+        //}
 
         /// <summary>
         /// Gets or sets the OID text format for textual representation of OIDs.

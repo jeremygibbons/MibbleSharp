@@ -50,7 +50,7 @@ namespace JunoSnmp.Test
             }
         }
 
-
+        [TestCase]
         public void TestEncodeInteger()
         {
             byte[] result = { 0x02, 0x02, (byte)0x96, (byte)0xB5 };
@@ -71,6 +71,7 @@ namespace JunoSnmp.Test
             Assert.AreEqual(result.Length, i32.BERLength);
         }
 
+        [TestCase]
         public void TestEncodeOID()
         {
             byte[] result = { 0x06, 0x04, 0x2B, 0x06, (byte)0x99, 0x37 };
@@ -90,6 +91,7 @@ namespace JunoSnmp.Test
             Assert.AreEqual(result.Length, variable.BERLength);
         }
 
+        [TestCase]
         public void TestEncodeOIDMaxSubID()
         {
             MemoryStream os1 = new MemoryStream();
@@ -103,6 +105,7 @@ namespace JunoSnmp.Test
             Assert.AreEqual(new OID(oid3), variable);
         }
 
+        [TestCase]
         public void TestEncodeSequence()
         {
             byte[]
@@ -126,7 +129,7 @@ namespace JunoSnmp.Test
             }
         }
 
-
+        [TestCase]
         public void TestEncodeString()
         {
             byte[] result = { 0x04, 0x04, (byte)0xEB, 0x06, (byte)0x99, 0x37 };
@@ -145,6 +148,7 @@ namespace JunoSnmp.Test
             Assert.AreEqual(result.Length, variable.BERLength);
         }
 
+        [TestCase]
         public void TestEncodeUnsignedInteger()
         {
             byte[] result = { 0x42, 0x05, 0x00, (byte)0x80, 0x00, 0x00, 0x00 };
@@ -163,6 +167,7 @@ namespace JunoSnmp.Test
             Assert.AreEqual(result.Length, variable.BERLength);
         }
 
+        [TestCase]
         public void TestEncodeUnsignedInt64()
         {   
             byte[] result = {
@@ -208,6 +213,7 @@ namespace JunoSnmp.Test
             }
         }
 
+        [TestCase]
         public void TestDecodeLength()
         {
             MemoryStream os1 = new MemoryStream();
@@ -228,6 +234,7 @@ namespace JunoSnmp.Test
             Assert.IsNotNull(ex);
         }
 
+        [TestCase]
         public void TestDecodeInteger()
         {
             MemoryStream os1 = new MemoryStream();
@@ -250,6 +257,7 @@ namespace JunoSnmp.Test
             Assert.AreEqual((byte)0x02, b.Value);
         }
 
+        [TestCase]
         public void TestDecodeUnsignedInteger()
         {
             MemoryStream os1 = new MemoryStream();
@@ -272,6 +280,7 @@ namespace JunoSnmp.Test
             Assert.AreEqual((byte)0x43, b.Value);
         }
 
+        [TestCase]
         public void TestDecodeUnsignedInt64()
         {
             MemoryStream os1 = new MemoryStream();
@@ -294,6 +303,7 @@ namespace JunoSnmp.Test
             Assert.AreEqual((byte)0x46, b.Value);
         }
 
+        [TestCase]
         public void TestDecodeString()
         {
             MemoryStream os1 = new MemoryStream();
@@ -308,6 +318,7 @@ namespace JunoSnmp.Test
             Assert.AreEqual((byte)0x04, b.Value);
         }
 
+        [TestCase]
         public void TestDecodeOID()
         {
             MemoryStream os1 = new MemoryStream();
@@ -322,6 +333,7 @@ namespace JunoSnmp.Test
             Assert.AreEqual((byte)0x06, b.Value);
         }
 
+        [TestCase]
         public void TestDecodeOID0()
         {
             MemoryStream os1 = new MemoryStream();
@@ -336,6 +348,7 @@ namespace JunoSnmp.Test
             Assert.AreEqual((byte)0x06, b.Value);
         }
 
+        [TestCase]
         public void TestDecodeOID11()
         {
             MemoryStream os1 = new MemoryStream();
@@ -350,6 +363,7 @@ namespace JunoSnmp.Test
             Assert.AreEqual((byte)0x06, b.Value);
         }
 
+        [TestCase]
         public void TestDecodeOID10()
         {
             MemoryStream os1 = new MemoryStream();
@@ -364,6 +378,7 @@ namespace JunoSnmp.Test
             Assert.AreEqual((byte)0x06, b.Value);
         }
 
+        [TestCase]
         public void TestDecodeOID139()
         {
             long[]
@@ -381,6 +396,7 @@ namespace JunoSnmp.Test
             Assert.AreEqual((byte)0x06, b.Value);
         }
 
+        [TestCase]
         public void TestDecodeOID2()
         {
             long[]
@@ -398,6 +414,7 @@ namespace JunoSnmp.Test
             Assert.AreEqual((byte)0x06, b.Value);
         }
 
+        [TestCase]
         public void TestDecodeOID2Big()
         {
             long[]
@@ -415,29 +432,29 @@ namespace JunoSnmp.Test
             Assert.AreEqual((byte)0x06, b.Value);
         }
 
-        /*
-        public void TestDecodeScopedPDU()  {
-          OctetString scopedPDUString =
-              OctetString.fromHexString("30:3f:02:01:03:30:12:02:04:04:44:59:05:02:04:00:00:ff:e2:04:01:04:02:01:03:04:10"+
-                  ":30:0e:03:00:02:01:00:02:01:00:04:00:04:00:04:00:30:14:04:00:04:00:a0:0e:02:04:04:44:59:05:02:01:00:02:"+
-                  "01:00:30:00");
-          BERInputStream wholeMsg = new BERInputStream(ByteBuffer.wrap(scopedPDUString.GetValue()));
-          BER.MutableByte type = new BER.MutableByte();
-          int length = BER.DecodeHeader(wholeMsg, type);
-          Assert.AreEqual(type.GetValue(),BER.SEQUENCE);
-          long lengthOfLength = wholeMsg.getPosition();
-          wholeMsg.reset();
-          wholeMsg.mark(length);
-          Assert.AreEqual(wholeMsg.skip(lengthOfLength), lengthOfLength);
-          Integer32 snmpVersion = new Integer32();
-          snmpVersion.decodeBER(wholeMsg);
-          Assert.AreEqual(snmpVersion.GetValue(), SnmpConstants.version3);
-          // decode SNMPv3 header
-          MPv3.HeaderData header = new MPv3.HeaderData();
-          header.decodeBER(wholeMsg);
-          ScopedPDU scopedPDU = new ScopedPDU();
-          scopedPDU.decodeBER(wholeMsg);
-        }
-        */
+        
+        //public void TestDecodeScopedPDU()  {
+        //  OctetString scopedPDUString =
+        //      OctetString.FromHexString("30:3f:02:01:03:30:12:02:04:04:44:59:05:02:04:00:00:ff:e2:04:01:04:02:01:03:04:10"+
+        //          ":30:0e:03:00:02:01:00:02:01:00:04:00:04:00:04:00:30:14:04:00:04:00:a0:0e:02:04:04:44:59:05:02:01:00:02:"+
+        //          "01:00:30:00");
+        //  BERInputStream wholeMsg = new BERInputStream(ByteBuffer.wrap(scopedPDUString.GetValue()));
+        //  BER.MutableByte type = new BER.MutableByte();
+        //  int length = BER.DecodeHeader(wholeMsg, type);
+        //  Assert.AreEqual(type.GetValue(),BER.SEQUENCE);
+        //  long lengthOfLength = wholeMsg.getPosition();
+        //  wholeMsg.reset();
+        //  wholeMsg.mark(length);
+        //  Assert.AreEqual(wholeMsg.skip(lengthOfLength), lengthOfLength);
+        //  Integer32 snmpVersion = new Integer32();
+        //  snmpVersion.decodeBER(wholeMsg);
+        //  Assert.AreEqual(snmpVersion.GetValue(), SnmpConstants.version3);
+        //  // decode SNMPv3 header
+        //  MPv3.HeaderData header = new MPv3.HeaderData();
+        //  header.decodeBER(wholeMsg);
+        //  ScopedPDU scopedPDU = new ScopedPDU();
+        //  scopedPDU.decodeBER(wholeMsg);
+        //}
+        
     }
 }

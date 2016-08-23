@@ -43,7 +43,7 @@ namespace JunoSnmp.MP
         private ITransportMapping<IAddress> transportMapping;
         private byte[] contextEngineID;
         private byte[] contextName;
-        private SecurityModel.SecurityModels securityModel;
+        private SecurityModel.SecurityModelID securityModel;
         private byte[] securityName;
         private SecurityLevel securityLevel;
         private ISecurityStateReference securityStateReference;
@@ -80,7 +80,7 @@ namespace JunoSnmp.MP
         public StateReference(PduHandle pduHandle,
                               IAddress peerAddress,
                               ITransportMapping<IAddress> peerTransport,
-                              SecurityModel.SecurityModels secModel,
+                              SecurityModel.SecurityModelID secModel,
                               byte[] secName,
                               int errorCode)
                 : this(
@@ -127,7 +127,7 @@ namespace JunoSnmp.MP
                               IAddress peerAddress,
                               ITransportMapping<IAddress> peerTransport,
                               byte[] secEngineID,
-                              SecurityModel.SecurityModels secModel,
+                              SecurityModel.SecurityModelID secModel,
                               byte[] secName,
                               JunoSnmp.Security.SecurityLevel secLevel,
                               byte[] contextEngineID,
@@ -195,7 +195,7 @@ namespace JunoSnmp.MP
             }
         }
 
-        public SecurityModel.SecurityModels SecurityModel
+        public SecurityModel.SecurityModelID SecurityModel
         {
             get
             {

@@ -83,6 +83,7 @@
     <Compile Include="ASN1\BERInputStream.cs" />
     <Compile Include="ASN1\BEROutputStream.cs" />
     <Compile Include="ASN1\IBERSerializable.cs" />
+    <Compile Include="Event\CommandResponderArgs.cs" />
     <Compile Include="Event\CounterIncrArgs.cs" />
     <Compile Include="Event\CounterSupport.cs" />
     <Compile Include="Event\EngineChangeArgs.cs" />

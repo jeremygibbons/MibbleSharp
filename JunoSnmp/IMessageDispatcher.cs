@@ -230,7 +230,7 @@ namespace JunoSnmp
         /// in the RFC are passed in as properties of the scoped PDU
         /// </remarks>
         int ReturnResponsePdu(MessageProcessingModel.MessageProcessingModels messageProcessingModel,
-                              SecurityModel.SecurityModels securityModel,
+                              SecurityModel.SecurityModelID securityModel,
                               byte[] securityName,
                               SecurityLevel securityLevel,
                               PDU pdu,

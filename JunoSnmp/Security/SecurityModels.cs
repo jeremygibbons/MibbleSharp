@@ -30,7 +30,7 @@ namespace JunoSnmp.Security
     /// </summary>
     public class SecurityModels
     {
-        private IDictionary<int, SecurityModel> securityModels = new Dictionary<int, SecurityModel>(3);
+        private IDictionary<SecurityModel.SecurityModelID, SecurityModel> securityModels = new Dictionary<SecurityModel.SecurityModelID, SecurityModel>(3);
 
         private static SecurityModels instance = null;
 
@@ -60,7 +60,7 @@ namespace JunoSnmp.Security
         /// </summary>
         /// <param name="id">The id of the Security Model</param>
         /// <returns>The requested Security Model, or null if it does not exist</returns>
-        public SecurityModel this[int id]
+        public SecurityModel this[SecurityModel.SecurityModelID id]
         {
             get
             {
@@ -110,7 +110,7 @@ namespace JunoSnmp.Security
         /// <returns>
         /// The removed <see cref="SecurityModel"/>
         /// </returns>
-        public SecurityModel RemoveSecurityModel(int id)
+        public SecurityModel RemoveSecurityModel(SecurityModel.SecurityModelID id)
         {
             SecurityModel sm = this.securityModels[id];
             this.securityModels.Remove(id);
