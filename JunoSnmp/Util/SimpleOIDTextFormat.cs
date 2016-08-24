@@ -22,6 +22,7 @@
 namespace JunoSnmp.Util
 {
     using System;
+    using System.Text.RegularExpressions;
     using System.Text;
     using JunoSnmp.SMI;
 
@@ -92,7 +93,8 @@ namespace JunoSnmp.Util
         /// <exception cref="ParseException">If the OID cannot be parsed successfully</exception>
         public static long[] ParseOID(string text)
         {
-            string[] subIDs = text.Split(new char[] { '.' }, StringSplitOptions.RemoveEmptyEntries);
+            ////string[] subIDs = text.Split(new char[] { '.' }, StringSplitOptions.RemoveEmptyEntries);
+            string[] subIDs = Regex.Split(text, @"(?=[\.])|(?<=[\.])");
             long[] value = new long[subIDs.Length];
             int size = 0;
             StringBuilder buf = null;

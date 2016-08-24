@@ -230,7 +230,7 @@ namespace JunoSnmp.SMI
             if (o is OctetString)
             {
                 OctetString other = (OctetString)o;
-                return Array.Equals(this.value, other.value);
+                return Enumerable.SequenceEqual(this.value, other.value);
             }
 
             return false;
@@ -246,7 +246,7 @@ namespace JunoSnmp.SMI
          */
         public bool EqualsValue(byte[] v)
         {
-            return Array.Equals(this.value, v);
+            return Enumerable.SequenceEqual(this.value, v);
         }
 
         public override int CompareTo(IVariable o)

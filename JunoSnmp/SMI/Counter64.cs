@@ -187,18 +187,8 @@ namespace JunoSnmp.SMI
                 return this.value.ToString();
             }
 
-            byte[] bytes = new byte[8];
-            for (int i = 0; i < 8; i++)
-            {
-                /* 
-                 * Note: changed so that bytes are output in little-endian order, as .NET Big Integers use
-                 * little-endian, unlike Java Big Integers
-                 */
-                bytes[i] = (byte)((this.value >> ((i) * 8)) & 0xFF);
-            }
-
-            BigInteger i64 = new BigInteger(bytes);
-            return i64.ToString();
+            ulong u64 = unchecked((ulong)this.value);
+            return u64.ToString();
         }
 
         public void SetValue(string value)

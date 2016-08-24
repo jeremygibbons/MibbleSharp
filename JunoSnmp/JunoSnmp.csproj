@@ -186,6 +186,8 @@
     <Compile Include="SMI\VariantVariable.cs" />
     <Compile Include="SMI\IVariantVariableCallback.cs" />
     <Compile Include="Test\TestBER.cs" />
+    <Compile Include="Test\TestCounter64.cs" />
+    <Compile Include="Test\TestOID.cs" />
     <Compile Include="TransportStateReference.cs" />
     <Compile Include="Transport\ITransportListener.cs" />
     <Compile Include="Util\OIDTextFormat.cs" />
