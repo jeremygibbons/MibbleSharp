@@ -60,7 +60,7 @@ namespace JunoSnmp.Security
                         sa.IV = new byte[initVectorLength]; ;
 
                         // Create an encryptor to perform the stream transform.
-                        ICryptoTransform encryptor = sa.CreateEncryptor(sa.Key, sa.IV);
+                        sa.CreateEncryptor(sa.Key, sa.IV);
                     }
 
                     return true;

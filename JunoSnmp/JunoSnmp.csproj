@@ -83,15 +83,24 @@
     <Compile Include="ASN1\BERInputStream.cs" />
     <Compile Include="ASN1\BEROutputStream.cs" />
     <Compile Include="ASN1\IBERSerializable.cs" />
+    <Compile Include="CertifiedTarget.cs" />
+    <Compile Include="CommunityTarget.cs" />
+    <Compile Include="DefaultTimeoutModel.cs" />
+    <Compile Include="Event\AuthenticationFailureArgs.cs" />
     <Compile Include="Event\CommandResponderArgs.cs" />
     <Compile Include="Event\CounterIncrArgs.cs" />
     <Compile Include="Event\CounterSupport.cs" />
     <Compile Include="Event\EngineChangeArgs.cs" />
+    <Compile Include="Event\IncomingMessageEventArgs.cs" />
+    <Compile Include="Event\ResponseEvent.cs" />
+    <Compile Include="Event\TransportStateEventArgs.cs" />
     <Compile Include="Event\UsmUserChangeArgs.cs" />
+    <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="ICertifiedIdentity.cs" />
     <Compile Include="ICommandResponder.cs" />
     <Compile Include="IMessageDispatcher.cs" />
     <Compile Include="ITarget.cs" />
+    <Compile Include="ITimeoutModel.cs" />
     <Compile Include="ITransportMapping.cs" />
     <Compile Include="IUser.cs" />
     <Compile Include="JunoSnmpSettings.cs" />
@@ -116,6 +125,7 @@
     <Compile Include="PDUv1.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ScopedPDU.cs" />
+    <Compile Include="SecureTarget.cs" />
     <Compile Include="Security\AuthHMAC192SHA256.cs" />
     <Compile Include="Security\AuthHMAC256SHA384.cs" />
     <Compile Include="Security\AuthHMAC384SHA512.cs" />
@@ -185,11 +195,25 @@
     <Compile Include="SMI\VariableBinding.cs" />
     <Compile Include="SMI\VariantVariable.cs" />
     <Compile Include="SMI\IVariantVariableCallback.cs" />
+    <Content Include="Snmp.cs" />
     <Compile Include="Test\TestBER.cs" />
     <Compile Include="Test\TestCounter64.cs" />
     <Compile Include="Test\TestOID.cs" />
     <Compile Include="TransportStateReference.cs" />
+    <Compile Include="Transport\AbstractTransportMapping.cs" />
+    <Compile Include="Transport\DefaultUdpTransportMapping.cs" />
+    <Compile Include="Transport\DummyTransport.cs" />
+    <Compile Include="Transport\IConnectionOrientedTransportMapping.cs" />
     <Compile Include="Transport\ITransportListener.cs" />
+    <Compile Include="Transport\MessageLength.cs" />
+    <Compile Include="Transport\MessageLengthDecoder.cs" />
+    <Compile Include="Transport\TcpTransportMapping.cs" />
+    <Compile Include="Transport\TLS\ITlsTmSecurityCallback.cs" />
+    <Compile Include="Transport\TLS\SecurityNameMapping.cs" />
+    <Compile Include="Transport\TransportMappings.cs" />
+    <Compile Include="Transport\UdpTransportMapping.cs" />
+    <Compile Include="UserTarget.cs" />
+    <Compile Include="Util\ICommonTimer.cs" />
     <Compile Include="Util\OIDTextFormat.cs" />
     <Compile Include="Util\ParseException.cs" />
     <Compile Include="Util\IPDUFactory.cs" />
@@ -206,6 +230,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Log\" />
+    <Folder Include="Transport\SSH\" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />

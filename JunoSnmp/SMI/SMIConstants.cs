@@ -26,7 +26,7 @@ namespace JunoSnmp.SMI
     /// <summary>
     /// The <c>SMIConstants</c> defines the tag values for SMI syntax types.
     /// </summary>
-    public sealed class SMIConstants
+    public static class SMIConstants
     {
         public const int SyntaxInteger = BER.Asn1Integer;
         public const int SyntaxOctetString= BER.Asn1OctetString;

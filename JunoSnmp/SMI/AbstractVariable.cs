@@ -24,7 +24,6 @@ namespace JunoSnmp.SMI
     using System;
     using System.Collections.Generic;
     using System.IO;
-    ////using System.Runtime.CompilerServices;
     using System.Runtime.Serialization;
     using JunoSnmp.ASN1;
 
@@ -48,23 +47,23 @@ namespace JunoSnmp.SMI
         private static readonly string SMISyntaxesPropertiesDefault =
             "smisyntaxes.properties";
 
-        private static readonly object[][] SYNTAX_NAME_MAPPING = new object[][]
+        private static readonly Dictionary<string, int> SYNTAX_NAME_MAPPING = new Dictionary<string, int>()
         {
-            new object[] { "Integer32", (int) BER.INTEGER32},
-            new object[] { "BIT STRING", (int) BER.BITSTRING},
-            new object[] { "OCTET STRING", (int) BER.OCTETSTRING},
-            new object[] { "OBJECT IDENTIFIER", (int) BER.OID},
-            new object[] { "TimeTicks", (int) BER.TIMETICKS},
-            new object[] { "Counter", (int) BER.COUNTER},
-            new object[] { "Counter64", (int) BER.COUNTER64},
-            new object[] { "EndOfMibView", BER.EndOfMibView},
-            new object[] { "Gauge", (int) BER.GAUGE32},
-            new object[] { "Unsigned32", (int) BER.GAUGE32},
-            new object[] { "IpAddress", (int) BER.IPADDRESS},
-            new object[] { "NoSuchInstance", BER.NoSuchInstance},
-            new object[] { "NoSuchObject", BER.NoSuchObject},
-            new object[] { "Null", (int) BER.NULL},
-            new object[] { "Opaque", (int) BER.OPAQUE}
+            { "Integer32", (int) BER.INTEGER32},
+            { "BIT STRING", (int) BER.BITSTRING},
+            { "OCTET STRING", (int) BER.OCTETSTRING},
+            { "OBJECT IDENTIFIER", (int) BER.OID},
+            { "TimeTicks", (int) BER.TIMETICKS},
+            { "Counter", (int) BER.COUNTER},
+            { "Counter64", (int) BER.COUNTER64},
+            { "EndOfMibView", BER.EndOfMibView},
+            { "Gauge", (int) BER.GAUGE32},
+            { "Unsigned32", (int) BER.GAUGE32},
+            { "IpAddress", (int) BER.IPADDRESS},
+            { "NoSuchInstance", BER.NoSuchInstance},
+            { "NoSuchObject", BER.NoSuchObject},
+            { "Null", (int) BER.NULL},
+            { "Opaque", (int) BER.OPAQUE}
         };
 
         private static Dictionary<int, IVariable> registeredSyntaxes = null;
@@ -76,15 +75,9 @@ namespace JunoSnmp.SMI
         /// The abstract <code>Variable</code> class serves as the base class for all
         /// specific SNMP syntax types.
         /// </summary>
-        public AbstractVariable()
+        protected AbstractVariable()
         {
         }
-
-        public abstract override bool Equals(object o);
-
-        public abstract int CompareTo(IVariable o);
-
-        public abstract override int GetHashCode();
 
         /// <summary>
         /// Gets the length of this <c>IVariable</c> in bytes when encoded
@@ -92,7 +85,10 @@ namespace JunoSnmp.SMI
         /// </summary>
         public abstract int BERLength { get; }
 
-
+        /// <summary>
+        /// Gets the payload length of this <c>IVariable</c> in bytes when 
+        /// encoded according to the Basic Encoding Rules(BER).
+        /// </summary>
         public virtual int BERPayloadLength
         {
             get
@@ -100,7 +96,89 @@ namespace JunoSnmp.SMI
                 return this.BERLength;
             }
         }
+        
+        /// <summary>
+        /// Gets a value indicating whether this variable is dynamic, which means
+        /// that it might change its value while it is being(BER) serialized.
+        /// If a variable is dynamic, it will be cloned on-the-fly when it is added 
+        /// to a <see cref="PDU"/> with <see cref="VariableBinding"/>. By cloning the 
+        /// value, it is ensured that there are no inconsistent changes between 
+        /// determining the length with <see cref="BERLength"/> for encoding 
+        /// enclosing SEQUENCES and the actual encoding of the Variable itself 
+        /// with <see cref="EncodeBER(Stream)"/>.
+        /// </summary>
+        /// <remarks>
+        /// False by default. Derived classes may override this if implementating dynamic
+        /// <see cref="IVariable"/> instances.
+        /// </remarks>
+        public virtual bool IsDynamic
+        {
+            get
+            {
+                return false;
+            }
+        }
 
+        /// <summary>
+        /// Gets a textual description of this Variable, such as "Integer32", as used
+        /// in the Structure of Management Information (SMI) modules.
+        /// '?' is returned if the syntax is unknown.
+        /// </summary>
+        public string SyntaxString
+        {
+            get
+            {
+                return AbstractVariable.GetSyntaxString(this.Syntax);
+            }
+
+        }
+
+        /// <summary>
+        /// Gets the ASN.1 syntax identifier value of this SNMP variable,
+        /// i.e. an integer value &lt; 128 for regular SMI objects and a value
+        /// &gt;= for exception values like <see cref="SMIConstants.ExceptionNoSuchObject"/>,
+        /// <see cref="SMIConstants.ExceptionNoSuchInstance"/> or 
+        /// <see cref="SMIConstants.ExceptionEndOfMibView"/>
+        /// </summary>
+        public abstract int Syntax { get; }
+        
+        /// <summary>
+        /// Checks whether this variable represents an exception like 
+        /// <see cref="SMIConstants.ExceptionNoSuchObject"/>,
+        /// <see cref="SMIConstants.ExceptionNoSuchInstance"/> or 
+        /// <see cref="SMIConstants.ExceptionEndOfMibView"/>, i.e. if the variable is
+        /// an instance of null and its syntax is one of those exception syntaxes.
+        /// </summary>
+        public bool IsException
+        {
+            get
+            {
+                return Null.IsExceptionSyntax(this.Syntax);
+            }
+        }
+        
+        /// <summary>
+        /// Returns an integer representation of this variable if
+        /// such a representation exists.
+        /// </summary>
+        /// <remarks>
+        /// If the native representation of this variable is a long, it will be
+        /// downcast to int here.
+        /// </remarks>
+        /// <exception cref="NotSupportedException">
+        /// If no integer representation exists for this variable
+        /// </exception>
+        public abstract int IntValue { get; }
+        
+        /// <summary>
+        /// Returns a long representation of this variable if
+        /// such a representation exists.
+        /// </summary>
+        /// <exception cref="NotSupportedException">
+        /// If no long representation exists for this variable
+        /// </exception>
+        public abstract long LongValue { get; }
+        
         /// <summary>
         /// Decodes an <c>IVariable</c> from an <c>InputStream</c>.
         /// </summary>
@@ -111,77 +189,197 @@ namespace JunoSnmp.SMI
         /// If the stream could not be decoded according to BER rules
         /// </exception>
         public abstract void DecodeBER(BERInputStream inputStream);
-
-        /**
-         * Encodes a <code>Variable</code> to an <code>OutputStream</code>.
-         * @param outputStream
-         *    an <code>OutputStream</code>.
-         * @throws IOException
-         *    if an error occurs while writing to the stream.
-         */
+        
+        /// <summary>
+        /// Encodes an <c>IVariable</c> to an output <c>Stream</c>.
+        /// </summary>
+        /// <param name="outputStream">The stream to write to</param>
+        /// <exception cref="IOException">
+        /// If an error occurs while writing to the stream
+        /// </exception>
         public abstract void EncodeBER(Stream outputStream);
-
-        /**
-         * Creates a <code>Variable</code> from a BER encoded <code>InputStream</code>.
-         * Subclasses of <code>Variable</code> are registered using the properties file
-         * <code>smisyntaxes.properties</code> in this package. The properties are
-         * read when this method is called first.
-         *
-         * @param inputStream
-         *    an <code>BERInputStream</code> containing a BER encoded byte stream.
-         * @return
-         *    an instance of a subclass of <code>Variable</code>.
-         * @throws IOException
-         *    if the <code>inputStream</code> is not properly BER encoded.
-         */
+        
+        /// <summary>
+        /// Creates an <c>IVariable</c> from a BER encoded <see cref="BERInputStream"/>.
+        /// Implementations of <c>IVariable</c> are registered using the properties file
+        /// <code>smisyntaxes.properties</code> in this package.The properties are
+        /// read when this method is called first.
+        /// </summary>
+        /// <param name="inputStream">The stream to be read from</param>
+        /// <returns>An <see cref="IVariable"/> instance</returns>
         public static IVariable CreateFromBER(BERInputStream inputStream)
         {
-            ////if (JunoSnmpSettings.ExtensibilityEnabled &&
-            ////    (registeredSyntaxes == null))
-            ////{
-            ////AbstractVariable.RegisterSyntaxes();
-            ////}
-
             long startPos = inputStream.Position;
             int type = inputStream.ReadByte();
             IVariable variable;
-            ////if (JunoSnmpSettings.ExtensibilityEnabled)
-            ////{
-            ////IVariable c = registeredSyntaxes[type];
-            //// if (c == null)
-            ////{
-            ////throw new IOException("Encountered unsupported variable syntax: " +
-            ////type);
-            ////}
-            ////
-            ////try
-            ////{
 
-            ////variable = c.NewInstance();
-            ////}
-            ////catch (IllegalAccessException aex)
-            ////{
-            ////throw new IOException("Could not access variable syntax class for: " +
-            ////c.getName());
-            ////}
-            ////catch (InstantiationException iex)
-            ////{
-            ////throw new IOException(
-            ////"Could not instantiate variable syntax class for: " +
-            ////c.getName);
-            ////}
-            ////}
-            ////else
-            ////{
             variable = CreateVariable(type);
-            ////}
             inputStream.Position = startPos;
             variable.DecodeBER(inputStream);
             return variable;
         }
 
+        /// <summary>
+        /// Creates a <code>Variable</code> from the supplied SMI syntax identifier.
+        /// </summary>
+        public static IVariable CreateFromSyntax(int smiSyntax)
+        {
+            return CreateVariable(smiSyntax);
+        }
+     
+        /// <summary>
+        /// Gets a string representation of the variable.
+        /// </summary>
+        /// <remarks>
+        /// Declaring this method abstract forces subclasses to implement ToString explicitely
+        /// </remarks>
+        /// <returns>
+        /// A string representation of the variable's value
+        /// </returns>
+        public abstract override string ToString();
+        
+        /// <summary>
+        /// Creates a fresh copy of this object with identical values
+        /// </summary>
+        /// <returns>A fresh copy of this object</returns>
+        public abstract object Clone();
+        
+        /// <summary>
+        /// Gets a textual description of the supplied syntax type.
+        /// </summary>
+        /// <param name="syntax">The BER code of the syntax</param>
+        /// <returns>
+        /// a textual description like 'Integer32' for <code>syntax</code> 
+        /// as used in the Structure of Management Information(SMI) modules.
+        /// '?' is returned if the supplied syntax is unknown.
+        /// </returns>
+        public static string GetSyntaxString(int syntax)
+        {
+            switch (syntax)
+            {
+                case BER.INTEGER:
+                    return "Integer32";
+                case BER.BITSTRING:
+                    return "BIT STRING";
+                case BER.OCTETSTRING:
+                    return "OCTET STRING";
+                case BER.OID:
+                    return "OBJECT IDENTIFIER";
+                case BER.TIMETICKS:
+                    return "TimeTicks";
+                case BER.COUNTER:
+                    return "Counter";
+                case BER.COUNTER64:
+                    return "Counter64";
+                case BER.EndOfMibView:
+                    return "EndOfMibView";
+                case BER.GAUGE32:
+                    return "Gauge";
+                case BER.IPADDRESS:
+                    return "IpAddress";
+                case BER.NoSuchInstance:
+                    return "NoSuchInstance";
+                case BER.NoSuchObject:
+                    return "NoSuchObject";
+                case BER.NULL:
+                    return "Null";
+                case BER.OPAQUE:
+                    return "Opaque";
+            }
+            return "?";
+        }
+                
+        /// <summary>
+        /// Returns the BER syntax ID for the supplied syntax string (as returned
+        /// by <see cref="GetSyntaxString(int)"/>
+        /// </summary>
+        /// <param name="syntaxString">The textual representation of the syntax</param>
+        /// <returns>The corresponding BER ID.</returns>
+        public static int GetSyntaxFromString(string syntaxString)
+        {
+            int syn ;
+            if(SYNTAX_NAME_MAPPING.TryGetValue(syntaxString, out syn))
+            {
+                return syn;
+            }
+            return BER.NULL;
+        }
+        
+        /// <summary>
+        /// Converts the value of this <c>Variable</c> to a (sub-)index value
+        /// </summary>
+        /// <param name="impliedLength">
+        /// Specifies if the sub-index has an implied length. This parameter applies
+        /// to variable length variables only(e.g. { @link OctetString}
+        /// and <see cref="OID"/>. For other variables it has no effect.
+        /// </param>
+        /// <returns>An OID that represents this value as a sub index</returns>
+        /// <exception cref="NotSupportedException">If this variable cannot be used as a sub index</exception>
+        public abstract OID ToSubIndex(bool impliedLength);
+
+        /// <summary>
+        /// Sets the value of this <c>IVariable</c> from the supplied (sub-)index.
+        /// </summary>
+        /// <param name="subIndex">The sub-index OID</param>
+        /// <param name="impliedLength">
+        /// Specifies if the sub-index has an implied length. This parameter applies
+        /// to variable length variables only(e.g. <see cref="OctetString"/>
+        /// and <see cref="OID"/>). For other variables it has no effect.
+        /// </param>
+        /// <exception cref="NotSupportedException">If this variable cannot be set from a sub index</exception>
+        public abstract void FromSubIndex(OID subIndex, bool impliedLength);
+
+        /// <summary>
+        /// Compares this object with another object
+        /// </summary>
+        /// <param name="o">The object to compare against</param>
+        /// <returns>True if both objects are of equal value, false if not</returns>
+        public abstract override bool Equals(object o);
+
+        /// <summary>
+        /// Compares this object with another object
+        /// </summary>
+        /// <param name="o">The object to compare against</param>
+        /// <returns>0 if both objects are of equal value, a non-zero value if not</returns>
+        public abstract int CompareTo(IVariable o);
+
+        /// <summary>
+        /// Gets a hashcode for this object
+        /// </summary>
+        /// <returns>A hashcode for this object</returns>
+        public abstract override int GetHashCode();
+
+        /// <summary>
+        /// Tests if two variables have the same value
+        /// </summary>
+        /// <param name="a">A variable</param>
+        /// <param name="b">Another variable</param>
+        /// <returns>
+        /// <c>True</c> if <c>a == null ? (b == null) : a.Equals(b)</c>
+        /// </returns>
+        public static bool Equal(AbstractVariable a, AbstractVariable b)
+        {
+            return (a == null) ? (b == null) : a.Equals(b);
+        }
+
+        /// <summary>
+        /// Writes this objects data to a stream for serialization
+        /// </summary>
+        /// <param name="info">The SerializationInfo object</param>
+        /// <param name="context">The streaming context</param>
+        public void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Factory method for new IVariable instances
+        /// </summary>
+        /// <param name="smiSyntax">The syntax for which a variable should be created</param>
+        /// <returns>A new instance of the designated IVariable type</returns>
         private static IVariable CreateVariable(int smiSyntax)
         {
+            //TODO: This seems like a very ugly way of doing this
             switch (smiSyntax)
             {
                 case SMIConstants.SyntaxObjectIdentifier:
@@ -242,330 +440,6 @@ namespace JunoSnmp.SMI
                                                            smiSyntax);
                     }
             }
-        }
-
-        /**
-         * Creates a <code>Variable</code> from the supplied SMI syntax identifier.
-         * Subclasses of <code>Variable</code> are registered using the properties
-         * file <code>smisyntaxes.properties</code> in this package. The properties
-         * are read when this method is called for the first time.
-         *
-         * @param smiSyntax
-         *    an SMI syntax identifier of the registered types, which is typically
-         *    defined by {@link SMIConstants}.
-         * @return
-         *    a <code>Variable</code> variable instance of the supplied SMI syntax.
-         */
-        public static IVariable CreateFromSyntax(int smiSyntax)
-        {
-            ////if (!JunoSnmpSettings.ExtensibilityEnabled)
-            ////{
-            return CreateVariable(smiSyntax);
-            ////}
-            ////if (registeredSyntaxes == null)
-            ////{
-            ////RegisterSyntaxes();
-            ////}
-            ///Class <? extends Variable > c = registeredSyntaxes.get(new Integer(smiSyntax));
-            ////if (c == null)
-            ////{
-            //// throw new ArgumentException("Unsupported variable syntax: " +
-            ////smiSyntax);
-            ////}
-            ////try
-            ////{
-            ////IVariable variable = c.newInstance();
-            ////return variable;
-            ////}
-            ////catch (IllegalAccessException aex)
-            ////{
-            ////throw new RuntimeException("Could not access variable syntax class for: " +
-            ////c.getName());
-            ////}
-            ////catch (InstantiationException iex)
-            ////{
-            ////throw new RuntimeException(
-            ////"Could not instantiate variable syntax class for: " +
-            ////c.getName());
-            ////}
-        }
-
-        /**
-         * Register SNMP syntax classes from a properties file. The registered
-         * syntaxes are used by the {@link #createFromBER} method to type-safe
-         * instantiate sub-classes from <code>Variable</code> from an BER encoded
-         * <code>InputStream</code>.
-         */
-        //[MethodImpl(MethodImplOptions.Synchronized)]
-        //private static void RegisterSyntaxes()
-        //{
-        //    string syntaxes = System.getProperty(SMISyntaxesProperties,
-        //                                         SMISyntaxesPropertiesDefault);
-        //    InputStream ins = Variable.getclass.getResourceAsStream(syntaxes);
-        //    if (ins == null)
-        //    {
-        //        throw new InternalError("Could not read '" + syntaxes +
-        //                                "' from classpath!");
-        //    }
-        //    Properties props = new Properties();
-        //    try
-        //    {
-        //        props.load(ins);
-        //        ///Hashtable<Integer, Class<? extends Variable>> regSyntaxes = new Hashtable<Integer, Class<? extends Variable>>(props.size());
-        //        for (Enumeration en = props.propertyNames(); en.hasMoreElements();)
-        //        {
-        //            string id = en.nextElement().toString();
-        //            string className = props.getProperty(id);
-        //            try
-        //            {
-        //                //Class<? extends Variable> c = (Class <? extends Variable >) Class.forName(className);
-        //                regSyntaxes.put(new Integer(id), c);
-        //            }
-        //            catch (ClassNotFoundException cnfe)
-        //            {
-        //                logger.error(cnfe);
-        //            }
-        //            catch (ClassCastException ccex)
-        //            {
-        //                log.Error(ccex);
-        //            }
-        //        }
-        //        // atomic syntax registration
-        //        registeredSyntaxes = regSyntaxes;
-        //    }
-        //    catch (IOException iox)
-        //    {
-        //        string txt = "Could not read '" + syntaxes + "': " +
-        //            iox.Message;
-        //        log.Error(txt);
-        //        throw new InternalError(txt);
-        //    }
-        //    finally
-        //    {
-        //        try
-        //        {
-        //            ins.close();
-        //        }
-        //        catch (IOException ex)
-        //        {
-        //            log.Warn(ex);
-        //        }
-        //    }
-        //}
-
-        /**
-         * Gets the ASN.1 syntax identifier value of this SNMP variable.
-         * @return
-         *    an integer value < 128 for regular SMI objects and a value >= 128
-         *    for exception values like noSuchObject, noSuchInstance, and
-         *    endOfMibView.
-         */
-        public abstract int Syntax { get; }
-
-        /**
-         * Checks whether this variable represents an exception like
-         * noSuchObject, noSuchInstance, and endOfMibView.
-         * @return
-         *    <code>true</code> if the syntax of this variable is an instance of
-         *    <code>Null</code> and its syntax equals one of the following:
-         *    <UL>
-         *    <LI>{@link SMIConstants#EXCEPTION_NO_SUCH_OBJECT}</LI>
-         *    <LI>{@link SMIConstants#EXCEPTION_NO_SUCH_INSTANCE}</LI>
-         *    <LI>{@link SMIConstants#EXCEPTION_END_OF_MIB_VIEW}</LI>
-         *    </UL>
-         */
-        public bool IsException
-        {
-            get
-            {
-                return Null.IsExceptionSyntax(this.Syntax);
-            }
-        }
-
-        /// <summary>
-        /// Gets a string representation of the variable.
-        /// </summary>
-        /// <remarks>
-        /// Declaring this method abstract forces subclasses to implement ToString explicitely
-        /// </remarks>
-        /// <returns>
-        /// A string representation of the variable's value
-        /// </returns>
-        public abstract override string ToString();
-
-        /**
-         * Returns an integer representation of this variable if
-         * such a representation exists.
-         * @return
-         *    an integer value (if the native representation of this variable
-         *    would be a long, then the long value will be casted to int).
-         * @throws UnsupportedOperationException if an integer representation
-         * does not exists for this Variable.
-         * @since 1.7
-         */
-        public abstract int IntValue { get; }
-
-        /**
-         * Returns a long representation of this variable if
-         * such a representation exists.
-         * @return
-         *    a long value.
-         * @throws UnsupportedOperationException if a long representation
-         * does not exists for this Variable.
-         * @since 1.7
-         */
-        public abstract long LongValue { get; }
-
-        public abstract object Clone();
-
-        /**
-         * Gets a textual description of the supplied syntax type.
-         * @param syntax
-         *    the BER code of the syntax.
-         * @return
-         *    a textual description like 'Integer32' for <code>syntax</code>
-         *    as used in the Structure of Management Information (SMI) modules.
-         *    '?' is returned if the supplied syntax is unknown.
-         */
-        public static string GetSyntaxString(int syntax)
-        {
-            switch (syntax)
-            {
-                case BER.INTEGER:
-                    return "Integer32";
-                case BER.BITSTRING:
-                    return "BIT STRING";
-                case BER.OCTETSTRING:
-                    return "OCTET STRING";
-                case BER.OID:
-                    return "OBJECT IDENTIFIER";
-                case BER.TIMETICKS:
-                    return "TimeTicks";
-                case BER.COUNTER:
-                    return "Counter";
-                case BER.COUNTER64:
-                    return "Counter64";
-                case BER.EndOfMibView:
-                    return "EndOfMibView";
-                case BER.GAUGE32:
-                    return "Gauge";
-                case BER.IPADDRESS:
-                    return "IpAddress";
-                case BER.NoSuchInstance:
-                    return "NoSuchInstance";
-                case BER.NoSuchObject:
-                    return "NoSuchObject";
-                case BER.NULL:
-                    return "Null";
-                case BER.OPAQUE:
-                    return "Opaque";
-            }
-            return "?";
-        }
-
-        /**
-         * Gets a textual description of this Variable.
-         * @return
-         *    a textual description like 'Integer32'
-         *    as used in the Structure of Management Information (SMI) modules.
-         *    '?' is returned if the syntax is unknown.
-         * @since 1.7
-         */
-        public string SyntaxString
-        {
-            get
-            {
-                return AbstractVariable.GetSyntaxString(this.Syntax);
-            }
-            
-        }
-
-        /**
-         * Returns the BER syntax ID for the supplied syntax string (as returned
-         * by {@link #getSyntaxString(int)}).
-         * @param syntaxString
-         *    the textual representation of the syntax.
-         * @return
-         *    the corresponding BER ID.
-         * @since 1.6
-         */
-        public static int GetSyntaxFromString(string syntaxString)
-        {
-            foreach (object[] aSYNTAX_NAME_MAPPING in SYNTAX_NAME_MAPPING)
-            {
-                if (aSYNTAX_NAME_MAPPING[0].Equals(syntaxString))
-                {
-                    return (int)aSYNTAX_NAME_MAPPING[1];
-                }
-            }
-            return BER.NULL;
-        }
-        
-        /// <summary>
-        /// Converts the value of this <c>Variable</c> to a (sub-)index value
-        /// </summary>
-        /// <param name="impliedLength">
-        /// Specifies if the sub-index has an implied length. This parameter applies
-        /// to variable length variables only(e.g. { @link OctetString}
-        /// and <see cref="OID"/>. For other variables it has no effect.
-        /// </param>
-        /// <returns>An OID that represents this value as a sub index</returns>
-        /// <exception cref="NotSupportedException">If this variable cannot be used as a sub index</exception>
-        public abstract OID ToSubIndex(bool impliedLength);
-
-        /// <summary>
-        /// Sets the value of this <c>IVariable</c> from the supplied (sub-)index.
-        /// </summary>
-        /// <param name="subIndex">The sub-index OID</param>
-        /// <param name="impliedLength">
-        /// Specifies if the sub-index has an implied length. This parameter applies
-        /// to variable length variables only(e.g. <see cref="OctetString"/>
-        /// and <see cref="OID"/>). For other variables it has no effect.
-        /// </param>
-        /// <exception cref="NotSupportedException">If this variable cannot be set from a sub index</exception>
-        public abstract void FromSubIndex(OID subIndex, bool impliedLength);
-
-        /**
-         * Indicates whether this variable is dynamic, which means that it might
-         * change its value while it is being (BER) serialized. If a variable is
-         * dynamic, it will be cloned on-the-fly when it is added to a {@link PDU}
-         * with {@link PDU#add(VariableBinding)}. By cloning the value, it is
-         * ensured that there are no inconsistent changes between determining the
-         * length with {@link #getBERLength()} for encoding enclosing SEQUENCES and
-         * the actual encoding of the Variable itself with {@link #encodeBER}.
-         *
-         * @return
-         *    <code>false</code> by default. Derived classes may override this
-         *    if implementing dynamic {@link Variable} instances.
-         * @since 1.8
-         */
-        public virtual bool IsDynamic
-        {
-            get
-            {
-                return false;
-            }
-        }
-
-        /**
-         * Tests if two variables have the same value.
-         * @param a
-         *   a variable.
-         * @param b
-         *   another variable.
-         * @return
-         *   <code>true</code> if
-         *   <code>a == null) ?  (b == null) : a.equals(b)</code>.
-         *   @since 2.0
-         */
-        public static bool Equal(AbstractVariable a, AbstractVariable b)
-        {
-            return (a == null) ? (b == null) : a.Equals(b);
-        }
-
-        public void GetObjectData(SerializationInfo info, StreamingContext context)
-        {
-            throw new NotImplementedException();
         }
     }
 }

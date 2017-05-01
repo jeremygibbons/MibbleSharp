@@ -52,7 +52,7 @@ namespace JunoSnmp.Security
          * @throws IllegalArgumentException
          *    if keyBytes is illegal
          */
-        public PrivAES(int keyBytes)
+        protected PrivAES(int keyBytes)
         {
             this.initVectorLength = PrivAES.INIT_VECTOR_LENGTH;
             this.protocolId = PrivAES.PROTOCOL_ID;

@@ -28,14 +28,22 @@ namespace JunoSnmp.MP
     /// The <c>SimpleMessageID</c> implements the simplest possible {@link MessageID} with
     /// a minimum memory footprint.
     /// </summary>
-    public class SimpleMessageID : MessageID, ISerializable
+    public class SimpleMessageID : MessageID, ISerializable, IEquatable<SimpleMessageID>
     {
 
-        private int messageID;
+        private readonly int messageID;
 
         public SimpleMessageID(int messageID)
         {
             this.messageID = messageID;
+        }
+
+        public int MessageID
+        {
+            get
+            {
+                return this.messageID;
+            }
         }
 
         public override bool Equals(object o)
@@ -56,15 +64,6 @@ namespace JunoSnmp.MP
             return messageID;
         }
 
-
-        public int MessageID
-        {
-            get
-            {
-                return this.messageID;
-            }
-        }
-
         public override string ToString()
         {
             return messageID.ToString();
@@ -73,6 +72,11 @@ namespace JunoSnmp.MP
         public void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             throw new NotImplementedException();
+        }
+
+        public bool Equals(SimpleMessageID other)
+        {
+            return this.messageID == other.messageID;
         }
     }
 }

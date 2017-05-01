@@ -27,121 +27,17 @@ namespace JunoSnmp.Security
     /// </summary>
     public class UsmSecurityStateReference : ISecurityStateReference
     {
-        private byte[] userName;
-        private byte[] securityName;
-        private byte[] securityEngineID;
-        private IAuthenticationProtocol authenticationProtocol;
-        private IPrivacyProtocol privacyProtocol;
-        private byte[] authenticationKey;
-        private byte[] privacyKey;
-        private int securityLevel;
+        public byte[] UserName { get; set; }
+        public byte[] SecurityName { get; set; }
+        public byte[] SecurityEngineID { get; set; }
+        public IAuthenticationProtocol AuthenticationProtocol { get; set; }
+        public IPrivacyProtocol PrivacyProtocol { get; set; }
+        public byte[] AuthenticationKey { get; set; }
+        public byte[] PrivacyKey { get; set; }
+        public int SecurityLevel { get; set; }
 
         public UsmSecurityStateReference()
         {
-        }
-
-        public byte[] UserName
-        {
-            get
-            {
-                return this.userName;
-            }
-
-            set
-            {
-                this.userName = value;
-            }
-        }
-
-        public byte[] SecurityName
-        {
-            get
-            {
-                return this.securityName;
-            }
-
-            set
-            {
-                this.securityName = value;
-            }
-        }
-
-        public byte[] SecurityEngineID
-        {
-            get
-            {
-                return this.securityEngineID;
-            }
-
-            set
-            {
-                this.securityEngineID = value;
-            }
-        }
-
-        public IAuthenticationProtocol AuthenticationProtocol
-        {
-            get
-            {
-                return this.authenticationProtocol;
-            }
-
-            set
-            {
-                this.authenticationProtocol = value;
-            }
-        }
-
-        public IPrivacyProtocol PrivacyProtocol
-        {
-            get
-            {
-                return this.privacyProtocol;
-            }
-
-            set
-            {
-                this.privacyProtocol = value;
-            }
-        }
-
-        public byte[] AuthenticationKey
-        {
-            get
-            {
-                return this.authenticationKey;
-            }
-
-            set
-            {
-                this.authenticationKey = value;
-            }
-        }
-
-        public byte[] PrivacyKey
-        {
-            get
-            {
-                return this.privacyKey;
-            }
-
-            set
-            {
-                this.privacyKey = value;
-            }
-        }
-
-        public int SecurityLevel
-        {
-            get
-            {
-                return this.securityLevel;
-            }
-
-            set
-            {
-                this.securityLevel = value;
-            }
         }
     }
 }

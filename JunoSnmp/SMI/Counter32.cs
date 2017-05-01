@@ -30,7 +30,7 @@ namespace JunoSnmp.SMI
     /// integers but is recognized as a distinct SMI type, which is used for
     /// monotonically increasing values that wrap around at 2^32-1 (4294967295).
     /// </summary>
-    public class Counter32 : UnsignedInteger32
+    public class Counter32 : UnsignedInteger32, IEquatable<Counter32>
     {
         public static readonly long MaxCounter32Value = 4294967295L;
 
@@ -70,7 +70,20 @@ namespace JunoSnmp.SMI
         /// </returns>
         public override bool Equals(object o)
         {
-            return (o is Counter32) && (((Counter32)o).GetValue() == this.GetValue());
+            return (o is Counter32 c) ?  this.Equals(c) : false;
+        }
+
+        /// <summary>
+        /// Tests if this <see cref="Counter32"/> is equal to another Counter32.
+        /// </summary>
+        /// <param name="o">An object to test against</param>
+        /// <returns>
+        /// True if both objects have the same value,
+        /// False if not.
+        /// </returns>
+        public bool Equals(Counter32 o)
+        {
+            return o.GetValue() == this.GetValue();
         }
 
         /// <summary>
@@ -98,8 +111,7 @@ namespace JunoSnmp.SMI
         /// <param name="inputStream">The input stream to read from</param>
         public override void DecodeBER(BERInputStream inputStream)
         {
-            BER.MutableByte type = new BER.MutableByte();
-            long newValue = BER.DecodeUnsignedInteger(inputStream, out type);
+            long newValue = BER.DecodeUnsignedInteger(inputStream, out BER.MutableByte type);
 
             if (type.Value != BER.COUNTER32)
             {

@@ -25,6 +25,7 @@ namespace JunoSnmp.Test
     using System.IO;
     using System.Text;
     using JunoSnmp.ASN1;
+    using JunoSnmp.MP;
     using JunoSnmp.SMI;
     using NUnit.Framework;
 
@@ -100,8 +101,7 @@ namespace JunoSnmp.Test
             BER.EncodeOID(os1, type2, oid3);
 
             byte[] value = os1.ToArray();
-            BER.MutableByte b = new BER.MutableByte();
-            OID variable = new OID(BER.DecodeOID(new BERInputStream(value), out b));
+            OID variable = new OID(BER.DecodeOID(new BERInputStream(value), out BER.MutableByte b));
             Assert.AreEqual(new OID(oid3), variable);
         }
 
@@ -177,7 +177,7 @@ namespace JunoSnmp.Test
             byte[] result4 = { 0x46, 0x04, 0x01, 0x00, 0x00, 0x01 };
             MemoryStream os1 = new MemoryStream(11);
             byte type2 = 0x46;
-            long value3 = -3914541189257109063L;// 14532202884452442553l;
+            long value3 = -3914541189257109063L;
             byte[] value = null;
             BER.EncodeUnsignedInt64(os1, type2, value3);
 
@@ -241,9 +241,8 @@ namespace JunoSnmp.Test
             int integer = -1;
             BER.EncodeInteger(os1, (byte)0x02, integer);
             byte[] result = os1.ToArray();
-            BER.MutableByte b = new BER.MutableByte();
             int decodedInteger =
-                BER.DecodeInteger(new BERInputStream(result), out b);
+                BER.DecodeInteger(new BERInputStream(result), out BER.MutableByte b);
             Assert.AreEqual(integer, decodedInteger);
             Assert.AreEqual((byte)0x02, b.Value);
 
@@ -264,9 +263,8 @@ namespace JunoSnmp.Test
             long integer = 0xFFFFFFFFL;
             BER.EncodeUnsignedInteger(os1, (byte)0x42, integer);
             byte[] result = os1.ToArray();
-            BER.MutableByte b = new BER.MutableByte();
             long decodedInteger =
-                BER.DecodeUnsignedInteger(new BERInputStream(result), out b);
+                BER.DecodeUnsignedInteger(new BERInputStream(result), out BER.MutableByte b);
             Assert.AreEqual(integer, decodedInteger);
             Assert.AreEqual((byte)0x42, b.Value);
 
@@ -287,9 +285,8 @@ namespace JunoSnmp.Test
             long integer = -1;
             BER.EncodeUnsignedInt64(os1, (byte)0x46, integer);
             byte[] result = os1.ToArray();
-            BER.MutableByte b = new BER.MutableByte();
             long decodedInteger =
-                BER.DecodeUnsignedInt64(new BERInputStream(result), out b);
+                BER.DecodeUnsignedInt64(new BERInputStream(result), out BER.MutableByte b);
             Assert.AreEqual(integer, decodedInteger);
             Assert.AreEqual((byte)0x46, b.Value);
 
@@ -310,9 +307,8 @@ namespace JunoSnmp.Test
             string s = "Hello SNMP4J";
             BER.EncodeString(os1, (byte)0x04, Encoding.UTF8.GetBytes(s));
             byte[] result = os1.ToArray();
-            BER.MutableByte b = new BER.MutableByte();
             byte[] decodedString =
-                BER.DecodeString(new BERInputStream(result), out b);
+                BER.DecodeString(new BERInputStream(result), out BER.MutableByte b);
             for (int i = 0; i < decodedString.Length; i++)
                 Assert.AreEqual(Encoding.UTF8.GetBytes(s)[i], decodedString[i]);
             Assert.AreEqual((byte)0x04, b.Value);
@@ -325,9 +321,8 @@ namespace JunoSnmp.Test
             long[] s = { 1, 3, 6, 1, 4, 4976, 1, 0 };
             BER.EncodeOID(os1, (byte)0x06, s);
             byte[] result = os1.ToArray();
-            BER.MutableByte b = new BER.MutableByte();
             long[] decodedOID =
-                BER.DecodeOID(new BERInputStream(result), out b);
+                BER.DecodeOID(new BERInputStream(result), out BER.MutableByte b);
             for (int i = 0; i < decodedOID.Length; i++)
                 Assert.AreEqual(s[i], decodedOID[i]);
             Assert.AreEqual((byte)0x06, b.Value);
@@ -340,9 +335,8 @@ namespace JunoSnmp.Test
             long[] s = { 0, 39, 6, 1, 4, 4976, 1, 0 };
             BER.EncodeOID(os1, (byte)0x06, s);
             byte[] result = os1.ToArray();
-            BER.MutableByte b = new BER.MutableByte();
             long[] decodedOID =
-                BER.DecodeOID(new BERInputStream(result), out b);
+                BER.DecodeOID(new BERInputStream(result), out BER.MutableByte b);
             for (int i = 0; i < decodedOID.Length; i++)
                 Assert.AreEqual(s[i], decodedOID[i]);
             Assert.AreEqual((byte)0x06, b.Value);
@@ -355,9 +349,8 @@ namespace JunoSnmp.Test
             long[] s = { 1, 1, 6, 1, 4, 4976, 1, 0 };
             BER.EncodeOID(os1, (byte)0x06, s);
             byte[] result = os1.ToArray();
-            BER.MutableByte b = new BER.MutableByte();
             long[] decodedOID =
-                BER.DecodeOID(new BERInputStream(result), out b);
+                BER.DecodeOID(new BERInputStream(result), out BER.MutableByte b);
             for (int i = 0; i < decodedOID.Length; i++)
                 Assert.AreEqual(s[i], decodedOID[i]);
             Assert.AreEqual((byte)0x06, b.Value);
@@ -370,9 +363,8 @@ namespace JunoSnmp.Test
             long[] s = { 1, 0, 6, 1, 4, 4976, 1, 0 };
             BER.EncodeOID(os1, (byte)0x06, s);
             byte[] result = os1.ToArray();
-            BER.MutableByte b = new BER.MutableByte();
             long[] decodedOID =
-                BER.DecodeOID(new BERInputStream(result), out b);
+                BER.DecodeOID(new BERInputStream(result), out BER.MutableByte b);
             for (int i = 0; i < decodedOID.Length; i++)
                 Assert.AreEqual(s[i], decodedOID[i]);
             Assert.AreEqual((byte)0x06, b.Value);
@@ -388,9 +380,8 @@ namespace JunoSnmp.Test
             MemoryStream os1 = new MemoryStream(oidLength);
             BER.EncodeOID(os1, (byte)0x06, s);
             byte[] result = os1.ToArray();
-            BER.MutableByte b = new BER.MutableByte();
             long[] decodedOID =
-                BER.DecodeOID(new BERInputStream(result), out b);
+                BER.DecodeOID(new BERInputStream(result), out BER.MutableByte b);
             for (int i = 0; i < decodedOID.Length; i++)
                 Assert.AreEqual(s[i], decodedOID[i]);
             Assert.AreEqual((byte)0x06, b.Value);
@@ -406,9 +397,8 @@ namespace JunoSnmp.Test
             MemoryStream os1 = new MemoryStream(oidLength);
             BER.EncodeOID(os1, (byte)0x06, s);
             byte[] result = os1.ToArray();
-            BER.MutableByte b = new BER.MutableByte();
             long[] decodedOID =
-                BER.DecodeOID(new BERInputStream(result), out b);
+                BER.DecodeOID(new BERInputStream(result), out BER.MutableByte b);
             for (int i = 0; i < decodedOID.Length; i++)
                 Assert.AreEqual(s[i], decodedOID[i]);
             Assert.AreEqual((byte)0x06, b.Value);
@@ -424,37 +414,34 @@ namespace JunoSnmp.Test
             MemoryStream os1 = new MemoryStream(oidLength);
             BER.EncodeOID(os1, (byte)0x06, s);
             byte[] result = os1.ToArray();
-            BER.MutableByte b = new BER.MutableByte();
             long[] decodedOID =
-                BER.DecodeOID(new BERInputStream(result), out b);
+                BER.DecodeOID(new BERInputStream(result), out BER.MutableByte b);
             for (int i = 0; i < decodedOID.Length; i++)
                 Assert.AreEqual(s[i], decodedOID[i]);
             Assert.AreEqual((byte)0x06, b.Value);
         }
 
-        
-        //public void TestDecodeScopedPDU()  {
-        //  OctetString scopedPDUString =
-        //      OctetString.FromHexString("30:3f:02:01:03:30:12:02:04:04:44:59:05:02:04:00:00:ff:e2:04:01:04:02:01:03:04:10"+
-        //          ":30:0e:03:00:02:01:00:02:01:00:04:00:04:00:04:00:30:14:04:00:04:00:a0:0e:02:04:04:44:59:05:02:01:00:02:"+
-        //          "01:00:30:00");
-        //  BERInputStream wholeMsg = new BERInputStream(ByteBuffer.wrap(scopedPDUString.GetValue()));
-        //  BER.MutableByte type = new BER.MutableByte();
-        //  int length = BER.DecodeHeader(wholeMsg, type);
-        //  Assert.AreEqual(type.GetValue(),BER.SEQUENCE);
-        //  long lengthOfLength = wholeMsg.getPosition();
-        //  wholeMsg.reset();
-        //  wholeMsg.mark(length);
-        //  Assert.AreEqual(wholeMsg.skip(lengthOfLength), lengthOfLength);
-        //  Integer32 snmpVersion = new Integer32();
-        //  snmpVersion.decodeBER(wholeMsg);
-        //  Assert.AreEqual(snmpVersion.GetValue(), SnmpConstants.version3);
-        //  // decode SNMPv3 header
-        //  MPv3.HeaderData header = new MPv3.HeaderData();
-        //  header.decodeBER(wholeMsg);
-        //  ScopedPDU scopedPDU = new ScopedPDU();
-        //  scopedPDU.decodeBER(wholeMsg);
-        //}
-        
+        public void TestDecodeScopedPDU()
+        {
+            OctetString scopedPDUString =
+                OctetString.FromHexString("30:3f:02:01:03:30:12:02:04:04:44:59:05:02:04:00:00:ff:e2:04:01:04:02:01:03:04:10" +
+                    ":30:0e:03:00:02:01:00:02:01:00:04:00:04:00:04:00:30:14:04:00:04:00:a0:0e:02:04:04:44:59:05:02:01:00:02:" +
+                    "01:00:30:00");
+            BERInputStream wholeMsg = new BERInputStream(scopedPDUString.GetValue());
+            BER.DecodeHeader(wholeMsg, out BER.MutableByte type);
+            Assert.AreEqual(type.Value, BER.SEQUENCE);
+            long lengthOfLength = wholeMsg.Position;
+            wholeMsg.Position = 0;
+            Assert.AreEqual(wholeMsg.Skip(lengthOfLength), lengthOfLength);
+            Integer32 snmpVersion = new Integer32();
+            snmpVersion.DecodeBER(wholeMsg);
+            Assert.AreEqual(snmpVersion.GetValue(), SnmpConstants.version3);
+            // decode SNMPv3 header
+            MPv3.HeaderData header = new MPv3.HeaderData();
+            header.DecodeBER(wholeMsg);
+            ScopedPDU scopedPDU = new ScopedPDU();
+            scopedPDU.DecodeBER(wholeMsg);
+        }
+
     }
 }

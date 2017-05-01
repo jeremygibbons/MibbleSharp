@@ -19,8 +19,12 @@
 namespace JunoSnmp
 {
     using System;
+    using System.Threading.Tasks;
+    using JunoSnmp.Event;
     using JunoSnmp.SMI;
     using JunoSnmp.Transport;
+
+    public delegate void IncomingMessageHandler(object o, IncomingMessageEventArgs args);
 
     /// <summary>
     /// The <see cref="ITransportMapping{A}"/> defines the common interface for SNMP
@@ -29,7 +33,9 @@ namespace JunoSnmp
     /// </summary>
     /// <typeparam name="A">The address type supported by this transport mapping</typeparam>
     public interface ITransportMapping<A> where A : IAddress 
-    {   
+    {
+        event IncomingMessageHandler OnIncomingMessage;
+
         /// <summary>
         /// Gets a value indicating whether the transport mapping is listening for
         /// incoming messages.For connection oriented transport mappings this
@@ -48,7 +54,7 @@ namespace JunoSnmp
         /// Gets the <c>IAddress</c> class that is supported by this transport mapping.
         /// </summary>
         /// <returns>A type implementing IAddress</returns>
-        Type GetSupportedAddressClass();
+        Type SupportedAddressClass { get; }
 
         /// <summary>
         /// Returns the address that represents the actual incoming address this transport
@@ -58,7 +64,7 @@ namespace JunoSnmp
         /// The address for incoming packets or <code>null</code> this transport
         /// mapping is not configured to listen for incoming packets.
         /// </returns>
-        A GetListenAddress();
+        A ListenAddress { get; }
 
         /// <summary>
         /// Sends a message to the supplied address using this transport.
@@ -72,20 +78,6 @@ namespace JunoSnmp
         void SendMessage(A address, byte[] message, TransportStateReference transStateReference);
 
         /// <summary>
-        /// Adds a transport listener to the transport. Normally, at least one
-        /// transport listener needs to be added to process incoming messages.
-        /// </summary>
-        /// <param name="transportListener">A <see cref="ITransportListener"/> instance</param>
-        void AddTransportListener(ITransportListener transportListener);
-
-        /// <summary>
-        /// Removes a transport listener. Incoming messages will no longer be
-        /// propagated to the supplied<code>ITransportListener</code>.
-        /// </summary>
-        /// <param name="transportListener">A <see cref="ITransportListener"/> instance</param>
-        void RemoveTransportListener(ITransportListener transportListener);
-
-        /// <summary>
         /// Closes the transport an releases all bound resources synchronously.
         /// </summary>
         void Close();
@@ -95,6 +87,6 @@ namespace JunoSnmp
         /// method needs to be called before <see cref="SendMessage(A, byte[], TransportStateReference)"/> 
         /// is called for the first time.
         /// </summary>
-        void Listen();
+        Task Listen();
     }
 }

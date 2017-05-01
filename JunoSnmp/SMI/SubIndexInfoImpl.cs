@@ -27,10 +27,10 @@ namespace JunoSnmp.SMI
     /// </summary>
     public class SubIndexInfoImpl : ISubIndexInfo
     {
-        private bool impliedLength;
-        private int minLength;
-        private int maxLength;
-        private int snmpSyntax;
+        private readonly bool impliedLength;
+        private readonly int minLength;
+        private readonly int maxLength;
+        private readonly int snmpSyntax;
 
         /**
          * Create a sub index information object.

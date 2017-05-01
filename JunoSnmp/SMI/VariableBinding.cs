@@ -28,7 +28,7 @@ namespace JunoSnmp.SMI
     /// A <c>VariableBinding</c> is an association of a object instance
     /// identifier(<see cref="OID"/>) and the instance's value (<see cref="IVariable"/>).
     /// </summary>
-    public class VariableBinding : ISerializable, IBERSerializable, ICloneable
+    public class VariableBinding : ISerializable, IBERSerializable, ICloneable, IEquatable<VariableBinding>
     {
         private OID oid;
         private IVariable variable;
@@ -190,8 +190,7 @@ namespace JunoSnmp.SMI
 
         public void DecodeBER(BERInputStream inputStream)
         {
-            BER.MutableByte type = new BER.MutableByte();
-            int length = BER.DecodeHeader(inputStream, out type);
+            int length = BER.DecodeHeader(inputStream, out BER.MutableByte type);
             long startPos = inputStream.Position;
             if (type.Value != BER.SEQUENCE)
             {
@@ -254,13 +253,17 @@ namespace JunoSnmp.SMI
 
         public override bool Equals(Object o)
         {
-            if (o is VariableBinding)
+            if (o is VariableBinding vb)
             {
-                VariableBinding other = (VariableBinding)o;
-                return this.oid.Equals(other.Oid) &&
-                    this.variable.Equals(other.Variable);
+                return this.Equals(vb);
             }
+
             return false;
+        }
+
+        public bool Equals(VariableBinding o)
+        {
+            return this.oid.Equals(o.Oid) && this.variable.Equals(o.Variable);
         }
 
         /**

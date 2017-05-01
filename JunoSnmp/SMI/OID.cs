@@ -35,7 +35,7 @@ namespace JunoSnmp.SMI
     /// defined by a MIB definition.The<code>OID</code> class allows definition and
     /// manipulation of object identifiers.
     /// </para></summary>
-    public class OID : AbstractVariable, IAssignableFrom<string>, IAssignableFrom<long[]>
+    public class OID : AbstractVariable, IAssignableFrom<string>, IAssignableFrom<long[]>, IEquatable<OID>
     {
         public static readonly int MaxOIDLen = 128;
         public static readonly long MaxSubIDValue = 0xFFFFFFFF;
@@ -465,21 +465,25 @@ namespace JunoSnmp.SMI
         /// <returns>True if the other object is an identical OID, false if not.</returns>
         public override bool Equals(object o)
         {
-            OID other = o as OID;
+            return (o is OID oi) ? this.Equals(oi) : false;
+        }
 
-            if (other == null)
-            {
-                return false;
-            }
-
-            if (other.value.Length != this.value.Length)
+        /// <summary>
+        /// Test this OID for equality with another object. Two OIDs are equal if
+        /// they are of equal length and all of their values are equal.
+        /// </summary>
+        /// <param name="o">The object to compare against</param>
+        /// <returns>True if the other object is an identical OID, false if not.</returns>
+        public bool Equals(OID o)
+        {
+            if (o.value.Length != this.value.Length)
             {
                 return false;
             }
 
             for (int i = 0; i < this.value.Length; i++)
             {
-                if (this.value[i] != other.value[i])
+                if (this.value[i] != o.value[i])
                 {
                     return false;
                 }
@@ -581,8 +585,7 @@ namespace JunoSnmp.SMI
         /// <param name="inputStream">The stream to read from</param>
         public override void DecodeBER(BERInputStream inputStream)
         {
-            BER.MutableByte type = new BER.MutableByte();
-            long[] v = BER.DecodeOID(inputStream, out type);
+            long[] v = BER.DecodeOID(inputStream, out BER.MutableByte type);
             if (type.Value != BER.OID)
             {
                 throw new IOException("Wrong type encountered when decoding OID: " +

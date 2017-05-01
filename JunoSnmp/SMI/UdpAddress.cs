@@ -29,7 +29,7 @@ namespace JunoSnmp.SMI
     /// <summary>
     /// The <c>UdpAddress</c> represents UDP/IP transport addresses.
     /// </summary>
-    public class UdpAddress : TransportIpAddress
+    public class UdpAddress : TransportIpAddress, IEquatable<UdpAddress>
     {
 
         public UdpAddress()
@@ -69,6 +69,11 @@ namespace JunoSnmp.SMI
         public override bool Equals(object o)
         {
             return (o is UdpAddress) && base.Equals(o);
+        }
+
+        public bool Equals(UdpAddress u)
+        {
+            return base.Equals(u);
         }
 
         public override int GetHashCode()

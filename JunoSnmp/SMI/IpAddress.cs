@@ -29,7 +29,7 @@ namespace JunoSnmp.SMI
     /// <summary>
     /// The <c>IpAddress</c> class represents an IPv4 address SNMP variable.
     /// </summary>
-    public class IpAddress : SMIAddress
+    public class IpAddress : SMIAddress, IEquatable<IpAddress>
     {
         private static readonly log4net.ILog log = log4net.LogManager
             .GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
@@ -188,9 +188,14 @@ namespace JunoSnmp.SMI
             return (o is IpAddress) && (CompareTo((IpAddress)o) == 0);
         }
 
+        public bool Equals(IpAddress ip)
+        {
+            return this.CompareTo(ip) == 0;
+        }
+
         public override void DecodeBER(BERInputStream inputStream)
         {
-            BER.MutableByte type = new BER.MutableByte();
+            BER.MutableByte type;
             byte[] value = BER.DecodeString(inputStream, out type);
             if (type.Value != BER.IPADDRESS)
             {

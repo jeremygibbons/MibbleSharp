@@ -26,7 +26,7 @@ namespace JunoSnmp.SMI
     /// UnsignedInteger32 type is an SNMP type that represents unsigned 32bit
     /// integer values(0 to 4294967295).
     /// </summary>
-    public class UnsignedInteger32 : AbstractVariable, IAssignableFrom<long>, IAssignableFrom<string>
+    public class UnsignedInteger32 : AbstractVariable, IAssignableFrom<long>, IAssignableFrom<string>, IEquatable<UnsignedInteger32>
     {
         protected long value = 0;
 
@@ -95,7 +95,7 @@ namespace JunoSnmp.SMI
         /// <param name="inputStream">The stream to read from</param>
         public override void DecodeBER(BERInputStream inputStream)
         {
-            BER.MutableByte type = new BER.MutableByte();
+            BER.MutableByte type;
             long newValue = BER.DecodeUnsignedInteger(inputStream, out type);
             if (type.Value != BER.GAUGE)
             {
@@ -152,12 +152,18 @@ namespace JunoSnmp.SMI
         /// </returns>
         public override bool Equals(object o)
         {
-            if (o is UnsignedInteger32)
+            UnsignedInteger32 ui = o as UnsignedInteger32;
+            if (ui == null)
             {
-                return (((UnsignedInteger32)o).value == value);
+                return false;
             }
 
-            return false;
+            return this.Equals(ui);
+        }
+
+        public bool Equals(UnsignedInteger32 o)
+        {
+            return o.value == this.value;
         }
 
         public override int CompareTo(IVariable o)

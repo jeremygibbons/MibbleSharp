@@ -40,7 +40,7 @@ namespace JunoSnmp.MP
         /// constants in this interface or by an appropriate constant in the
         /// class implementing this interface.
         /// </summary>
-        MessageProcessingModels MessageProcModelId { get; }
+        public MessageProcessingModels MessageProcModelId { get; }
 
         /// <summary>
         /// Prepares an outgoing message as defined in RFC3412 §7.1.

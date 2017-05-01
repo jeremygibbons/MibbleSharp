@@ -40,7 +40,7 @@ namespace JunoSnmp.Security
 
         public static readonly long TIME_PRECISION = 1000000000L;
 
-        private IDictionary<IVariable, UsmTimeEntry> table = new Dictionary<IVariable, UsmTimeEntry>(10);
+        private readonly IDictionary<IVariable, UsmTimeEntry> table = new Dictionary<IVariable, UsmTimeEntry>(10);
         private long lastLocalTimeChange = System.DateTime.Now.Ticks;
         private UsmTimeEntry localTime;
 
@@ -177,84 +177,94 @@ namespace JunoSnmp.Security
         public int CheckTime(UsmTimeEntry entry)
         {
             int now = (int)(System.DateTime.Now.Ticks / TIME_PRECISION);
+
             if (localTime.EngineID.Equals(entry.EngineID))
             {
                 /* Entry found, we are authoritative */
-                if ((localTime.EngineBoots == 2147483647)
-                    || (localTime.EngineBoots != entry.EngineBoots)
-                    || (Math.Abs(now + localTime.TimeDiff - entry.LatestReceivedTime) > 150))
-                {
-                    if (log.IsDebugEnabled)
-                    {
-                        log.Debug(
-                            "CheckTime: received message outside time window (authoritative):" +
-                            ((localTime.EngineBoots !=
-                              entry.EngineBoots) ? "engineBoots differ " + localTime.EngineBoots + "!=" + entry.EngineBoots :
-                             "" + (Math.Abs(now + localTime.TimeDiff -
-                                          entry.LatestReceivedTime)) + " > 150"));
-                    }
-
-                    return SnmpConstants.SNMPv3_USM_NOT_IN_TIME_WINDOW;
-                }
-                else
-                {
-                    if (log.IsDebugEnabled)
-                    {
-                        log.Debug("CheckTime: time ok (authoritative)");
-                    }
-                    return SnmpConstants.SNMPv3_USM_OK;
-                }
+                return CheckTimeForAuthoritativeEngine(entry, now);
             }
             else
             {
-                UsmTimeEntry time = table[entry.EngineID];
-                if (time == null)
-                {
-                    return SnmpConstants.SNMPv3_USM_UNKNOWN_ENGINEID;
-                }
-                // RFC 3414 section 3.2.7 b) 1):
-                if ((entry.EngineBoots > time.EngineBoots) ||
-                    ((entry.EngineBoots == time.EngineBoots) &&
-                     (entry.LatestReceivedTime > time.LatestReceivedTime)))
-                {
-                    /* time ok, update values */
-                    time.EngineBoots = entry.EngineBoots;
-                    time.LatestReceivedTime = entry.LatestReceivedTime;
-                    time.TimeDiff = entry.LatestReceivedTime - now;
-                }
-                // RFC 3414 section 3.2.7 b) 2):
-                if ((entry.EngineBoots < time.EngineBoots)
-                    || ((entry.EngineBoots == time.EngineBoots) &&
-                     (time.LatestReceivedTime > entry.LatestReceivedTime + 150))
-                     || (time.EngineBoots == 2147483647))
-                {
-                    if (log.IsDebugEnabled)
-                    {
-                        log.Debug(
-                            "CheckTime: received message outside time window (non authoritative)");
-                    }
-
-                    return SnmpConstants.SNMPv3_USM_NOT_IN_TIME_WINDOW;
-                }
-                else
-                {
-                    if (log.IsDebugEnabled)
-                    {
-                        log.Debug("CheckTime: time ok (non authoritative)");
-                    }
-
-                    return SnmpConstants.SNMPv3_USM_OK;
-                }
+                return CheckTimeForNonAuthoritativeEngine(entry, now);
             }
-        }
-
-        public void Reset()
-        {
         }
 
         public void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             throw new NotImplementedException();
+        }
+
+        private int CheckTimeForAuthoritativeEngine(UsmTimeEntry entry, int now)
+        {
+            if ((localTime.EngineBoots == 2147483647)
+                    || (localTime.EngineBoots != entry.EngineBoots)
+                    || (Math.Abs(now + localTime.TimeDiff - entry.LatestReceivedTime) > 150))
+            {
+                if (log.IsDebugEnabled)
+                {
+                    log.Debug(
+                        "CheckTime: received message outside time window (authoritative):" +
+                        ((localTime.EngineBoots !=
+                          entry.EngineBoots) ? "engineBoots differ " + localTime.EngineBoots + "!=" + entry.EngineBoots :
+                         "" + (Math.Abs(now + localTime.TimeDiff -
+                                      entry.LatestReceivedTime)) + " > 150"));
+                }
+
+                return SnmpConstants.SNMPv3_USM_NOT_IN_TIME_WINDOW;
+            }
+            else
+            {
+                if (log.IsDebugEnabled)
+                {
+                    log.Debug("CheckTime: time ok (authoritative)");
+                }
+                return SnmpConstants.SNMPv3_USM_OK;
+            }
+        }
+
+        private int CheckTimeForNonAuthoritativeEngine(UsmTimeEntry entry, int now)
+        {
+            UsmTimeEntry time = table[entry.EngineID];
+
+            if (time == null)
+            {
+                return SnmpConstants.SNMPv3_USM_UNKNOWN_ENGINEID;
+            }
+
+            // RFC 3414 section 3.2.7 b) 1):
+            if ((entry.EngineBoots > time.EngineBoots) ||
+                ((entry.EngineBoots == time.EngineBoots) &&
+                 (entry.LatestReceivedTime > time.LatestReceivedTime)))
+            {
+                /* time ok, update values */
+                time.EngineBoots = entry.EngineBoots;
+                time.LatestReceivedTime = entry.LatestReceivedTime;
+                time.TimeDiff = entry.LatestReceivedTime - now;
+            }
+
+            // RFC 3414 section 3.2.7 b) 2):
+            if ((entry.EngineBoots < time.EngineBoots)
+                || ((entry.EngineBoots == time.EngineBoots) &&
+                 (time.LatestReceivedTime > entry.LatestReceivedTime + 150))
+                 || (time.EngineBoots == 2147483647))
+            {
+                if (log.IsDebugEnabled)
+                {
+                    log.Debug(
+                        "CheckTime: received message outside time window (non authoritative)");
+                }
+
+                return SnmpConstants.SNMPv3_USM_NOT_IN_TIME_WINDOW;
+            }
+            else
+            {
+                if (log.IsDebugEnabled)
+                {
+                    log.Debug("CheckTime: time ok (non authoritative)");
+                }
+
+                return SnmpConstants.SNMPv3_USM_OK;
+            }
         }
     }
 }

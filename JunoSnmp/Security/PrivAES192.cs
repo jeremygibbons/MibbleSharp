@@ -35,7 +35,7 @@ namespace JunoSnmp.Security
         /// <summary>
         /// Unique ID of this privacy protocol.
         /// </summary>
-        public static OID Oid = new OID(SnmpConstants.oosnmpUsmAesCfb192Protocol);
+        public static readonly OID Oid = new OID(SnmpConstants.oosnmpUsmAesCfb192Protocol);
 
         private OID oid;
 

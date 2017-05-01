@@ -60,6 +60,11 @@ namespace JunoSnmp.Event
             {
                 return this.increment;
             }
+
+            set
+            {
+                this.increment = value;
+            }
         }
 
         public object Index

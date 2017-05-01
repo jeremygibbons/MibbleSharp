@@ -32,7 +32,7 @@ namespace JunoSnmp.SMI
     /// 2^64-1 (18446744073709551615). The unsigned 64 bit value is represented as a signed
     /// 64 bit long value internally
     /// </summary>
-    public class Counter64 : AbstractVariable, IAssignableFrom<long>, IAssignableFrom<string>
+    public class Counter64 : AbstractVariable, IAssignableFrom<long>, IAssignableFrom<string>, IEquatable<Counter64>
     {
 
         private long value = 0;
@@ -136,8 +136,7 @@ namespace JunoSnmp.SMI
         /// <param name="inputStream">The stream to read from</param>
         public override void DecodeBER(BERInputStream inputStream)
         {
-            BER.MutableByte type = new BER.MutableByte();
-            long newValue = BER.DecodeUnsignedInt64(inputStream, out type);
+            long newValue = BER.DecodeUnsignedInt64(inputStream, out BER.MutableByte type);
             if (type.Value != BER.COUNTER64)
             {
                 throw new IOException("Wrong type encountered when decoding Counter64: " +
@@ -155,7 +154,12 @@ namespace JunoSnmp.SMI
 
         public override bool Equals(object o)
         {
-            return (o is Counter64) && ((Counter64)o).value == this.value;
+            return (o is Counter64 c) ? c.value == this.value : false;
+        }
+
+        public bool Equals(Counter64 c)
+        {
+            return this.value == c.value;
         }
 
         public override int CompareTo(IVariable o)

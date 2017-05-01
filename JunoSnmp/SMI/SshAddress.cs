@@ -27,12 +27,12 @@ namespace JunoSnmp.SMI
     /// The <c>SshAddress</c> represents a SSH transport addresses as defined
     /// by RFC 5592 SnmpSSHAddress textual convention.
     /// </summary>
-    public class SshAddress : TcpAddress
+    public class SshAddress : TcpAddress, IEquatable<SshAddress>
     {
         private static readonly log4net.ILog log = log4net.LogManager
            .GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
-        private string addressURI;
+        private readonly string addressURI;
         private string userName;
 
         public SshAddress(string addressURI)
@@ -74,7 +74,7 @@ namespace JunoSnmp.SMI
             {
                 string addressString = address;
                 string portString = null;
-                string userName = null;
+                string userNameString = null;
                 int lastColon = address.LastIndexOf(':');
                 if ((lastColon >= 0) && (lastColon + 1 < address.Length))
                 {
@@ -85,7 +85,7 @@ namespace JunoSnmp.SMI
                 int firstAtPos = addressString.IndexOf('@');
                 if ((firstAtPos > 0) && (firstAtPos + 1 < addressString.Length))
                 {
-                    userName = addressString.Substring(0, firstAtPos);
+                    userNameString = addressString.Substring(0, firstAtPos);
                     addressString = addressString.Substring(firstAtPos + 1);
                 }
 
@@ -93,7 +93,7 @@ namespace JunoSnmp.SMI
                 {
                     this.SetSystemNetIpAddress(System.Net.Dns.GetHostAddresses(addressString)[0]);
                     this.port = int.Parse(portString);
-                    this.userName = userName;
+                    this.userName = userNameString;
                 }
                 catch (Exception)
                 {
@@ -111,21 +111,21 @@ namespace JunoSnmp.SMI
 
         public override bool Equals(object o)
         {
-            SshAddress sa = o as SshAddress;
-
-            if (sa == null)
+            if (o is SshAddress sa)
             {
-                return false;
+                return this.Equals(sa);
             }
-
-            if (base.Equals(sa)
-                && this.GetSystemNetIpAddress().Equals(sa.GetSystemNetIpAddress())
-                && this.addressURI.Equals(sa.AddressURI)
-                && (this.userName == null || this.userName.Equals(sa.UserName)))
-            {
-                return true;
-            }
+            
             return false;
+        }
+
+        public bool Equals(SshAddress s)
+        {
+            return s != null
+                && base.Equals(s)
+                && this.GetSystemNetIpAddress().Equals(s.GetSystemNetIpAddress())
+                && this.addressURI.Equals(s.AddressURI)
+                && (this.userName == null || this.userName.Equals(s.UserName));
         }
 
         public override int GetHashCode()

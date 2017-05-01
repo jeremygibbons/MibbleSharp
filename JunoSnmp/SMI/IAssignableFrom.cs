@@ -24,7 +24,7 @@ namespace JunoSnmp.SMI
     /// which will allow it to determine its value from the passed string.
     /// </summary>
     /// <typeparam name="T">The type a value is assignable by</typeparam>
-    public interface IAssignableFrom<T>
+    public interface IAssignableFrom<in T>
     {
         /// <summary>
         /// Sets the value of the object from a argument of type T

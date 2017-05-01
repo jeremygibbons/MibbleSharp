@@ -33,7 +33,7 @@ namespace JunoSnmp.SMI
     /// <see cref="ADDRESS_TYPES_PROPERTIES"/> before calling the <see cref="Parse"/> method
     /// for the first time.
     /// </summary>
-    public class GenericAddress : SMIAddress
+    public class GenericAddress : SMIAddress, IEquatable<GenericAddress>
     {
         /// <summary>
         /// Default address type identifier for an UpdAddress.
@@ -65,15 +65,17 @@ namespace JunoSnmp.SMI
            .GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
         private SMIAddress address;
-        private static Dictionary<string, Func<IAddress>> knownAddressTypeGenerators = null;
+        private static Dictionary<string, Func<IAddress>> knownAddressTypeGenerators = new Dictionary<string, Func<IAddress>>();
         private static Dictionary<string, Type> knownAddressTypes = null;
 
         public GenericAddress()
         {
+            RegisterAddressTypes();
         }
 
         public GenericAddress(SMIAddress address)
         {
+            RegisterAddressTypes();
             this.address = address;
         }
 
@@ -111,6 +113,11 @@ namespace JunoSnmp.SMI
         public override bool Equals(object o)
         {
             return this.address.Equals(o);
+        }
+
+        public bool Equals(GenericAddress g)
+        {
+            return this.address.Equals(g);
         }
 
         public override void DecodeBER(BERInputStream inputStream)
@@ -222,7 +229,6 @@ namespace JunoSnmp.SMI
                 knownAddressTypes = h;
             }
             */
-            GenericAddress.knownAddressTypeGenerators = new Dictionary<string, Func<IAddress>>();
             GenericAddress.knownAddressTypes = new Dictionary<string, Type>();
 
             GenericAddress.knownAddressTypeGenerators.Add(TYPE_UDP, () => new UdpAddress());
@@ -256,11 +262,6 @@ namespace JunoSnmp.SMI
          */
         public static IAddress Parse(string address)
         {
-            if (knownAddressTypeGenerators == null)
-            {
-                GenericAddress.RegisterAddressTypes();
-            }
-
             string type = TYPE_UDP;
             int sep = address.IndexOf(':');
             if (sep > 0)
@@ -268,7 +269,8 @@ namespace JunoSnmp.SMI
                 type = address.Substring(0, sep);
                 address = address.Substring(sep + 1);
             }
-            type = type.ToLower();
+
+            type = type.ToLowerInvariant();
 
             if(knownAddressTypeGenerators.ContainsKey(type) == false)
             {

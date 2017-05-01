@@ -30,7 +30,6 @@ namespace JunoSnmp
     /// </summary>
     public interface ICertifiedIdentity
     {
-
         OctetString ServerFingerprint { get; }
 
         OctetString ClientFingerprint { get; }

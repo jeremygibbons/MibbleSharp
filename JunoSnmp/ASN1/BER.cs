@@ -56,7 +56,7 @@ namespace JunoSnmp.ASN1
         public const byte OID = Asn1Universal | 0x06;
         public const byte SEQUENCE = Asn1Constructor | 0x10;
 
-        public const byte IPADDRESS = Asn1Application | 0x00;
+        public const byte IPADDRESS = Asn1Application; // actually Asn1Application | 0x00
         public const byte COUNTER = Asn1Application | 0x01;
         public const byte COUNTER32 = Asn1Application | 0x01;
         public const byte GAUGE = Asn1Application | 0x02;
@@ -73,42 +73,19 @@ namespace JunoSnmp.ASN1
         private const int LenMask = 0x0ff;
 
         private static bool checkSequenceLengthFlag = true;
-        private static bool checkValueLengthFlag = true;
 
         /// <summary>
         /// Gets or sets a value indicating whether to check if a value's indicated length is
         /// in fact available from the input stream.
         /// </summary>
-        public static bool CheckValueLengthFlag
-        {
-            get
-            {
-                return BER.checkValueLengthFlag;
-            }
-
-            set
-            {
-                BER.checkValueLengthFlag = value;
-            }
-        }
+        public static bool CheckValueLengthFlag { get; set; }
 
         /// <summary>
         /// Gets or sets a value indicating whether the indicated length of a parsed SEQUENCE should 
         /// be checked against the real length of the parsed objects.
         /// </summary>
-        public static bool CheckSequenceLengthFlag
-        {
-            get
-            {
-                return BER.checkSequenceLengthFlag;
-            }
-
-            set
-            {
-                BER.checkSequenceLengthFlag = value;
-            }
-        }
-
+        public static bool CheckSequenceLengthFlag { get; set; }
+        
         /// <summary>
         /// Encodes an ASN.1 header for an object with the ID and
         /// length specified.
@@ -184,7 +161,7 @@ namespace JunoSnmp.ASN1
         /// <exception cref="IOException">If an error is encountered writing to the stream</exception>
         public static void EncodeLength(Stream os, int length)
         {
-            if (length < 0)
+            if (length < 0 || length > 0xFFFFFF)
             {
                 os.WriteByte(0x04 | Asn1LongLength);
                 os.WriteByte((byte)((length >> 24) & 0xFF));
@@ -208,18 +185,10 @@ namespace JunoSnmp.ASN1
                 os.WriteByte((byte)((length >> 8) & 0xFF));
                 os.WriteByte((byte)(length & 0xFF));
             }
-            else if (length <= 0xFFFFFF)
+            else
             { 
                 // 0xFFFF < length <= 0xFFFFFF
                 os.WriteByte(0x03 | Asn1LongLength);
-                os.WriteByte((byte)((length >> 16) & 0xFF));
-                os.WriteByte((byte)((length >> 8) & 0xFF));
-                os.WriteByte((byte)(length & 0xFF));
-            }
-            else
-            {
-                os.WriteByte(0x04 | Asn1LongLength);
-                os.WriteByte((byte)((length >> 24) & 0xFF));
                 os.WriteByte((byte)((length >> 16) & 0xFF));
                 os.WriteByte((byte)((length >> 8) & 0xFF));
                 os.WriteByte((byte)(length & 0xFF));
@@ -773,7 +742,8 @@ namespace JunoSnmp.ASN1
             // Handle invalid object identifier encodings of the form 06 00 robustly
             if (length == 0)
             {
-                oid[0] = oid[1] = 0;
+                oid[0] = 0;
+                oid[1] = 0;
             }
 
             int pos = 1;
@@ -1020,7 +990,7 @@ namespace JunoSnmp.ASN1
         /// </exception>
         private static void CheckLength(BERInputStream ins, int length)
         {
-            if (!checkValueLengthFlag)
+            if (!CheckValueLengthFlag)
             {
                 return;
             }

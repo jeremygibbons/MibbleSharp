@@ -26,7 +26,7 @@ namespace JunoSnmp.SMI
     /// The <code>Null</code> class represents SMI Null and the derived
     /// SMIv2 exception syntaxes.
     /// </summary>
-    public class Null : AbstractVariable
+    public class Null : AbstractVariable, IEquatable<Null>
     {
 
         private int syntax = SMIConstants.SyntaxNull;
@@ -47,8 +47,7 @@ namespace JunoSnmp.SMI
 
         public override void DecodeBER(BERInputStream inputStream)
         {
-            BER.MutableByte type = new BER.MutableByte();
-            BER.DecodeNull(inputStream, out type);
+            BER.DecodeNull(inputStream, out BER.MutableByte type);
             this.syntax = type.Value & 0xFF;
         }
 
@@ -80,7 +79,12 @@ namespace JunoSnmp.SMI
 
         public override bool Equals(object o)
         {
-            return (o is Null) && (((Null)o).Syntax == this.Syntax);
+            return (o is Null n) ? this.Equals(n) : false;
+        }
+
+        public bool Equals(Null n)
+        {
+            return this.Syntax == n.Syntax;
         }
 
         public override int CompareTo(IVariable o)

@@ -27,11 +27,11 @@ namespace JunoSnmp.Security
     /// The <code>ByteArrayWindow</code> provides windowed access to a sub-array
     /// of a byte array.
     /// </summary>
-    public class ByteArrayWindow
+    public class ByteArrayWindow : IEquatable<ByteArrayWindow>
     {
         private byte[] value;
-        private int offset;
-        private int length;
+        private readonly int offset;
+        private readonly int length;
         
         /// <summary>
         /// Initializes a new instance of the <see cref="ByteArrayWindow"/> class, 
@@ -97,12 +97,12 @@ namespace JunoSnmp.Security
             {
                 if (i >= this.length)
                 {
-                    throw new IndexOutOfRangeException(string.Empty + i + " >= " + this.length);
+                    throw new ArgumentOutOfRangeException(string.Empty + i + " >= " + this.length);
                 }
 
                 if (i < 0)
                 {
-                    throw new IndexOutOfRangeException(string.Empty + i);
+                    throw new ArgumentOutOfRangeException(string.Empty + i);
                 }
 
                 return this.value[i + this.offset];
@@ -112,12 +112,12 @@ namespace JunoSnmp.Security
             {
                 if (i >= this.length)
                 {
-                    throw new IndexOutOfRangeException(string.Empty + i + " >= " + this.length);
+                    throw new ArgumentOutOfRangeException(string.Empty + i + " >= " + this.length);
                 }
 
                 if (i < 0)
                 {
-                    throw new IndexOutOfRangeException(string.Empty + i);
+                    throw new ArgumentOutOfRangeException(string.Empty + i);
                 }
 
                 this.value[i + this.offset] = value;
@@ -133,26 +133,35 @@ namespace JunoSnmp.Security
         /// </returns>
         public override bool Equals(object obj)
         {
-            ByteArrayWindow b = obj as ByteArrayWindow;
-            if (b != null)
+            if (obj is ByteArrayWindow b)
             {
-                if (b.Length != this.Length)
-                {
-                    return false;
-                }
-
-                for (int i = 0; i < this.Length; i++)
-                {
-                    if (b.Value[i] != this.Value[i])
-                    {
-                        return false;
-                    }
-                }
-
-                return true;
+                return this.Equals(b);
             }
 
             return false;
+        }
+
+        public bool Equals(ByteArrayWindow other)
+        {
+            if (other == null)
+            {
+                return false;
+            }
+
+            if (other.Length != this.Length)
+            {
+                return false;
+            }
+
+            for (int i = 0; i < this.Length; i++)
+            {
+                if (other.Value[i] != this.Value[i])
+                {
+                    return false;
+                }
+            }
+
+            return true;
         }
 
         /// <summary>

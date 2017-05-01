@@ -30,7 +30,7 @@ namespace JunoSnmp.SMI
         /// <summary>
         /// Initializes a new instance of the <see cref="ReadonlyVariableCallback"/> class.
         /// </summary>
-        public ReadonlyVariableCallback()
+        protected ReadonlyVariableCallback()
         {
         }
 

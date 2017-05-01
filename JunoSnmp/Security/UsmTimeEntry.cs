@@ -34,10 +34,14 @@ namespace JunoSnmp.Security
     public class UsmTimeEntry : ISerializable
     {
 
-        private OctetString engineID;
-        private int engineBoots;
-        private int timeDiff;
-        private int latestReceivedTime;
+        public OctetString EngineID { get; }
+        public int EngineBoots { get; set; }
+        public int TimeDiff { get; set; }
+
+        /// <summary>
+        /// The time when a message has been received last from the associated SNMP engine.
+        /// </summary>
+        public int LatestReceivedTime { get; set; }
 
         /**
          * Creates a time entry with engine ID, engine boots and time.
@@ -51,70 +55,9 @@ namespace JunoSnmp.Security
          */
         public UsmTimeEntry(OctetString engineID, int engineBoots, int engineTime)
         {
-            this.engineID = engineID;
-            this.engineBoots = engineBoots;
-            this.EngineTime = engineTime;
-        }
-
-        public OctetString EngineID
-        {
-            get
-            {
-                return engineID;
-            }
-        }
-
-
-        public int EngineBoots
-        {
-            get
-            {
-                return this.engineBoots;
-            }
-
-            set
-            {
-                this.engineBoots = value;
-            }
-        }
-
-        public int TimeDiff
-        {
-            get
-            {
-                return this.timeDiff;
-            }
-
-            set
-            {
-                this.timeDiff = value;
-            }
-        }
-
-        /**
-         * Gets the time when a message has been received last from the associated
-         * SNMP engine.
-         * @return
-         *    the engine time in seconds.
-         */
-
-        /**
-         * Sets the time when a message has been received last from the associated
-         * SNMP engine.
-         * @param latestReceivedTime
-         *    the engine time in seconds.
-         */
-        public int LatestReceivedTime
-        {
-            get
-            {
-                return this.latestReceivedTime;
-            }
-
-            set
-            {
-                this.latestReceivedTime = value;
-            }
+            this.EngineID = engineID;
+            this.EngineBoots = engineBoots;
+            this.SetEngineTime(engineTime);
         }
 
         /**
@@ -123,13 +66,10 @@ namespace JunoSnmp.Security
          * @param engineTime
          *    the time in seconds elapsed since the last reboot of the engine.
          */
-        public int EngineTime
+        public void SetEngineTime(int time)
         {
-            set
-            {
-                this.latestReceivedTime = value;
-                this.timeDiff = value - (int)(DateTime.Now.Ticks / UsmTimeTable.TIME_PRECISION);
-            }   
+            this.LatestReceivedTime = time;
+            this.TimeDiff = time - (int)(DateTime.Now.Ticks / UsmTimeTable.TIME_PRECISION);
         }
 
         public void GetObjectData(SerializationInfo info, StreamingContext context)

@@ -201,7 +201,7 @@ namespace JunoSnmp
         /// <summary>
         /// Sets the security model for this target.
         /// </summary>
-        public JunoSnmp.Security.SecurityModel.SecurityModelID SecurityModel
+        public virtual JunoSnmp.Security.SecurityModel.SecurityModelID SecurityModel
         {
             get
             {
@@ -238,7 +238,7 @@ namespace JunoSnmp
         /// <see cref="Security.SecurityLevel.NoAuthNoPriv"/>
         /// <see cref="Security.SecurityLevel.AuthNoPriv"/>
         /// <see cref="Security.SecurityLevel.AuthPriv"/>
-        public SecurityLevel SecurityLevel
+        public virtual SecurityLevel SecurityLevel
         {
             get
             {

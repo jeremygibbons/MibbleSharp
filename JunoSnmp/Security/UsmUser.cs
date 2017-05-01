@@ -36,12 +36,12 @@ namespace JunoSnmp.Security
     /// </para></summary>
     public class UsmUser : IUser, IComparable, ICloneable
     {
-        private OctetString securityName;
-        private OctetString authenticationPassphrase;
-        private OctetString privacyPassphrase;
-        private OID authenticationProtocol;
-        private OID privacyProtocol;
-        private OctetString localizationEngineID;
+        private readonly OctetString securityName;
+        private readonly OctetString authenticationPassphrase;
+        private readonly OctetString privacyPassphrase;
+        private readonly OID authenticationProtocol;
+        private readonly OID privacyProtocol;
+        private readonly OctetString localizationEngineID;
 
         /**
          * Creates a USM user.

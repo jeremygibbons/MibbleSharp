@@ -25,7 +25,7 @@ namespace JunoSnmp.SMI
     /// <summary>
     /// The <c>Integer32</c> represents 32bit signed integer values for SNMP.
     /// </summary>
-    public class Integer32 : AbstractVariable, IAssignableFrom<int>, IAssignableFrom<string>
+    public class Integer32 : AbstractVariable, IAssignableFrom<int>, IAssignableFrom<string>, IEquatable<Integer32>
     {
 
         private int value = 0;
@@ -61,7 +61,7 @@ namespace JunoSnmp.SMI
         /// <param name="inputStream">The input stream to read from</param>
         public override void DecodeBER(BERInputStream inputStream)
         {
-            BER.MutableByte type = new BER.MutableByte();
+            BER.MutableByte type;
             int newValue = BER.DecodeInteger(inputStream, out type);
 
             if (type.Value != BER.INTEGER)
@@ -123,7 +123,17 @@ namespace JunoSnmp.SMI
         /// <returns>True if the object are equal-valued Integer32 objects, false if not</returns>
         public override bool Equals(object o)
         {
-            return (o is Integer32) && (((Integer32)o).value == value);
+            return (o is Integer32) && (((Integer32)o).value == this.value);
+        }
+
+        /// <summary>
+        /// Checks whether this object and another Integer32 object are equal
+        /// </summary>
+        /// <param name="other">The Integer32 to compare with</param>
+        /// <returns>True if the object are equal-valued Integer32 objects, false if not</returns>
+        public bool Equals(Integer32 other)
+        {
+            return other.value == this.value;
         }
 
         /// <summary>

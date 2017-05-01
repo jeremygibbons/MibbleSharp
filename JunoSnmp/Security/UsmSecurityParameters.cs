@@ -31,20 +31,21 @@ namespace JunoSnmp.Security
         private static readonly log4net.ILog log = log4net.LogManager
             .GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
-        private static readonly int MAX_BER_LENGTH_WITHOU_SEC_PARAMS =
-      32 + 2 + 6 + 6 + 32 + 2;
+        private static readonly int MAX_BER_LENGTH_WITHOU_SEC_PARAMS = 32 + 2 + 6 + 6 + 32 + 2;
 
-        private OctetString authoritativeEngineID = new OctetString();
-        private Integer32 authoritativeEngineBoots = new Integer32();
-        private Integer32 authoritativeEngineTime = new Integer32();
-        private OctetString userName = new OctetString();
-        private IAuthenticationProtocol authenticationProtocol = null;
-        private IPrivacyProtocol privacyProtocol = null;
-        private byte[] authenticationKey;
-        private byte[] privacyKey;
-        private OctetString privacyParameters = new OctetString();
-        private OctetString authenticationParameters = new OctetString();
-        private int securityParametersPosition = -1;
+        private readonly OctetString authoritativeEngineID = new OctetString();
+        private readonly Integer32 authoritativeEngineBoots = new Integer32();
+        private readonly Integer32 authoritativeEngineTime = new Integer32();
+
+        public OctetString UserName { get; set; } = new OctetString();
+        public IAuthenticationProtocol AuthenticationProtocol { get; set; }
+        public IPrivacyProtocol PrivacyProtocol { get; set; }
+        public byte[] AuthenticationKey { get; set; }
+        public byte[] PrivacyKey {get; set; }
+        public OctetString PrivacyParameters { get; set; } = new OctetString();
+        public OctetString AuthenticationParameters { get; set; } = new OctetString();
+        public int SecurityParametersPosition { get; set; }  = -1;
+
         private int authParametersPosition = -1;
         private int decodedLength = -1;
         private int sequencePosition = -1;
@@ -63,9 +64,9 @@ namespace JunoSnmp.Security
             this.authoritativeEngineID = authoritativeEngineID;
             this.authoritativeEngineBoots = authoritativeEngineBoots;
             this.authoritativeEngineTime = authoritativeEngineTime;
-            this.privacyProtocol = privacyProtocol;
-            this.userName = userName;
-            this.authenticationProtocol = authenticationProtocol;
+            this.PrivacyProtocol = privacyProtocol;
+            this.UserName = userName;
+            this.AuthenticationProtocol = authenticationProtocol;
         }
 
 
@@ -113,45 +114,6 @@ namespace JunoSnmp.Security
             }
         }
 
-        public OctetString UserName
-        {
-            get
-            {
-                return userName;
-            }
-
-            set
-            {
-                this.userName = value;
-            }
-        }
-
-        public IAuthenticationProtocol AuthenticationProtocol
-        {
-            get
-            {
-                return this.authenticationProtocol;
-            }
-
-            set
-            {
-                this.authenticationProtocol = value;
-            }
-        }
-
-        public IPrivacyProtocol PrivacyProtocol
-        {
-            get
-            {
-                return this.privacyProtocol;
-            }
-
-            set
-            {
-                this.privacyProtocol = value;
-            }
-        }
-
         public int BERLength
         {
             get
@@ -175,9 +137,10 @@ namespace JunoSnmp.Security
         {
             int pos = (int)inputStream.Position;
             this.decodedLength = pos;
-            BER.MutableByte mutableByte = new BER.MutableByte();
+            BER.MutableByte mutableByte;
             int octetLength = BER.DecodeHeader(inputStream, out mutableByte);
             long startPos = inputStream.Position;
+
             if (mutableByte.Value != BER.OCTETSTRING)
             {
                 string txt =
@@ -186,9 +149,11 @@ namespace JunoSnmp.Security
                 log.Warn(txt);
                 throw new IOException(txt);
             }
+
             sequencePosition = (int)inputStream.Position;
             int length = BER.DecodeHeader(inputStream, out mutableByte);
             long startPosSeq = inputStream.Position;
+
             if (mutableByte.Value != BER.SEQUENCE)
             {
                 string txt =
@@ -197,18 +162,20 @@ namespace JunoSnmp.Security
                 log.Warn(txt);
                 throw new IOException(txt);
             }
+
             authoritativeEngineID.DecodeBER(inputStream);
             authoritativeEngineBoots.DecodeBER(inputStream);
             authoritativeEngineTime.DecodeBER(inputStream);
-            userName.DecodeBER(inputStream);
+            UserName.DecodeBER(inputStream);
             this.authParametersPosition = (int)(inputStream.Position - pos);
             pos = (int)inputStream.Position;
-            authenticationParameters.DecodeBER(inputStream);
+            this.AuthenticationParameters.DecodeBER(inputStream);
             this.authParametersPosition +=
-                ((int)inputStream.Position - pos) - authenticationParameters.BERPayloadLength;
+                ((int)inputStream.Position - pos) - this.AuthenticationParameters.BERPayloadLength;
 
-            privacyParameters.DecodeBER(inputStream);
+            PrivacyParameters.DecodeBER(inputStream);
             this.decodedLength = (int)(inputStream.Position - decodedLength);
+
             if (BER.CheckSequenceLengthFlag)
             {
                 // check length
@@ -226,8 +193,8 @@ namespace JunoSnmp.Security
             get
             {
                 return this.BERLength -
-                    (this.authenticationParameters.BERPayloadLength +
-                     privacyParameters.BERLength);
+                    (this.AuthenticationParameters.BERPayloadLength +
+                     PrivacyParameters.BERLength);
             }
         }
 
@@ -246,9 +213,9 @@ namespace JunoSnmp.Security
             authoritativeEngineID.EncodeBER(outputStream);
             authoritativeEngineBoots.EncodeBER(outputStream);
             authoritativeEngineTime.EncodeBER(outputStream);
-            userName.EncodeBER(outputStream);
-            authenticationParameters.EncodeBER(outputStream);
-            privacyParameters.EncodeBER(outputStream);
+            UserName.EncodeBER(outputStream);
+            this.AuthenticationParameters.EncodeBER(outputStream);
+            PrivacyParameters.EncodeBER(outputStream);
         }
 
         /**
@@ -263,9 +230,9 @@ namespace JunoSnmp.Security
                 int length = authoritativeEngineID.BERLength;
                 length += authoritativeEngineBoots.BERLength;
                 length += authoritativeEngineTime.BERLength;
-                length += userName.BERLength;
-                length += authenticationParameters.BERLength;
-                length += privacyParameters.BERLength;
+                length += UserName.BERLength;
+                length += this.AuthenticationParameters.BERLength;
+                length += PrivacyParameters.BERLength;
                 return length;
             }
         }
@@ -273,7 +240,9 @@ namespace JunoSnmp.Security
         public int GetBERMaxLength(int securityLevel)
         {
             SecurityProtocols secProtocol = SecurityProtocols.GetInstance();
+
             int securityParamsLength = 2;
+
             if (securityLevel > (int)SecurityLevel.NoAuthNoPriv)
             {
                 securityParamsLength = secProtocol.MaxAuthDigestLength +
@@ -289,71 +258,6 @@ namespace JunoSnmp.Security
             return MAX_BER_LENGTH_WITHOU_SEC_PARAMS + securityParamsLength +
                 BER.GetBERLengthOfLength(MAX_BER_LENGTH_WITHOU_SEC_PARAMS +
                                          securityParamsLength) + 1;
-        }
-
-        public byte[] AuthenticationKey
-        {
-            get
-            {
-                return this.authenticationKey;
-            }
-
-            set
-            {
-                this.authenticationKey = value;
-            }
-        }
-
-        public byte[] PrivacyKey
-        {
-            get
-            {
-                return this.privacyKey;
-            }
-
-            set
-            {
-                this.privacyKey = value;
-            }
-        }
-
-        public OctetString PrivacyParameters
-        {
-            get
-            {
-                return this.privacyParameters;
-            }
-
-            set
-            {
-                this.privacyParameters = value;
-            }
-        }
-
-        public OctetString AuthenticationParameters
-        {
-            get
-            {
-                return this.authenticationParameters;
-            }
-
-            set
-            {
-                this.authenticationParameters = value;
-            }
-        }
-
-        public int SecurityParametersPosition
-        {
-            get
-            {
-                return this.securityParametersPosition;
-            }
-
-            set
-            {
-                this.securityParametersPosition = value;
-            }
         }
 
         public int AuthParametersPosition

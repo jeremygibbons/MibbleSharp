@@ -29,7 +29,7 @@ namespace JunoSnmp.SMI
     /// <summary>
     /// The <c>OctetString</c> class represents the SMI type OCTET STRING.
     /// </summary>
-    public class OctetString : AbstractVariable, IAssignableFrom<byte[]>, IAssignableFrom<string>
+    public class OctetString : AbstractVariable, IAssignableFrom<byte[]>, IAssignableFrom<string>, IEquatable<OctetString>
     {
         private static readonly char DefaultHexDelimiter = ':';
 
@@ -41,7 +41,7 @@ namespace JunoSnmp.SMI
         public OctetString()
         {
         }
-        
+
         /// <summary>
         /// Initializes a new instance of the <see cref="OctetString"/> class from a byte array.
         /// </summary>
@@ -49,7 +49,7 @@ namespace JunoSnmp.SMI
         public OctetString(byte[] rawValue) : this(rawValue, 0, rawValue.Length)
         {
         }
-        
+
         /// <summary>
         /// Initializes a new instance of the <see cref="OctetString"/> class from a byte array
         /// </summary>
@@ -63,7 +63,7 @@ namespace JunoSnmp.SMI
             this.value = new byte[length];
             System.Array.Copy(rawValue, offset, this.value, 0, length);
         }
-        
+
         /// <summary>
         /// Creates an octet string from a string.
         /// </summary>
@@ -72,7 +72,7 @@ namespace JunoSnmp.SMI
         {
             this.value = Encoding.UTF8.GetBytes(stringValue);
         }
-        
+
         /// <summary>
         /// Creates an octet string from another OctetString by cloning its value.
         /// </summary>
@@ -82,7 +82,7 @@ namespace JunoSnmp.SMI
             this.value = new byte[0];
             this.Append(other);
         }
-        
+
         /// <summary>Appends a single byte to this octet string.</summary>
         /// <param name="b">A byte value</param>
         public void Append(byte b)
@@ -92,7 +92,7 @@ namespace JunoSnmp.SMI
             newValue[this.value.Length] = b;
             this.value = newValue;
         }
-        
+
         /// <summary>
         /// Appends an array of bytes to this octet string.
         /// </summary>
@@ -104,7 +104,7 @@ namespace JunoSnmp.SMI
             System.Array.Copy(bytes, 0, newValue, this.value.Length, bytes.Length);
             value = newValue;
         }
-        
+
         /// <summary>
         /// Appends an octet string.
         /// </summary>
@@ -185,7 +185,7 @@ namespace JunoSnmp.SMI
                 return SMIConstants.SyntaxOctetString;
             }
         }
-        
+
         /// <summary>
         /// Gets or sets the byte at the specified index.
         /// </summary>
@@ -204,7 +204,7 @@ namespace JunoSnmp.SMI
                 this.value[index] = value;
             }
         }
-        
+
         /// <summary>
         /// Gets a hashcode for this object
         /// </summary>
@@ -227,13 +227,17 @@ namespace JunoSnmp.SMI
         /// <returns>True if the two objects are identical <see cref="OctetString"/>s, false if not</returns>
         public override bool Equals(object o)
         {
-            if (o is OctetString)
-            {
-                OctetString other = (OctetString)o;
-                return Enumerable.SequenceEqual(this.value, other.value);
-            }
+            return (o is OctetString os) ? this.Equals(os) : false;
+        }
 
-            return false;
+        /// <summary>
+        /// Check whether this object is equal to another
+        /// </summary>
+        /// <param name="o">The object to compare to</param>
+        /// <returns>True if the two objects are identical <see cref="OctetString"/>s, false if not</returns>
+        public bool Equals(OctetString os)
+        {
+            return Enumerable.SequenceEqual(this.value, os.value);
         }
 
         /**
@@ -251,29 +255,30 @@ namespace JunoSnmp.SMI
 
         public override int CompareTo(IVariable o)
         {
-            if (o is OctetString)
-            {
-                OctetString other = (OctetString)o;
-                int maxlen = Math.Min(this.value.Length, other.value.Length);
-                for (int i = 0; i < maxlen; i++)
-                {
-                    if (value[i] != other.value[i])
-                    {
-                        if ((value[i] & 0xFF) < (other.value[i] & 0xFF))
-                        {
-                            return -1;
-                        }
-                        else
-                        {
-                            return 1;
-                        }
-                    }
-                }
+            OctetString os = o as OctetString;
 
-                return value.Length - other.value.Length;
+            if (os == null)
+            {
+                throw new ArgumentException(o.GetType().Name + " is not an OctetString");
             }
 
-            throw new ArgumentException(o.GetType().Name + " is not an OctetString");
+            int maxlen = Math.Min(this.value.Length, os.value.Length);
+            for (int i = 0; i < maxlen; i++)
+            {
+                if (value[i] != os.value[i])
+                {
+                    if ((value[i] & 0xFF) < (os.value[i] & 0xFF))
+                    {
+                        return -1;
+                    }
+                    else
+                    {
+                        return 1;
+                    }
+                }
+            }
+
+            return value.Length - os.value.Length;
         }
 
         /**
@@ -408,7 +413,7 @@ namespace JunoSnmp.SMI
         public static OctetString FromHexStringPairs(string hexString)
         {
             byte[] val = Enumerable.Range(0, hexString.Count() / 2)
-                .Select(h => (byte) Convert.ToInt32(hexString.Substring(h, 2), 16)).ToArray();
+                .Select(h => (byte)Convert.ToInt32(hexString.Substring(h, 2), 16)).ToArray();
             return new OctetString(val);
         }
 
@@ -426,14 +431,15 @@ namespace JunoSnmp.SMI
         public static OctetString FromString(string str, int radix)
         {
             int digits = (int)(Math.Round((float)Math.Log(256) / Math.Log(radix)));
-            byte[] value = new byte[str.Length / digits];
+            byte[] val = new byte[str.Length / digits];
+
             for (int n = 0; n < str.Length; n += digits)
             {
                 string s = str.Substring(n, n + digits);
-                value[n / digits] = (byte)Convert.ToInt32(s, radix);
+                val[n / digits] = (byte)Convert.ToInt32(s, radix);
             }
 
-            return new OctetString(value);
+            return new OctetString(val);
         }
 
         public string ToString(char separator, int radix)

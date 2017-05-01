@@ -38,9 +38,9 @@ namespace JunoSnmp.MP
         public const int MILLISECOND_TO_NANOSECOND = 1000000;
         public const int HUNDREDTHS_TO_NANOSECOND = 10000000;
 
-        public static readonly int version1 = 0;
-        public static readonly int version2c = 1;
-        public static readonly int version3 = 3;
+        public const int version1 = 0;
+        public const int version2c = 1;
+        public const int version3 = 3;
 
         // SNMP error conditions defined (indirectly) by the SNMP standards:
         /** Command responders did not respond within specified timeout interval. */
@@ -73,58 +73,58 @@ namespace JunoSnmp.MP
         public static readonly int SNMP_ERROR_NOT_WRITEABLE = 17;
         public static readonly int SNMP_ERROR_INCONSISTENT_NAME = 18;
 
-        public static readonly int SNMP_MP_OK = 0;
-        public static readonly int SNMP_MP_ERROR = -1400;
-        public static readonly int SNMP_MP_UNSUPPORTED_SECURITY_MODEL = -1402;
-        public static readonly int SNMP_MP_NOT_IN_TIME_WINDOW = -1403;
-        public static readonly int SNMP_MP_DOUBLED_MESSAGE = -1404;
-        public static readonly int SNMP_MP_INVALID_MESSAGE = -1405;
-        public static readonly int SNMP_MP_INVALID_ENGINEID = -1406;
-        public static readonly int SNMP_MP_NOT_INITIALIZED = -1407;
-        public static readonly int SNMP_MP_PARSE_ERROR = -1408;
-        public static readonly int SNMP_MP_UNKNOWN_MSGID = -1409;
-        public static readonly int SNMP_MP_MATCH_ERROR = -1410;
-        public static readonly int SNMP_MP_COMMUNITY_ERROR = -1411;
-        public static readonly int SNMP_MP_WRONG_USER_NAME = -1412;
-        public static readonly int SNMP_MP_BUILD_ERROR = -1413;
-        public static readonly int SNMP_MP_USM_ERROR = -1414;
-        public static readonly int SNMP_MP_UNKNOWN_PDU_HANDLERS = -1415;
-        public static readonly int SNMP_MP_UNAVAILABLE_CONTEXT = -1416;
-        public static readonly int SNMP_MP_UNKNOWN_CONTEXT = -1417;
-        public static readonly int SNMP_MP_REPORT_SENT = -1418;
+        public const int SNMP_MP_OK = 0;
+        public const int SNMP_MP_ERROR = -1400;
+        public const int SNMP_MP_UNSUPPORTED_SECURITY_MODEL = -1402;
+        public const int SNMP_MP_NOT_IN_TIME_WINDOW = -1403;
+        public const int SNMP_MP_DOUBLED_MESSAGE = -1404;
+        public const int SNMP_MP_INVALID_MESSAGE = -1405;
+        public const int SNMP_MP_INVALID_ENGINEID = -1406;
+        public const int SNMP_MP_NOT_INITIALIZED = -1407;
+        public const int SNMP_MP_PARSE_ERROR = -1408;
+        public const int SNMP_MP_UNKNOWN_MSGID = -1409;
+        public const int SNMP_MP_MATCH_ERROR = -1410;
+        public const int SNMP_MP_COMMUNITY_ERROR = -1411;
+        public const int SNMP_MP_WRONG_USER_NAME = -1412;
+        public const int SNMP_MP_BUILD_ERROR = -1413;
+        public const int SNMP_MP_USM_ERROR = -1414;
+        public const int SNMP_MP_UNKNOWN_PDU_HANDLERS = -1415;
+        public const int SNMP_MP_UNAVAILABLE_CONTEXT = -1416;
+        public const int SNMP_MP_UNKNOWN_CONTEXT = -1417;
+        public const int SNMP_MP_REPORT_SENT = -1418;
 
-        public static readonly int SNMPv1v2c_CSM_OK = 0;
-        public static readonly int SNMPv1v2c_CSM_BAD_COMMUNITY_NAME = 1501;
-        public static readonly int SNMPv1v2c_CSM_BAD_COMMUNITY_USE = 1502;
+        public const int SNMPv1v2c_CSM_OK = 0;
+        public const int SNMPv1v2c_CSM_BAD_COMMUNITY_NAME = 1501;
+        public const int SNMPv1v2c_CSM_BAD_COMMUNITY_USE = 1502;
 
 
-        public static readonly int SNMPv3_USM_OK = 0;
-        public static readonly int SNMPv3_USM_ERROR = 1401;
-        public static readonly int SNMPv3_USM_UNSUPPORTED_SECURITY_LEVEL = 1403;
-        public static readonly int SNMPv3_USM_UNKNOWN_SECURITY_NAME = 1404;
-        public static readonly int SNMPv3_USM_ENCRYPTION_ERROR = 1405;
-        public static readonly int SNMPv3_USM_DECRYPTION_ERROR = 1406;
-        public static readonly int SNMPv3_USM_AUTHENTICATION_ERROR = 1407;
-        public static readonly int SNMPv3_USM_AUTHENTICATION_FAILURE = 1408;
-        public static readonly int SNMPv3_USM_PARSE_ERROR = 1409;
+        public const int SNMPv3_USM_OK = 0;
+        public const int SNMPv3_USM_ERROR = 1401;
+        public const int SNMPv3_USM_UNSUPPORTED_SECURITY_LEVEL = 1403;
+        public const int SNMPv3_USM_UNKNOWN_SECURITY_NAME = 1404;
+        public const int SNMPv3_USM_ENCRYPTION_ERROR = 1405;
+        public const int SNMPv3_USM_DECRYPTION_ERROR = 1406;
+        public const int SNMPv3_USM_AUTHENTICATION_ERROR = 1407;
+        public const int SNMPv3_USM_AUTHENTICATION_FAILURE = 1408;
+        public const int SNMPv3_USM_PARSE_ERROR = 1409;
         public const int SNMPv3_USM_UNKNOWN_ENGINEID = 1410;
         public const int SNMPv3_USM_NOT_IN_TIME_WINDOW = 1411;
-        public static readonly int SNMPv3_USM_UNSUPPORTED_AUTHPROTOCOL = 1412;
-        public static readonly int SNMPv3_USM_UNSUPPORTED_PRIVPROTOCOL = 1413;
-        public static readonly int SNMPv3_USM_ADDRESS_ERROR = 1414;
-        public static readonly int SNMPv3_USM_ENGINE_ID_TOO_LONG = 1415;
-        public static readonly int SNMPv3_USM_SECURITY_NAME_TOO_LONG = 1416;
+        public const int SNMPv3_USM_UNSUPPORTED_AUTHPROTOCOL = 1412;
+        public const int SNMPv3_USM_UNSUPPORTED_PRIVPROTOCOL = 1413;
+        public const int SNMPv3_USM_ADDRESS_ERROR = 1414;
+        public const int SNMPv3_USM_ENGINE_ID_TOO_LONG = 1415;
+        public const int SNMPv3_USM_SECURITY_NAME_TOO_LONG = 1416;
 
-        public static readonly int SNMPv3_TSM_OK = 0;
-        public static readonly int SNMPv3_TSM_UNKNOWN_PREFIXES = 1601;
-        public static readonly int SNMPv3_TSM_INVALID_CACHES = 1602;
-        public static readonly int SNMPv3_TSM_INADEQUATE_SECURITY_LEVELS = 1603;
+        public const int SNMPv3_TSM_OK = 0;
+        public const int SNMPv3_TSM_UNKNOWN_PREFIXES = 1601;
+        public const int SNMPv3_TSM_INVALID_CACHES = 1602;
+        public const int SNMPv3_TSM_INADEQUATE_SECURITY_LEVELS = 1603;
 
-        public static readonly int SNMP_MD_OK = 0;
-        public static readonly int SNMP_MD_ERROR = 1701;
-        public static readonly int SNMP_MD_UNSUPPORTED_MP_MODEL = 1702;
-        public static readonly int SNMP_MD_UNSUPPORTED_ADDRESS_CLASS = 1703;
-        public static readonly int SNMP_MD_UNSUPPORTED_SNMP_VERSION = 1704;
+        public const int SNMP_MD_OK = 0;
+        public const int SNMP_MD_ERROR = 1701;
+        public const int SNMP_MD_UNSUPPORTED_MP_MODEL = 1702;
+        public const int SNMP_MD_UNSUPPORTED_ADDRESS_CLASS = 1703;
+        public const int SNMP_MD_UNSUPPORTED_SNMP_VERSION = 1704;
 
 
         // USM security protocol OIDs
