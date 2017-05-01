@@ -61,12 +61,11 @@ namespace JunoSnmp.SMI
         /// <param name="inputStream">The input stream to read from</param>
         public override void DecodeBER(BERInputStream inputStream)
         {
-            BER.MutableByte type;
-            int newValue = BER.DecodeInteger(inputStream, out type);
+            int newValue = BER.DecodeInteger(inputStream, out byte type);
 
-            if (type.Value != BER.INTEGER)
+            if (type != BER.INTEGER)
             {
-                throw new IOException("Wrong type encountered when decoding Counter: " + type.Value);
+                throw new IOException("Wrong type encountered when decoding Counter: " + type);
             }
 
             this.SetValue(newValue);

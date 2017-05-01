@@ -151,8 +151,8 @@ namespace JunoSnmp
         /// </summary>
         public override void DecodeBER(BERInputStream inputStream)
         {
-            BER.MutableByte mutableByte = new BER.MutableByte();
-            int length = BER.DecodeHeader(inputStream, out mutableByte);
+            byte type;
+            int length = BER.DecodeHeader(inputStream, out type);
             long startPos = inputStream.Position;
             contextEngineID.DecodeBER(inputStream);
             contextName.DecodeBER(inputStream);

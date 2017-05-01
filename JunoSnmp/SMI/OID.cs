@@ -585,11 +585,11 @@ namespace JunoSnmp.SMI
         /// <param name="inputStream">The stream to read from</param>
         public override void DecodeBER(BERInputStream inputStream)
         {
-            long[] v = BER.DecodeOID(inputStream, out BER.MutableByte type);
-            if (type.Value != BER.OID)
+            long[] v = BER.DecodeOID(inputStream, out byte type);
+            if (type != BER.OID)
             {
                 throw new IOException("Wrong type encountered when decoding OID: " +
-                                      type.Value);
+                                      type);
             }
 
             this.SetValue(v);

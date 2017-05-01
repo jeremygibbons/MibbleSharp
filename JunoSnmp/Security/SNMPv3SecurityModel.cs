@@ -77,8 +77,8 @@ namespace JunoSnmp.Security
         {
             long pos = scopedPDU.Position;
             int readLengthBytes = (int)scopedPDU.Position;
-            BER.MutableByte mutableByte = new BER.MutableByte();
-            int length = BER.DecodeHeader(scopedPDU, out mutableByte);
+            byte type;
+            int length = BER.DecodeHeader(scopedPDU, out type);
             readLengthBytes = (int)scopedPDU.Position - readLengthBytes;
             byte[] buf = new byte[length + readLengthBytes];
             scopedPDU.Position = pos;

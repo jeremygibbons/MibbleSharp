@@ -72,8 +72,6 @@ namespace JunoSnmp.ASN1
         public const int MaskOidLength = 127;
         private const int LenMask = 0x0ff;
 
-        private static bool checkSequenceLengthFlag = true;
-
         /// <summary>
         /// Gets or sets a value indicating whether to check if a value's indicated length is
         /// in fact available from the input stream.
@@ -280,25 +278,21 @@ namespace JunoSnmp.ASN1
             }
 
             // build up the header
-            BER.EncodeHeader(os, type, len);  
-            
+            BER.EncodeHeader(os, type, len);
+
             // length of BER encoded item
 
             // special case, add a null byte for len of 5
+            int start = 0;
             if (len == 5)
             {
                 os.WriteByte(0);
-                for (int x = 1; x < len; x++)
-                {
-                    os.WriteByte((byte)(value >> (8 * (4 - x) & LenMask)));
-                }
+                start = 1;
             }
-            else
+
+            for (int x = start; x < len; x++)
             {
-                for (int x = 0; x < len; x++)
-                {
-                    os.WriteByte((byte)(value >> (8 * ((len - 1) - x) & LenMask)));
-                }
+                os.WriteByte((byte)(value >> (8 * ((len - 1) - x) & LenMask)));
             }
         }
         
@@ -383,7 +377,7 @@ namespace JunoSnmp.ASN1
 
                 if (firstSubID < 0 || firstSubID > 2)
                 {
-                    throw new IOException("Invalid first sub-identifier (must be 0, 1, or 2)");
+                    throw new ArgumentException("Invalid first sub-identifier (must be 0, 1, or 2)");
                 }
 
                 BER.EncodeSubID(os, oid[1] + (firstSubID * 40));
@@ -463,12 +457,12 @@ namespace JunoSnmp.ASN1
 
                 if (lengthbyte == 0)
                 {
-                    throw new IOException("Indefinite lengths are not supported");
+                    throw new ArgumentException("Indefinite lengths are not supported");
                 }
 
                 if (lengthbyte > 4)
                 {
-                    throw new IOException("Data length > 4 bytes are not supported!");
+                    throw new ArgumentException("Data length > 4 bytes are not supported!");
                 }
 
                 for (int i = 0; i < lengthbyte; i++)
@@ -479,7 +473,7 @@ namespace JunoSnmp.ASN1
 
                 if (length < 0)
                 {
-                    throw new IOException("SNMP does not support data lengths > 2^31");
+                    throw new ArgumentException("SNMP does not support data lengths > 2^31");
                 }
             }
             else
@@ -515,18 +509,18 @@ namespace JunoSnmp.ASN1
         /// <exception cref="IOException">If an error occurred reading from the stream</exception>
         public static int DecodeHeader(
             BERInputStream ins,
-            out MutableByte type,
+            out byte type,
             bool checkLength)
         {
             // this only works on data types < 30, i.e. no extension octets
             byte t = (byte)ins.ReadByte();
             if ((t & Asn1ExtensionId) == Asn1ExtensionId)
             {
-                throw new IOException("Cannot process extension IDs" +
+                throw new ArgumentException("Cannot process extension IDs" +
                                       ins.PositionMessage);
             }
 
-            type = new MutableByte(t);
+            type = t;
             return BER.DecodeLength(ins, checkLength);
         }
         
@@ -546,7 +540,7 @@ namespace JunoSnmp.ASN1
         /// </param>
         /// <returns>The decoded length of the object</returns>
         /// <exception cref="IOException">If an error occurred reading from the stream</exception>
-        public static int DecodeHeader(BERInputStream ins, out MutableByte type)
+        public static int DecodeHeader(BERInputStream ins, out byte type)
         {
             return DecodeHeader(ins, out type, true);
         }
@@ -557,20 +551,18 @@ namespace JunoSnmp.ASN1
         /// <param name="ins">The <see cref="BERInputStream"/> to be read from</param>
         /// <param name="type">The variable which will contain the decoded value type </param>
         /// <returns>The value of the decoded integer</returns>
-        public static int DecodeInteger(BERInputStream ins, out MutableByte type)
+        public static int DecodeInteger(BERInputStream ins, out byte type)
         {
             int length;
             int value = 0;
 
-            type = new MutableByte();
+            type = (byte)ins.ReadByte();
 
-            type.Value = (byte)ins.ReadByte();
-
-            if ((type.Value != 0x02) && (type.Value != 0x43) &&
-                (type.Value != 0x41))
+            if ((type != 0x02) && (type != 0x43) &&
+                (type != 0x41))
             {
-                throw new IOException(
-                    "Wrong ASN.1 type. Not an integer: " + type.Value +
+                throw new ArgumentException(
+                    "Wrong ASN.1 type. Not an integer: " + type +
                     ins.PositionMessage);
             }
 
@@ -578,7 +570,7 @@ namespace JunoSnmp.ASN1
 
             if (length > 4)
             {
-                throw new IOException(
+                throw new ArgumentException(
                     "Length greater than 32bit are not supported " +
                     " for integers: " + ins.PositionMessage);
             }
@@ -608,21 +600,19 @@ namespace JunoSnmp.ASN1
         /// <param name="ins">The <see cref="BERInputStream"/> to be read from</param>
         /// <param name="type">The type read from the input stream</param>
         /// <returns>The value of the integer read, as a long</returns>
-        public static long DecodeUnsignedInteger(BERInputStream ins, out MutableByte type)
+        public static long DecodeUnsignedInteger(BERInputStream ins, out byte type)
         {
             int length;
             long value = 0;
 
-            type = new MutableByte();
-
-            type.Value = (byte)ins.ReadByte();
-            if ((type.Value != 0x02) && (type.Value != 0x43) &&
-                (type.Value != 0x41) && (type.Value != 0x42) &&
-                (type.Value != 0x47))
+            type = (byte)ins.ReadByte();
+            if ((type != 0x02) && (type != 0x43) &&
+                (type != 0x41) && (type != 0x42) &&
+                (type != 0x47))
             {
-                throw new IOException(
+                throw new ArgumentException(
                     "Wrong ASN.1 type. Not an unsigned integer: " +
-                    type.Value +
+                    type +
                     ins.PositionMessage);
             }
 
@@ -633,7 +623,7 @@ namespace JunoSnmp.ASN1
             int b = ins.ReadByte();
             if ((length > 5) || ((length > 4) && (b != 0x00)))
             {
-                throw new IOException("Only 32bit unsigned integers are supported" +
+                throw new ArgumentException("Only 32bit unsigned integers are supported" +
                                       ins.PositionMessage);
             }
 
@@ -670,22 +660,23 @@ namespace JunoSnmp.ASN1
         /// <param name="ins">The <see cref="BERInputStream"/> to be read from</param>
         /// <param name="type">The type read from the stream</param>
         /// <returns>The decoded string, as an array of bytes</returns>
-        public static byte[] DecodeString(BERInputStream ins, out MutableByte type)
+        public static byte[] DecodeString(BERInputStream ins, out byte type)
         {
             // ASN.1 octet string ::= primstring | cmpdstring
             // primstring ::= 0x04 asnlength byte {byte}*
             // cmpdstring ::= 0x24 asnlength string {string}*
             // ipaddress  ::= 0x40 4 byte byte byte byte
-            type = new MutableByte();
 
-            type.Value = (byte)ins.ReadByte();
-            if ((type.Value != BER.OCTETSTRING) && (type.Value != 0x24) &&
-                (type.Value != BER.IPADDRESS) && (type.Value != BER.OPAQUE) &&
-                (type.Value != BER.BITSTRING) &&
-                (type.Value != 0x45))
+            type = (byte)ins.ReadByte();
+            if ((type != BER.OCTETSTRING) && (type != 0x24) &&
+                (type != BER.IPADDRESS) && (type != BER.OPAQUE) &&
+                (type != BER.BITSTRING) &&
+                (type != 0x45))
             {
-                throw new IOException("Wrong ASN.1 type. Not a string: " + type.Value +
-                                      ins.PositionMessage);
+                throw new ArgumentException(
+                    "Wrong ASN.1 type. Not a string: "
+                    + type
+                    + ins.PositionMessage);
             }
 
             int length = BER.DecodeLength(ins);
@@ -703,7 +694,7 @@ namespace JunoSnmp.ASN1
                 }
                 else if (read < 0)
                 {
-                    throw new IOException("Wrong string length " + read + " < " + length);
+                    throw new ArgumentException("Wrong string length " + read + " < " + length);
                 }
             }
 
@@ -716,7 +707,7 @@ namespace JunoSnmp.ASN1
         /// <param name="ins">The input stream to read from</param>
         /// <param name="type">An out parameter representing the type read from the stream</param>
         /// <returns>An integer array representing the OID as a set of subIDs</returns>
-        public static long[] DecodeOID(BERInputStream ins, out MutableByte type)
+        public static long[] DecodeOID(BERInputStream ins, out byte type)
         {
             /* ASN.1 objid ::= 0x06 asnlength subidentifier {subidentifier}*
              * subidentifier ::= {leadingbyte}* lastbyte
@@ -725,13 +716,11 @@ namespace JunoSnmp.ASN1
              */
             long subidentifier;
             int length;
-
-            type = new MutableByte();
-
-            type.Value = (byte)ins.ReadByte();
-            if (type.Value != 0x06)
+            
+            type = (byte)ins.ReadByte();
+            if (type != 0x06)
             {
-                throw new IOException("Wrong type. Not an OID: " + type.Value +
+                throw new ArgumentException("Wrong type. Not an OID: " + type +
                                       ins.PositionMessage);
             }
 
@@ -758,7 +747,7 @@ namespace JunoSnmp.ASN1
                     int next = ins.ReadByte();
                     if (next < 0)
                     {
-                        throw new IOException("Unexpected end of input stream" +
+                        throw new EndOfStreamException("Unexpected end of input stream" +
                                               ins.PositionMessage);
                     }
 
@@ -815,14 +804,14 @@ namespace JunoSnmp.ASN1
         /// </summary>
         /// <param name="ins">The <see cref="BERInputStream"/> to read from</param>
         /// <param name="type">An out parameter which returns the type read from the stream</param>
-        public static void DecodeNull(BERInputStream ins, out MutableByte type)
+        /// <exception cref="ArgumentException">If parameters are incorrect</exception>
+        public static void DecodeNull(BERInputStream ins, out byte type)
         {
-            type = new MutableByte();
-            type.Value = (byte)(ins.ReadByte() & 0xFF);
-            if ((type.Value != (byte)0x05) && (type.Value != (byte)0x80) &&
-                (type.Value != (byte)0x81) && (type.Value != (byte)0x82))
+            type = (byte)(ins.ReadByte() & 0xFF);
+            if ((type != (byte)0x05) && (type != (byte)0x80) &&
+                (type != (byte)0x81) && (type != (byte)0x82))
             {
-                throw new IOException("Wrong ASN.1 type. Is not null: " + type.Value +
+                throw new ArgumentException("Wrong ASN.1 type. Is not null: " + type +
                                       ins.PositionMessage);
             }
 
@@ -830,7 +819,7 @@ namespace JunoSnmp.ASN1
 
             if (length != 0)
             {
-                throw new IOException("Invalid Null encoding, length is not zero: " +
+                throw new ArgumentException("Invalid Null encoding, length is not zero: " +
                                       length + ins.PositionMessage);
             }
         }
@@ -841,14 +830,14 @@ namespace JunoSnmp.ASN1
         /// <param name="ins">The <see cref="BERInputStream"/> to read from</param>
         /// <param name="type">An out parameter which returns the type read from the stream</param>
         /// <returns>The integer read from the stream</returns>
-        public static long DecodeUnsignedInt64(BERInputStream ins, out MutableByte type)
+        /// <exception cref="ArgumentException">If parameters are incorrect</exception>
+        public static long DecodeUnsignedInt64(BERInputStream ins, out byte type)
         {
-            type = new MutableByte();
-            type.Value = (byte)ins.ReadByte();
+            type = (byte)ins.ReadByte();
 
-            if ((type.Value != 0x02) && (type.Value != 0x46))
+            if ((type != 0x02) && (type != 0x46))
             {
-                throw new IOException("Wrong type. Not an integer 64: " + type.Value +
+                throw new ArgumentException("Wrong type. Not an integer 64: " + type +
                                       ins.PositionMessage);
             }
 
@@ -857,7 +846,7 @@ namespace JunoSnmp.ASN1
 
             if (length > 9)
             {
-                throw new IOException("Invalid 64bit unsigned integer length: " + length +
+                throw new ArgumentException("Invalid 64bit unsigned integer length: " + length +
                                      ins.PositionMessage);
             }
             
@@ -895,7 +884,7 @@ namespace JunoSnmp.ASN1
         /// </summary>
         /// <param name="expectedLength">The expected length of the sequence</param>
         /// <param name="sequence">The sequence to be verified</param>
-        /// <exception cref="IOException">If the lengths do not match</exception>
+        /// <exception cref="ArgumentException">If the lengths do not match</exception>
         public static void CheckSequenceLength(
             int expectedLength,
             IBERSerializable sequence)
@@ -903,10 +892,11 @@ namespace JunoSnmp.ASN1
             if (BER.CheckSequenceLengthFlag &&
                 (expectedLength != sequence.BERPayloadLength))
             {
-                throw new IOException("The actual length of the SEQUENCE object " +
-                                      sequence.GetType().Name +
-                                      " is " + sequence.BERPayloadLength + ", but " +
-                                      expectedLength + " was expected");
+                throw new ArgumentException(
+                    "The actual length of the SEQUENCE object "
+                    + sequence.GetType().Name + " is " 
+                    + sequence.BERPayloadLength + ", but "
+                    + expectedLength + " was expected");
             }
         }
 
@@ -917,7 +907,7 @@ namespace JunoSnmp.ASN1
         /// <param name="expectedLength">The expected length of the sequence</param>
         /// <param name="actualLength">The actual length of the read items</param>
         /// <param name="sequence">The sequence to be verified</param>
-        /// <exception cref="IOException">If the lengths do not match</exception>
+        /// <exception cref="ArgumentException">If the lengths do not match</exception>
         public static void CheckSequenceLength(
             int expectedLength,
             int actualLength,
@@ -926,7 +916,7 @@ namespace JunoSnmp.ASN1
             if (BER.CheckSequenceLengthFlag &&
                 (expectedLength != actualLength))
             {
-                throw new IOException("The actual length of the SEQUENCE object " +
+                throw new ArgumentException("The actual length of the SEQUENCE object " +
                                       sequence.GetType().Name +
                                       " is " + actualLength + ", but " +
                                       expectedLength + " was expected");
@@ -985,7 +975,7 @@ namespace JunoSnmp.ASN1
         /// </summary>
         /// <param name="ins">The <see cref="BERInputStream"/> to be read from</param>
         /// <param name="length">The required number of bytes</param>
-        /// <exception cref="IOException">
+        /// <exception cref="ArgumentException">
         /// If there are insufficient available bytes without blocking
         /// </exception>
         private static void CheckLength(BERInputStream ins, int length)
@@ -997,11 +987,13 @@ namespace JunoSnmp.ASN1
 
             if ((length < 0) || (length > ins.Length))
             {
-                throw new IOException("The encoded length " +
-                                      length +
-                                      " exceeds the number of bytes left in input" +
-                                      ins.PositionMessage +
-                                      " which actually is " + ins.Length);
+                throw new ArgumentException(
+                    "The encoded length "
+                    + length
+                    + " exceeds the number of bytes left in input"
+                    + ins.PositionMessage
+                    + " which actually is "
+                    + ins.Length);
             }
         }
 
@@ -1037,38 +1029,6 @@ namespace JunoSnmp.ASN1
 
             // 32 bits long subid
             return 5;
-        }
-
-        /// <summary>
-        /// The <code>MutableByte</code> class serves for exchanging type information
-        /// from the various Decode* methods.
-        /// </summary>
-        public class MutableByte
-        {
-            /// <summary>
-            /// Initializes a new instance of the <see cref="MutableByte"/> class.
-            /// </summary>
-            public MutableByte()
-            {
-            }
-
-            /// <summary>
-            /// Initializes a new instance of the <see cref="MutableByte"/> class
-            /// with an initial supplied value
-            /// </summary>
-            /// <param name="value">The initial value</param>
-            public MutableByte(byte value)
-            {
-                this.Value = value;
-            }
-
-            /// <summary>
-            /// Gets or sets the value of the Mutable Byte
-            /// </summary>
-            public byte Value
-            {
-                get; set;
-            }
         }
     }
 }

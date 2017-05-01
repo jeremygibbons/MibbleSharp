@@ -137,28 +137,28 @@ namespace JunoSnmp.Security
         {
             int pos = (int)inputStream.Position;
             this.decodedLength = pos;
-            BER.MutableByte mutableByte;
-            int octetLength = BER.DecodeHeader(inputStream, out mutableByte);
+            byte type;
+            int octetLength = BER.DecodeHeader(inputStream, out type);
             long startPos = inputStream.Position;
 
-            if (mutableByte.Value != BER.OCTETSTRING)
+            if (type != BER.OCTETSTRING)
             {
                 string txt =
                     "BER decoding error: Expected BER OCTETSTRING but found: " +
-                    mutableByte.Value;
+                    type;
                 log.Warn(txt);
                 throw new IOException(txt);
             }
 
             sequencePosition = (int)inputStream.Position;
-            int length = BER.DecodeHeader(inputStream, out mutableByte);
+            int length = BER.DecodeHeader(inputStream, out type);
             long startPosSeq = inputStream.Position;
 
-            if (mutableByte.Value != BER.SEQUENCE)
+            if (type != BER.SEQUENCE)
             {
                 string txt =
                     "BER decoding error: Expected BER SEQUENCE but found: " +
-                    mutableByte.Value;
+                    type;
                 log.Warn(txt);
                 throw new IOException(txt);
             }

@@ -47,8 +47,8 @@ namespace JunoSnmp.SMI
 
         public override void DecodeBER(BERInputStream inputStream)
         {
-            BER.DecodeNull(inputStream, out BER.MutableByte type);
-            this.syntax = type.Value & 0xFF;
+            BER.DecodeNull(inputStream, out byte type);
+            this.syntax = type & 0xFF;
         }
 
         public override int Syntax

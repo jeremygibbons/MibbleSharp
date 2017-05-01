@@ -835,25 +835,25 @@ namespace JunoSnmp.MP
 
             public void DecodeBER(BERInputStream message)
             {
-                BER.MutableByte type = new BER.MutableByte();
+                byte type;
                 int length = BER.DecodeHeader(message, out type);
-                if (type.Value != BER.SEQUENCE)
+                if (type != BER.SEQUENCE)
                 {
-                    throw new IOException("Unexpected sequence header type: " +
-                                          type.Value);
+                    throw new ArgumentException("Unexpected sequence header type: " +
+                                          type);
                 }
 
                 msgID.DecodeBER(message);
                 msgMaxSize.DecodeBER(message);
                 if (msgMaxSize.GetValue() < 484)
                 {
-                    throw new IOException("Invalid msgMaxSize: " + msgMaxSize);
+                    throw new ArgumentException("Invalid msgMaxSize: " + msgMaxSize);
                 }
 
                 msgFlags.DecodeBER(message);
                 if (msgFlags.Length != 1)
                 {
-                    throw new IOException("Message flags length != 1: " + msgFlags.Length);
+                    throw new ArgumentException("Message flags length != 1: " + msgFlags.Length);
                 }
 
                 Integer32 secMod = new Integer32();
@@ -1323,9 +1323,8 @@ namespace JunoSnmp.MP
 
                 long pos = wholeMsg.Position;
 
-                BER.MutableByte type = new BER.MutableByte();
-                int length = BER.DecodeHeader(wholeMsg, out type);
-                if (type.Value != BER.SEQUENCE)
+                int length = BER.DecodeHeader(wholeMsg, out byte type);
+                if (type != BER.SEQUENCE)
                 {
                     return SnmpConstants.SNMP_MP_PARSE_ERROR;
                 }

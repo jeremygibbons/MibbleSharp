@@ -195,12 +195,11 @@ namespace JunoSnmp.SMI
 
         public override void DecodeBER(BERInputStream inputStream)
         {
-            BER.MutableByte type;
-            byte[] value = BER.DecodeString(inputStream, out type);
-            if (type.Value != BER.IPADDRESS)
+            byte[] value = BER.DecodeString(inputStream, out byte type);
+            if (type != BER.IPADDRESS)
             {
                 throw new IOException("Wrong type encountered when decoding Counter: " +
-                                      type.Value);
+                                      type);
             }
 
             if (value.Length != 4)

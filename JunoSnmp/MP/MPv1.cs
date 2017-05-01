@@ -162,10 +162,10 @@ namespace JunoSnmp.MP
             StatusInformation statusInformation,
             MutableStateReference mutableStateReference)
         {
-            BER.MutableByte mutableByte;
-            int length = BER.DecodeHeader(wholeMsg, out mutableByte);
+            byte type;
+            int length = BER.DecodeHeader(wholeMsg, out type);
             int startPos = (int)wholeMsg.Position;
-            if (mutableByte.Value != BER.SEQUENCE)
+            if (type != BER.SEQUENCE)
             {
                 string txt = "SNMPv1 PDU must start with a SEQUENCE";
                 log.Error(txt);

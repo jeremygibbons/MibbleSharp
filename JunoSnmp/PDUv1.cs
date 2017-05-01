@@ -142,11 +142,11 @@ namespace JunoSnmp
         /// <param name="inputStream">An <see cref="BERInputStream"/> to read from</param>
         public override void DecodeBER(BERInputStream inputStream)
         {
-            BER.MutableByte pduType = new BER.MutableByte();
+            byte pduType;
             int length = BER.DecodeHeader(inputStream, out pduType);
             int pduStartPos = (int)inputStream.Position;
 
-            switch (pduType.Value)
+            switch (pduType)
             {
                 case PDU.SET:
                 case PDU.GET:
@@ -162,12 +162,12 @@ namespace JunoSnmp
                         break;
                     }
 
-                    throw new IOException("Unsupported PDU type: " + pduType.Value);
+                    throw new ArgumentException("Unsupported PDU type: " + pduType);
                 default:
-                    throw new IOException("Unsupported PDU type: " + pduType.Value);
+                    throw new ArgumentException("Unsupported PDU type: " + pduType);
             }
 
-            this.Type = pduType.Value;
+            this.Type = pduType;
 
             if (this.Type == PDU.V1TRAP)
             {
@@ -185,12 +185,11 @@ namespace JunoSnmp
             }
 
             // reusing pduType here to save memory ;-)
-            pduType = new BER.MutableByte();
             int vbLength = BER.DecodeHeader(inputStream, out pduType);
 
-            if (pduType.Value != BER.SEQUENCE)
+            if (pduType != BER.SEQUENCE)
             {
-                throw new IOException("Encountered invalid tag, SEQUENCE expected: " + pduType.Value);
+                throw new IOException("Encountered invalid tag, SEQUENCE expected: " + pduType);
             }
 
             // rest read count

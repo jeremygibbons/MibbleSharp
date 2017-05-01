@@ -95,12 +95,11 @@ namespace JunoSnmp.SMI
         /// <param name="inputStream">The stream to read from</param>
         public override void DecodeBER(BERInputStream inputStream)
         {
-            BER.MutableByte type;
-            long newValue = BER.DecodeUnsignedInteger(inputStream, out type);
-            if (type.Value != BER.GAUGE)
+            long newValue = BER.DecodeUnsignedInteger(inputStream, out byte type);
+            if (type != BER.GAUGE)
             {
                 throw new IOException("Wrong type encountered when decoding Gauge: " +
-                                      type.Value);
+                                      type);
             }
 
             this.SetValue(newValue);

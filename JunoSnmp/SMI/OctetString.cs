@@ -152,12 +152,11 @@ namespace JunoSnmp.SMI
         /// <param name="inputStream">The stream to read from</param>
         public override void DecodeBER(BERInputStream inputStream)
         {
-            BER.MutableByte type;
-            byte[] v = BER.DecodeString(inputStream, out type);
-            if (type.Value != BER.OCTETSTRING)
+            byte[] v = BER.DecodeString(inputStream, out byte type);
+            if (type != BER.OCTETSTRING)
             {
                 throw new IOException("Wrong type encountered when decoding OctetString: " +
-                                      type.Value);
+                                      type);
             }
 
             this.SetValue(v);

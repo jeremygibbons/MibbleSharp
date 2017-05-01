@@ -77,11 +77,10 @@ namespace JunoSnmp.SMI
 
         public override void DecodeBER(BERInputStream inputStream)
         {
-            BER.MutableByte type = new BER.MutableByte();
-            long newValue = BER.DecodeUnsignedInteger(inputStream, out type);
-            if (type.Value != BER.TIMETICKS)
+            long newValue = BER.DecodeUnsignedInteger(inputStream, out byte type);
+            if (type != BER.TIMETICKS)
             {
-                throw new IOException("Wrong type encountered when decoding TimeTicks: " + type.Value);
+                throw new IOException("Wrong type encountered when decoding TimeTicks: " + type);
             }
 
             this.SetValue(newValue);

@@ -895,8 +895,8 @@ namespace JunoSnmp.Security
                             
                             BERInputStream scopedPDUHeader = new BERInputStream(bis.ToArray());
                             long headerStartingPosition = scopedPDUHeader.Position;
-                            BER.MutableByte mb;
-                            int scopedPDULength = BER.DecodeHeader(scopedPDUHeader, out mb);
+                            byte type;
+                            int scopedPDULength = BER.DecodeHeader(scopedPDUHeader, out type);
                             int scopedPDUPayloadPosition = scopedPDUPosition +
                                   (int)(scopedPDUHeader.Position - headerStartingPosition);
                             scopedPDUHeader.Close();

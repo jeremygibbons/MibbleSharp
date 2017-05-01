@@ -167,16 +167,17 @@ namespace JunoSnmp.MP
                                        MutableStateReference mutableStateReference)
         {
 
-            BER.MutableByte mutableByte = new BER.MutableByte();
-            int length = BER.DecodeHeader(wholeMsg, out mutableByte);
+            byte type;
+            int length = BER.DecodeHeader(wholeMsg, out type);
             int startPos = (int)wholeMsg.Position;
 
-            if (mutableByte.Value != BER.SEQUENCE)
+            if (type != BER.SEQUENCE)
             {
                 string txt = "SNMPv2c PDU must start with a SEQUENCE";
                 log.Error(txt);
                 throw new IOException(txt);
             }
+
             Integer32 version = new Integer32();
             version.DecodeBER(wholeMsg);
 

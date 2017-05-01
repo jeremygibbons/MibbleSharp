@@ -562,10 +562,10 @@ namespace JunoSnmp
 
         public virtual void DecodeBER(BERInputStream inputStream)
         {
-            BER.MutableByte pduType = new BER.MutableByte();
+            byte pduType;
             int length = BER.DecodeHeader(inputStream, out pduType);
             int pduStartPos = (int)inputStream.Position;
-            switch ((int)pduType.Value)
+            switch ((int)pduType)
             {
                 case PDU.SET:
                 case PDU.GET:
@@ -577,20 +577,21 @@ namespace JunoSnmp
                 case PDU.RESPONSE:
                     break;
                 default:
-                    throw new IOException("Unsupported PDU type: " + pduType.Value);
+                    throw new IOException("Unsupported PDU type: " + pduType);
             }
-            this.type = pduType.Value;
+
+            this.type = pduType;
             requestID.DecodeBER(inputStream);
             errorStatus.DecodeBER(inputStream);
             errorIndex.DecodeBER(inputStream);
 
-            pduType = new BER.MutableByte();
             int vbLength = BER.DecodeHeader(inputStream, out pduType);
-            if (pduType.Value != BER.SEQUENCE)
+            if (pduType != BER.SEQUENCE)
             {
-                throw new IOException("Encountered invalid tag, SEQUENCE expected: " +
-                                      pduType.Value);
+                throw new ArgumentException("Encountered invalid tag, SEQUENCE expected: " +
+                                      pduType);
             }
+
             // rest read count
             int startPos = (int)inputStream.Position;
             variableBindings = new List<VariableBinding>();
@@ -600,12 +601,14 @@ namespace JunoSnmp
                 vb.DecodeBER(inputStream);
                 variableBindings.Add(vb);
             }
+
             if (inputStream.Position - startPos != vbLength)
             {
                 throw new IOException("Length of VB sequence (" + vbLength +
                                       ") does not match real length: " +
                                       ((int)inputStream.Position - startPos));
             }
+
             if (BER.CheckSequenceLengthFlag)
             {
                 BER.CheckSequenceLength(length,

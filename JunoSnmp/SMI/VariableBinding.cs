@@ -190,11 +190,11 @@ namespace JunoSnmp.SMI
 
         public void DecodeBER(BERInputStream inputStream)
         {
-            int length = BER.DecodeHeader(inputStream, out BER.MutableByte type);
+            int length = BER.DecodeHeader(inputStream, out byte type);
             long startPos = inputStream.Position;
-            if (type.Value != BER.SEQUENCE)
+            if (type != BER.SEQUENCE)
             {
-                throw new IOException("Invalid sequence encoding: " + type.Value);
+                throw new IOException("Invalid sequence encoding: " + type);
             }
 
             this.oid.DecodeBER(inputStream);
