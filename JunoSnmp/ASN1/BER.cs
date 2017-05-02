@@ -27,7 +27,7 @@ namespace JunoSnmp.ASN1
     /// <summary>
     /// The BER class provides utility methods for BER encoding and decoding.
     /// </summary>
-    public class BER
+    public static class BER
     {
         public const byte Asn1Boolean = 0x01;
         public const byte Asn1Integer = 0x02;
