@@ -67,7 +67,7 @@ namespace JunoSnmp.Security
             this.localEngineID = localEngineID;
         }
 
-        protected void FireIncrementCounter(CounterIncrArgs e)
+        protected void FireIncrementCounter(CounterIncrEventArgs e)
         {
             counterSupport.IncrementCounter(this, e);
         }
@@ -176,7 +176,7 @@ namespace JunoSnmp.Security
                     string prefix = GetTransportDomainPrefix(tmStateReference.Address);
                     if (prefix == null)
                     {
-                        CounterIncrArgs evt = new CounterIncrArgs(SnmpConstants.snmpTsmUnknownPrefixes);
+                        CounterIncrEventArgs evt = new CounterIncrEventArgs(SnmpConstants.snmpTsmUnknownPrefixes);
                         FireIncrementCounter(evt);
                         return SnmpConstants.SNMPv3_TSM_UNKNOWN_PREFIXES;
                     }
@@ -185,7 +185,7 @@ namespace JunoSnmp.Security
                         string secNamePrefix = GetSecurityNamePrefix(securityName);
                         if ((secNamePrefix == null) || (!secNamePrefix.Equals(prefix)))
                         {
-                            CounterIncrArgs evt = new CounterIncrArgs(SnmpConstants.snmpTsmInvalidPrefixes);
+                            CounterIncrEventArgs evt = new CounterIncrEventArgs(SnmpConstants.snmpTsmInvalidPrefixes);
                             FireIncrementCounter(evt);
                             return SnmpConstants.SNMPv3_TSM_UNKNOWN_PREFIXES;
                         }
@@ -269,7 +269,7 @@ namespace JunoSnmp.Security
             if ((tmStateReference == null) ||
                 (!tmStateReference.IsTransportSecurityValid))
             {
-                CounterIncrArgs evt = new CounterIncrArgs(SnmpConstants.snmpTsmInvalidCaches);
+                CounterIncrEventArgs evt = new CounterIncrEventArgs(SnmpConstants.snmpTsmInvalidCaches);
                 FireIncrementCounter(evt);
                 return SnmpConstants.SNMPv3_TSM_INVALID_CACHES;
             }
@@ -280,14 +280,14 @@ namespace JunoSnmp.Security
                     GenericAddress.GetTDomainPrefix(tmStateReference.Address.GetType());
                 if (prefix == null)
                 {
-                    CounterIncrArgs evt = new CounterIncrArgs(SnmpConstants.snmpTsmUnknownPrefixes);
+                    CounterIncrEventArgs evt = new CounterIncrEventArgs(SnmpConstants.snmpTsmUnknownPrefixes);
                     FireIncrementCounter(evt);
                     UpdateStatusInfo(securityLevel, statusInfo, evt);
                     return SnmpConstants.SNMPv3_TSM_UNKNOWN_PREFIXES;
                 }
                 else if ((prefix.Length <= 0) || (prefix.Length > 4))
                 {
-                    CounterIncrArgs evt = new CounterIncrArgs(SnmpConstants.snmpTsmInvalidPrefixes);
+                    CounterIncrEventArgs evt = new CounterIncrEventArgs(SnmpConstants.snmpTsmInvalidPrefixes);
                     FireIncrementCounter(evt);
                     UpdateStatusInfo(securityLevel, statusInfo, evt);
                     return SnmpConstants.SNMPv3_TSM_UNKNOWN_PREFIXES;
@@ -308,7 +308,7 @@ namespace JunoSnmp.Security
             // 4. Compare the value of tmTransportSecurityLevel:
             if (securityLevel > tmStateReference.TransportSecurityLevel)
             {
-                CounterIncrArgs evt = new CounterIncrArgs(SnmpConstants.snmpTsmInadequateSecurityLevels);
+                CounterIncrEventArgs evt = new CounterIncrEventArgs(SnmpConstants.snmpTsmInadequateSecurityLevels);
                 FireIncrementCounter(evt);
                 UpdateStatusInfo(securityLevel, statusInfo, evt);
                 return SnmpConstants.SNMPv3_TSM_INADEQUATE_SECURITY_LEVELS;
@@ -333,7 +333,7 @@ namespace JunoSnmp.Security
             return SnmpConstants.SNMPv3_TSM_OK;
         }
 
-        private void UpdateStatusInfo(SecurityLevel securityLevel, StatusInformation statusInfo, CounterIncrArgs evt)
+        private void UpdateStatusInfo(SecurityLevel securityLevel, StatusInformation statusInfo, CounterIncrEventArgs evt)
         {
             if (statusInfo != null)
             {

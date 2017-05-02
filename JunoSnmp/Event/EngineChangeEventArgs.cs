@@ -28,17 +28,17 @@ namespace JunoSnmp.Event
     /// A class describing the arguments passed when an engine is added, removed or ignored in
     /// a Message Processing model.
     /// </summary>
-    public class EngineChangeArgs : EventArgs
+    public class EngineChangeEventArgs : EventArgs
     {
         private OctetString engineID;
         private IAddress engineAddress;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="EngineChangeArgs"/> class.
+        /// Initializes a new instance of the <see cref="EngineChangeEventArgs"/> class.
         /// </summary>
         /// <param name="engineID">The Engine ID of the engine</param>
         /// <param name="engineAddress">The Engine Address of the engine</param>
-        public EngineChangeArgs(OctetString engineID, IAddress engineAddress)
+        public EngineChangeEventArgs(OctetString engineID, IAddress engineAddress)
         {
             this.engineAddress = engineAddress;
             this.engineID = engineID;

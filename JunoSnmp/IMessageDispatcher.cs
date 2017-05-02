@@ -25,7 +25,7 @@ namespace JunoSnmp
     using JunoSnmp.SMI;
     using JunoSnmp.Transport;
 
-    public delegate void CommandResponder(object o, CommandResponderArgs args);
+    public delegate void CommandResponder(object o, CommandResponderEventArgs args);
 
     /// <summary><para>
     /// The <c>MessageDispatcher</c> interface defines common services of
@@ -42,7 +42,7 @@ namespace JunoSnmp
         /// <summary>
         /// Successfully processed SNMP messages will be presented to all command
         /// responders who have registered for this event until a responder
-        /// sets the <see cref="CommandResponderArgs.Processed"/>
+        /// sets the <see cref="CommandResponderEventArgs.Processed"/>
         /// to<c>true</c>.
         /// </summary>
         event CommandResponder OnIncomingPdu;

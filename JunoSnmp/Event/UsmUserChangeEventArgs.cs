@@ -24,7 +24,7 @@ namespace JunoSnmp.Event
     using System;
     using JunoSnmp.Security;
 
-    public class UsmUserChangeArgs : EventArgs
+    public class UsmUserChangeEventArgs : EventArgs
     {
         /// <summary>
         /// Constant: a new user was created.
@@ -54,7 +54,7 @@ namespace JunoSnmp.Event
  * @param type
  *    can be USER_ADDED, USER_REMOVED or USER_CHANGED.
  */
-        public UsmUserChangeArgs(UsmUserEntry changedEntry, int type) : base()
+        public UsmUserChangeEventArgs(UsmUserEntry changedEntry, int type) : base()
         {
             this.user = changedEntry;
             this.type = type;

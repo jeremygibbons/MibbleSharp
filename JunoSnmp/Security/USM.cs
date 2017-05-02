@@ -59,7 +59,7 @@ namespace JunoSnmp.Security
 
         private CounterSupport counterSupport;
 
-        public delegate void UsmUserChangeHandler(object o, UsmUserChangeArgs args);
+        public delegate void UsmUserChangeHandler(object o, UsmUserChangeEventArgs args);
 
         public event UsmUserChangeHandler OnAddUser;
         public event UsmUserChangeHandler OnChangeUser;
@@ -690,7 +690,7 @@ namespace JunoSnmp.Security
 
                 if (statusInfo != null)
                 {
-                    CounterIncrArgs evt = new CounterIncrArgs(SnmpConstants.usmStatsUnknownEngineIDs);
+                    CounterIncrEventArgs evt = new CounterIncrEventArgs(SnmpConstants.usmStatsUnknownEngineIDs);
                     FireIncrementCounter(evt);
 
                     statusInfo.SecurityLevel = securityLevel;
@@ -718,7 +718,7 @@ namespace JunoSnmp.Security
                     }
                     if (statusInfo != null)
                     {
-                        CounterIncrArgs evt = new CounterIncrArgs(SnmpConstants.usmStatsUnknownUserNames);
+                        CounterIncrEventArgs evt = new CounterIncrEventArgs(SnmpConstants.usmStatsUnknownUserNames);
                         FireIncrementCounter(evt);
 
                         statusInfo.SecurityLevel = SecurityLevel.NoAuthNoPriv;
@@ -749,7 +749,7 @@ namespace JunoSnmp.Security
                                      securityEngineID.ToHexString());
                     }
 
-                    CounterIncrArgs evt = new CounterIncrArgs(SnmpConstants.usmStatsUnknownUserNames);
+                    CounterIncrEventArgs evt = new CounterIncrEventArgs(SnmpConstants.usmStatsUnknownUserNames);
                     FireIncrementCounter(evt);
 
                     if (statusInfo != null)
@@ -789,7 +789,7 @@ namespace JunoSnmp.Security
                                      securityLevel + " by user " + user);
                     }
 
-                    CounterIncrArgs evt = new CounterIncrArgs(SnmpConstants.usmStatsUnsupportedSecLevels);
+                    CounterIncrEventArgs evt = new CounterIncrEventArgs(SnmpConstants.usmStatsUnsupportedSecLevels);
                     FireIncrementCounter(evt);
 
                     if (JunoSnmpSettings.ReportSecurityLevelStrategy ==
@@ -823,7 +823,7 @@ namespace JunoSnmp.Security
                                     usmSecurityParameters.AuthenticationParameters.ToHexString());
                             }
 
-                            CounterIncrArgs evt = new CounterIncrArgs(SnmpConstants.usmStatsWrongDigests);
+                            CounterIncrEventArgs evt = new CounterIncrEventArgs(SnmpConstants.usmStatsWrongDigests);
                             FireIncrementCounter(evt);
 
                             if (JunoSnmpSettings.ReportSecurityLevelStrategy ==
@@ -852,7 +852,7 @@ namespace JunoSnmp.Security
                                                  ", engineTime=" +
                                                  usmSecurityParameters.AuthoritativeEngineTime);
 
-                                    CounterIncrArgs evt = new CounterIncrArgs(SnmpConstants.usmStatsNotInTimeWindows);
+                                    CounterIncrEventArgs evt = new CounterIncrEventArgs(SnmpConstants.usmStatsNotInTimeWindows);
                                     FireIncrementCounter(evt);
 
                                     statusInfo.SecurityLevel = SecurityLevel.AuthNoPriv;
@@ -867,7 +867,7 @@ namespace JunoSnmp.Security
                                                      securityEngineID);
                                     }
 
-                                    CounterIncrArgs evt = new CounterIncrArgs(SnmpConstants.usmStatsUnknownEngineIDs);
+                                    CounterIncrEventArgs evt = new CounterIncrEventArgs(SnmpConstants.usmStatsUnknownEngineIDs);
                                     FireIncrementCounter(evt);
                                     if (JunoSnmpSettings.ReportSecurityLevelStrategy ==
                                         JunoSnmpSettings.ReportSecurityLevelOption.noAuthNoPrivIfNeeded)
@@ -945,7 +945,7 @@ namespace JunoSnmp.Security
             return SnmpConstants.SNMPv3_USM_OK;
         }
 
-        protected void FireIncrementCounter(CounterIncrArgs e)
+        protected void FireIncrementCounter(CounterIncrEventArgs e)
         {
             counterSupport.IncrementCounter(this, e);
         }
@@ -1065,7 +1065,7 @@ namespace JunoSnmp.Security
             entry.AuthenticationKey = authKey;
             entry.PrivacyKey = privKey;
             userTable.addUser(entry);
-            OnChangeUser(this, new UsmUserChangeArgs(entry, UsmUserChangeArgs.USER_ADDED));
+            OnChangeUser(this, new UsmUserChangeEventArgs(entry, UsmUserChangeEventArgs.USER_ADDED));
         }
 
         /**
@@ -1082,11 +1082,11 @@ namespace JunoSnmp.Security
             UsmUserEntry oldEntry = userTable.addUser(entry);
             if (oldEntry == null)
             {
-                OnChangeUser(this, new UsmUserChangeArgs(entry, UsmUserChangeArgs.USER_ADDED));
+                OnChangeUser(this, new UsmUserChangeEventArgs(entry, UsmUserChangeEventArgs.USER_ADDED));
             }
             else
             {
-                OnChangeUser(this, new UsmUserChangeArgs(entry, UsmUserChangeArgs.USER_CHANGED));
+                OnChangeUser(this, new UsmUserChangeEventArgs(entry, UsmUserChangeEventArgs.USER_CHANGED));
             }
         }
 
@@ -1176,7 +1176,7 @@ namespace JunoSnmp.Security
                 foreach (UsmUserEntry entry in entries)
                 {
                     users.Add(entry.UsmUser);
-                    OnRemoveUser(this, new UsmUserChangeArgs(entry, UsmUserChangeArgs.USER_REMOVED));
+                    OnRemoveUser(this, new UsmUserChangeEventArgs(entry, UsmUserChangeEventArgs.USER_REMOVED));
                 }
 
                 return users;
@@ -1224,7 +1224,7 @@ namespace JunoSnmp.Security
             UsmUserEntry entry = userTable.RemoveUser(engineID, userName);
             if (entry != null)
             {
-                OnRemoveUser(this, new UsmUserChangeArgs(entry, UsmUserChangeArgs.USER_REMOVED));
+                OnRemoveUser(this, new UsmUserChangeEventArgs(entry, UsmUserChangeEventArgs.USER_REMOVED));
                 return entry.UsmUser;
             }
 
@@ -1237,7 +1237,7 @@ namespace JunoSnmp.Security
         public void RemoveAllUsers()
         {
             userTable.Clear();
-            OnRemoveUser(this, new UsmUserChangeArgs(null, UsmUserChangeArgs.USER_REMOVED));
+            OnRemoveUser(this, new UsmUserChangeEventArgs(null, UsmUserChangeEventArgs.USER_REMOVED));
         }
 
         /**
@@ -1266,7 +1266,7 @@ namespace JunoSnmp.Security
                                                      authProtocol, authKey,
                                                      privProtocol, privKey);
             userTable.addUser(newEntry);
-            OnAddUser(this, new UsmUserChangeArgs(newEntry, UsmUserChangeArgs.USER_ADDED));
+            OnAddUser(this, new UsmUserChangeEventArgs(newEntry, UsmUserChangeEventArgs.USER_ADDED));
             return newEntry;
         }
 

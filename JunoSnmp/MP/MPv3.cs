@@ -87,7 +87,7 @@ namespace JunoSnmp.MP
 
         protected IEngineIdCacheFactory engineIdCacheFactory = new LimitedCapacityEngineIdCacheFactory();
 
-        public delegate void EngineChangeHandler(object o, EngineChangeArgs args);
+        public delegate void EngineChangeHandler(object o, EngineChangeEventArgs args);
 
         public event EngineChangeHandler OnAddEngine;
         public event EngineChangeHandler OnRemoveEngine;
@@ -486,12 +486,12 @@ namespace JunoSnmp.MP
                     OctetString previousEngineID = AddEngineIdToCache(address, engineID);
                     if (previousEngineID == null || !previousEngineID.Equals(engineID))
                     {
-                        OnAddEngine(this, new EngineChangeArgs(engineID, address));
+                        OnAddEngine(this, new EngineChangeEventArgs(engineID, address));
                     }
                 }
                 catch (ArgumentException)
                 {
-                    OnIgnoreEngine(this, new EngineChangeArgs(engineID, address));
+                    OnIgnoreEngine(this, new EngineChangeEventArgs(engineID, address));
                     return false;
                 }
                 return true;
@@ -566,7 +566,7 @@ namespace JunoSnmp.MP
             {
                 engineIDs.Remove(address);
 
-                OnRemoveEngine(this, new EngineChangeArgs(engineID, address));
+                OnRemoveEngine(this, new EngineChangeEventArgs(engineID, address));
             }
 
             return engineID;
@@ -1370,7 +1370,7 @@ namespace JunoSnmp.MP
                     log.Error("RFC3412 §7.2.4 - Unsupported security model: " +
                                  securityModel);
 
-                    counterSupport.IncrementCounter(this, new CounterIncrArgs(SnmpConstants.snmpUnknownSecurityModels));
+                    counterSupport.IncrementCounter(this, new CounterIncrEventArgs(SnmpConstants.snmpUnknownSecurityModels));
 
                     return SnmpConstants.SNMP_MP_UNSUPPORTED_SECURITY_MODEL;
                 }
@@ -1398,7 +1398,7 @@ namespace JunoSnmp.MP
                             securityLevel = SecurityLevel.NoAuthNoPriv;
                             log.Debug("RFC3412 §7.2.5 - Invalid message (illegal msgFlags)");
 
-                            counterSupport.IncrementCounter(this, new CounterIncrArgs(SnmpConstants.snmpInvalidMsgs));
+                            counterSupport.IncrementCounter(this, new CounterIncrEventArgs(SnmpConstants.snmpInvalidMsgs));
                             // do not send back report
                             return SnmpConstants.SNMP_MP_INVALID_MESSAGE;
                         }
@@ -1467,7 +1467,7 @@ namespace JunoSnmp.MP
                             log.Debug(iox.StackTrace);
                         }
                         
-                        counterSupport.IncrementCounter(this, new CounterIncrArgs(SnmpConstants.snmpInASNParseErrs));
+                        counterSupport.IncrementCounter(this, new CounterIncrEventArgs(SnmpConstants.snmpInASNParseErrs));
                         return SnmpConstants.SNMP_MP_PARSE_ERROR;
                     }
                     if (((scopedPdu.ContextEngineID == null) ||
@@ -1475,7 +1475,7 @@ namespace JunoSnmp.MP
                         ((scopedPdu.Type != PDU.RESPONSE) &&
                          (scopedPdu.Type != PDU.REPORT)))
                     {
-                        CounterIncrArgs evt = new CounterIncrArgs(SnmpConstants.snmpUnknownPDUHandlers);
+                        CounterIncrEventArgs evt = new CounterIncrEventArgs(SnmpConstants.snmpUnknownPDUHandlers);
                         counterSupport.IncrementCounter(this, evt);
                         VariableBinding errorIndication =
                             new VariableBinding(evt.Oid, evt.CurrentValue);

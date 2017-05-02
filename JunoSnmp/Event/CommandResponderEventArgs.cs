@@ -26,7 +26,7 @@ namespace JunoSnmp.Event
     using JunoSnmp.Security;
     using JunoSnmp.SMI;
 
-    public class CommandResponderArgs : EventArgs
+    public class CommandResponderEventArgs : EventArgs
     {
         private IMessageDispatcher messageDispatcher;
         private int securityModel;
@@ -68,7 +68,7 @@ namespace JunoSnmp.Event
          *    needed for responding a request, will be <code>null</code> for
          *    notifications.
          */
-        public CommandResponderArgs(IMessageDispatcher messageDispatcher,
+        public CommandResponderEventArgs(IMessageDispatcher messageDispatcher,
                                      ITransportMapping<IAddress> transportMapping,
                                      IAddress sourceAddress,
                                      int messageProcessingModel,
@@ -104,7 +104,7 @@ namespace JunoSnmp.Event
          *    the <code>CommandResponderEvent</code> to copy.
          * @since 1.1
          */
-        public CommandResponderArgs(CommandResponderArgs other)
+        public CommandResponderEventArgs(CommandResponderEventArgs other)
             : base()
         {
             this.TransportMapping = other.transportMapping;

@@ -37,6 +37,6 @@ namespace JunoSnmp
         /// process and some additional information returned by the message
         /// processing model that decoded the SNMP message.
         /// </param>
-        void ProcessPdu(object source, CommandResponderArgs ev);
+        void ProcessPdu(object source, CommandResponderEventArgs ev);
     }
 }

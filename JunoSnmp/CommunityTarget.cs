@@ -67,12 +67,7 @@ namespace JunoSnmp
 
             set
             {
-                if (value == null)
-                {
-                    throw new ArgumentException("Community must not be null");
-                }
-
-                this.SecurityName = value;
+                this.SecurityName = value ?? throw new ArgumentException("Community must not be null");
             }
         }
 

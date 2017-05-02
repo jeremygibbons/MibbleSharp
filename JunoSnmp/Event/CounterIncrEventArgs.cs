@@ -24,24 +24,24 @@ namespace JunoSnmp.Event
     using System;
     using JunoSnmp.SMI;
 
-    public class CounterIncrArgs : EventArgs
+    public class CounterIncrEventArgs : EventArgs
     {
         private OID oid;
         private IVariable currentValue = new Counter32();
         private long increment = 1;
         private Object index;
 
-        public CounterIncrArgs(OID oid)
+        public CounterIncrEventArgs(OID oid)
         {
             this.oid = oid;
         }
 
-        public CounterIncrArgs(OID oid, long increment) : this(oid)
+        public CounterIncrEventArgs(OID oid, long increment) : this(oid)
         {
             this.increment = increment;
         }
 
-        public CounterIncrArgs(OID oid, long increment, object index) : this(oid, increment)
+        public CounterIncrEventArgs(OID oid, long increment, object index) : this(oid, increment)
         {
             this.index = index;
         }

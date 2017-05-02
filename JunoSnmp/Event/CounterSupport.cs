@@ -23,9 +23,9 @@ namespace JunoSnmp.Event
 {
     public class CounterSupport
     {
-        protected static CounterSupport instance = null;
+        private static CounterSupport instance = null;
 
-        public delegate void CounterIncrementHandler(object o, CounterIncrArgs args);
+        public delegate void CounterIncrementHandler(object o, CounterIncrEventArgs args);
 
         public event CounterIncrementHandler OnIncrementCounter;
 
@@ -49,7 +49,7 @@ namespace JunoSnmp.Event
             }
         }
 
-        public void IncrementCounter(object sender, CounterIncrArgs cia)
+        public void IncrementCounter(object sender, CounterIncrEventArgs cia)
         {
             OnIncrementCounter(sender, cia);
         }
