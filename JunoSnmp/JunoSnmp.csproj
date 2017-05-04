@@ -109,7 +109,7 @@
     <Compile Include="MP\IRequestStatistics.cs" />
     <Compile Include="MP\MessageProcessingModel.cs" />
     <Compile Include="MP\IEngineIdCacheSize.cs" />
-    <Compile Include="MP\MessageId.cs" />
+    <Compile Include="MP\IMessageId.cs" />
     <Compile Include="MP\MPv1.cs" />
     <Compile Include="MP\MPv2.cs" />
     <Compile Include="MP\MPv3.cs" />

@@ -59,7 +59,7 @@ namespace JunoSnmp.MP
         public override string ToString()
         {
             return "TimedMessageID{" +
-                "msgID=" + this.MessageID +
+                "msgID=" + this.MessageId +
                 ",creationNanoTime=" + this.creationNanoTime +
                 "}";
         }

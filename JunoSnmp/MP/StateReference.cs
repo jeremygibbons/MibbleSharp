@@ -47,13 +47,13 @@ namespace JunoSnmp.MP
         private byte[] securityName;
         private SecurityLevel securityLevel;
         private ISecurityStateReference securityStateReference;
-        private MessageID msgID;
+        private IMessageId msgID;
         private int maxSizeResponseScopedPDU;
         private int msgFlags;
         private PduHandle pduHandle;
         private byte[] securityEngineID;
         private int errorCode = 0;
-        protected List<MessageID> retryMsgIDs;
+        protected List<IMessageId> retryMsgIDs;
         private int matchedMsgID;
         private long responseRuntimeNanos;
 
@@ -252,7 +252,7 @@ namespace JunoSnmp.MP
             this.msgID = CreateMessageID(msgID);
         }
 
-        public MessageID MsgID
+        public IMessageId MsgID
         {
             get
             {
@@ -354,16 +354,16 @@ namespace JunoSnmp.MP
                 IRequestStatistics requestStatistics = (IRequestStatistics)pduHandle;
                 requestStatistics.TotalMessagesSent = 1 + ((retryMsgIDs != null) ? retryMsgIDs.Count : 0);
                 requestStatistics.ResponseRuntimeNanos = responseRuntimeNanos;
-                if (msgID.MessageID == matchedMsgID)
+                if (msgID.MessageId == matchedMsgID)
                 {
                     requestStatistics.IndexOfMessageResponded = 0;
                 }
                 else if (retryMsgIDs != null)
                 {
                     int index = 1;
-                    foreach(MessageID mid in retryMsgIDs)
+                    foreach(IMessageId mid in retryMsgIDs)
                     {
-                        if (mid.MessageID == matchedMsgID)
+                        if (mid.MessageId == matchedMsgID)
                         {
                             requestStatistics.IndexOfMessageResponded = index;
                             break;
@@ -374,7 +374,7 @@ namespace JunoSnmp.MP
             }
         }
 
-        protected bool IsMatchingMessageID(MessageID msgID)
+        protected bool IsMatchingMessageID(IMessageId msgID)
         {
             return ((this.msgID == msgID) ||
                     ((retryMsgIDs != null) && (retryMsgIDs.Contains(msgID))));
@@ -382,7 +382,7 @@ namespace JunoSnmp.MP
 
         public bool IsMatchingMessageID(int msgID)
         {
-            if (this.msgID.MessageID == msgID)
+            if (this.msgID.MessageId == msgID)
             {
                 matchedMsgID = msgID;
                 if (this.msgID is TimedMessageID)
@@ -392,9 +392,9 @@ namespace JunoSnmp.MP
             }
             else if (retryMsgIDs != null)
             {
-                foreach (MessageID retryMsgID in retryMsgIDs)
+                foreach (IMessageId retryMsgID in retryMsgIDs)
                 {
-                    if (retryMsgID.MessageID == msgID)
+                    if (retryMsgID.MessageId == msgID)
                     {
                         matchedMsgID = msgID;
                         if (this.msgID is TimedMessageID)
@@ -436,7 +436,7 @@ namespace JunoSnmp.MP
 
         public override int GetHashCode()
         {
-            return msgID.MessageID;
+            return msgID.MessageId;
         }
 
         public override string ToString()
@@ -452,19 +452,19 @@ namespace JunoSnmp.MP
         }
 
         [MethodImpl(MethodImplOptions.Synchronized)]
-        public void addMessageIDs(List<MessageID> msgIDs)
+        public void addMessageIDs(List<IMessageId> msgIDs)
         {
             if (retryMsgIDs == null)
             {
-                retryMsgIDs = new List<MessageID>(msgIDs.Count);
+                retryMsgIDs = new List<IMessageId>(msgIDs.Count);
             }
             retryMsgIDs.AddRange(msgIDs);
         }
 
         [MethodImpl(MethodImplOptions.Synchronized)]
-        public List<MessageID> getMessageIDs()
+        public List<IMessageId> getMessageIDs()
         {
-            List<MessageID> msgIDs = new List<MessageID>(1 + ((retryMsgIDs != null) ? retryMsgIDs.Count : 0));
+            List<IMessageId> msgIDs = new List<IMessageId>(1 + ((retryMsgIDs != null) ? retryMsgIDs.Count : 0));
             msgIDs.Add(msgID);
             if (retryMsgIDs != null)
             {
@@ -473,7 +473,7 @@ namespace JunoSnmp.MP
             return msgIDs;
         }
 
-        protected MessageID CreateMessageID(int msgID)
+        protected IMessageId CreateMessageID(int msgID)
         {
             if (JunoSnmpSettings.JunoSnmpStatisticsLevel == JunoSnmpSettings.JunoSnmpStatistics.extended)
             {

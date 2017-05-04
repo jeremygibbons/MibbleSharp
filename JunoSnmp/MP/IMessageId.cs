@@ -25,12 +25,12 @@ namespace JunoSnmp.MP
     /// The <code>MessageID</code> interface defines the characteristics of a SNMP message ID
     /// as defined by RFC 3412 §6.2.
     /// </summary>
-    public interface MessageID
+    public interface IMessageId
     {
         /// <summary>
         /// Gets the message ID as a positive int
         /// </summary>
-        int MessageID
+        int MessageId
         {
             get;
         }

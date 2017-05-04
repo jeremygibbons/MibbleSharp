@@ -28,7 +28,7 @@ namespace JunoSnmp.MP
     /// The <c>SimpleMessageID</c> implements the simplest possible {@link MessageID} with
     /// a minimum memory footprint.
     /// </summary>
-    public class SimpleMessageID : MessageID, ISerializable, IEquatable<SimpleMessageID>
+    public class SimpleMessageID : IMessageId, ISerializable, IEquatable<SimpleMessageID>
     {
 
         private readonly int messageID;
@@ -38,7 +38,7 @@ namespace JunoSnmp.MP
             this.messageID = messageID;
         }
 
-        public int MessageID
+        public int MessageId
         {
             get
             {

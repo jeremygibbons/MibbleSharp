@@ -1134,7 +1134,7 @@ namespace JunoSnmp.MP
                                           BEROutputStream outgoingMessage)
         {
             /** Leave entry in cache or remove it? RFC3414 §3.1.a.1 says discard it*/
-            StateReference cacheEntry = cache.PopEntry(stateReference.MsgID.MessageID);
+            StateReference cacheEntry = cache.PopEntry(stateReference.MsgID.MessageId);
             if (cacheEntry == null)
             {
                 return SnmpConstants.SNMP_MP_UNKNOWN_MSGID;
@@ -1177,7 +1177,7 @@ namespace JunoSnmp.MP
             }
             // response message is not reportable
             headerData.MsgFlags = flags;
-            headerData.MsgID = stateReference.MsgID.MessageID;
+            headerData.MsgID = stateReference.MsgID.MessageId;
             headerData.MsgMaxSize = maxMessageSize;
             headerData.SecurityModel = securityModel;
 
