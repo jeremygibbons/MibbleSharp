@@ -38,7 +38,8 @@ namespace JunoSnmp
     /// </summary>
     /// <seealso cref="PDUv1"/>
     /// <seealso cref="ScopedPDU"/>
-    public class PDU : IBERSerializable, ISerializable
+    /// <remarks>The PDU class does not use the request ID as a hash code because the ID can change</remarks>
+    public class PDU : IBERSerializable, ISerializable, IEquatable<PDU>
     {
         /**
          * Denotes a get PDU.
@@ -193,8 +194,17 @@ namespace JunoSnmp
         protected List<VariableBinding> variableBindings = new List<VariableBinding>();
         protected Integer32 errorStatus = new Integer32();
         protected Integer32 errorIndex = new Integer32();
-        protected Integer32 requestID = new Integer32();
-        protected int type = GET;
+
+        /**
+          * Gets or sets the request ID for this PDU. When the request ID is not set or set to
+          * zero, the message processing model will generate a unique request ID for
+          * the <code>PDU</code> when sent.
+          * @param requestID
+          *    a unique request ID.
+          */
+        public Integer32 RequestID { get; set; } = new Integer32();
+
+        public int Type { get; set; } = GET;
 
         /**
          * Default constructor.
@@ -219,11 +229,11 @@ namespace JunoSnmp
 
             this.errorIndex = (Integer32)other.errorIndex.Clone();
             this.errorStatus = (Integer32)other.errorStatus.Clone();
-            this.type = other.type;
+            this.Type = other.Type;
 
-            if (other.requestID != null)
+            if (other.RequestID != null)
             {
-                this.requestID = (Integer32)other.requestID.Clone();
+                this.RequestID = (Integer32)other.RequestID.Clone();
             }
         }
 
@@ -240,7 +250,7 @@ namespace JunoSnmp
          */
         public PDU(int pduType, List<VariableBinding> vbs)
         {
-            this.type = pduType;
+            this.Type = pduType;
             this.variableBindings = new List<VariableBinding>(vbs.Count);
             foreach (VariableBinding vb in vbs)
             {
@@ -520,8 +530,8 @@ namespace JunoSnmp
         {
             get
             {
-                return ((type != PDU.REPORT) && (type != PDU.RESPONSE) &&
-                    (type != PDU.TRAP) && (type != PDU.V1TRAP));
+                return ((this.Type != PDU.REPORT) && (this.Type != PDU.RESPONSE) &&
+                    (this.Type != PDU.TRAP) && (this.Type != PDU.V1TRAP));
             }
         }
 
@@ -536,7 +546,7 @@ namespace JunoSnmp
         {
             get
             {
-                return ((type == PDU.RESPONSE) || (type == PDU.REPORT));
+                return ((this.Type == PDU.RESPONSE) || (this.Type == PDU.REPORT));
             }
         }
 
@@ -580,8 +590,8 @@ namespace JunoSnmp
                     throw new IOException("Unsupported PDU type: " + pduType);
             }
 
-            this.type = pduType;
-            requestID.DecodeBER(inputStream);
+            this.Type = pduType;
+            this.RequestID.DecodeBER(inputStream);
             errorStatus.DecodeBER(inputStream);
             errorIndex.DecodeBER(inputStream);
 
@@ -643,22 +653,21 @@ namespace JunoSnmp
                 length += BER.GetBERLengthOfLength(length) + 1;
 
                 // req id, error status, error index
-                Integer32 i32 = new Integer32(requestID.GetValue());
+                Integer32 i32 = new Integer32(this.RequestID.GetValue());
                 length += i32.BERLength;
                 i32 = errorStatus;
                 length += i32.BERLength;
                 i32 = errorIndex;
                 length += i32.BERLength;
-                i32 = null;
                 return length;
             }
         }
 
         public virtual void EncodeBER(Stream outputStream)
         {
-            BER.EncodeHeader(outputStream, type, this.BERPayloadLengthPDU);
+            BER.EncodeHeader(outputStream, this.Type, this.BERPayloadLengthPDU);
 
-            requestID.EncodeBER(outputStream);
+            this.RequestID.EncodeBER(outputStream);
             errorStatus.EncodeBER(outputStream);
             errorIndex.EncodeBER(outputStream);
 
@@ -685,60 +694,11 @@ namespace JunoSnmp
             this.RequestID = new Integer32(0);
         }
 
-        /**
-         * Gets the PDU type. The default is {@link PDU#GETNEXT}.
-         * @return
-         *    the PDU's type.
-         */
-
-        /**
-         * Sets the PDU type.
-         * @param type
-         *    the type of the PDU (e.g. GETNEXT, SET, etc.)
-         */
-        public int Type
-        {
-            get
-            {
-                return type;
-            }
-
-            set
-            {
-                this.type = value;
-            }
-        }
-
         public virtual object Clone()
         {
             return new PDU(this);
         }
 
-        /**
-         * Gets the request ID associated with this PDU.
-         * @return
-         *    an <code>Integer32</code> instance.
-         */
-
-        /**
-         * Sets the request ID for this PDU. When the request ID is not set or set to
-         * zero, the message processing model will generate a unique request ID for
-         * the <code>PDU</code> when sent.
-         * @param requestID
-         *    a unique request ID.
-         */
-        public Integer32 RequestID
-        {
-            get
-            {
-                return this.requestID;
-            }
-
-            set
-            {
-                this.requestID = value;
-            }
-        }
 
         /**
          * Gets a string representation of the supplied PDU type.
@@ -783,7 +743,7 @@ namespace JunoSnmp
          *    the corresponding PDU type constant, or <code>Integer.MIN_VALUE</code>
          *    of the supplied type is unknown.
          */
-        public static int getTypeFromString(String type)
+        public static int GetTypeFromString(String type)
         {
             if (type.Equals("GET"))
             {
@@ -833,9 +793,9 @@ namespace JunoSnmp
         public override string ToString()
         {
             StringBuilder buf = new StringBuilder();
-            buf.Append(PDU.GetTypeString(type));
+            buf.Append(PDU.GetTypeString(this.Type));
             buf.Append("[requestID=");
-            buf.Append(requestID);
+            buf.Append(this.RequestID);
             buf.Append(", errorStatus=");
             buf.Append(this.ErrorStatusText + "(" + errorStatus + ")");
             buf.Append(", errorIndex=");
@@ -916,25 +876,39 @@ namespace JunoSnmp
             return this.variableBindings.ToArray();
         }
 
-        public override int GetHashCode()
-        {
-            // Returning the hasCode() of the request ID is not a good idea, as
-            // this might change during sending a request.
-            return base.GetHashCode();
-        }
-
         public override bool Equals(object obj)
         {
-            if (obj is PDU)
+            if (obj is PDU p)
             {
-                PDU o = (PDU)obj;
-                return (type == o.type) &&
-                    (AbstractVariable.Equal(requestID, o.requestID)) &&
-                    (AbstractVariable.Equal(errorStatus, o.errorStatus)) &&
-                    (AbstractVariable.Equal(errorIndex, o.errorIndex)) &&
-                    variableBindings.Equals(o.variableBindings);
+                return this.Equals(p);
             }
+
             return false;
+        }
+
+        public bool Equals(PDU p)
+        {
+            return (this.Type == p.Type) 
+                && AbstractVariable.Equal(this.RequestID, p.RequestID)
+                && AbstractVariable.Equal(errorStatus, p.errorStatus)
+                && AbstractVariable.Equal(errorIndex, p.errorIndex)
+                && variableBindings.Equals(p.variableBindings);
+        }
+
+        public override int GetHashCode()
+        {
+            int hash = 17;
+            int hashmult = 37;
+
+            unchecked
+            {
+                hash = hash * hashmult + (this.RequestID?.GetHashCode() ?? 0);
+                hash = hash * hashmult + this.ErrorStatus;
+                hash = hash * hashmult + this.ErrorIndex;
+                hash = hash * hashmult + (this.VariableBindings?.GetHashCode() ?? 0);
+            }
+
+            return hash;
         }
 
         public void GetObjectData(SerializationInfo info, StreamingContext context)

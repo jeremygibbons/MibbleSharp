@@ -43,7 +43,7 @@ namespace JunoSnmp
     /// The descriptions are taken from the <c>SNMPv2-MIB</c> (RFC 3418). The corresponding
     /// OIDs are defined in <see cref="JunoSnmp.MP.SnmpConstants"/>.
     /// </summary>
-    public class PDUv1 : PDU
+    public class PDUv1 : PDU, IEquatable<PDUv1>
     {
 
         /// <summary>
@@ -102,9 +102,9 @@ namespace JunoSnmp
 
         private OID enterprise = new OID();
         private IpAddress agentAddress = new IpAddress("0.0.0.0");
-        private Integer32 genericTrap = new Integer32(0);
-        private Integer32 specificTrap = new Integer32(0);
-        private TimeTicks timestamp = new TimeTicks(0);
+        private readonly Integer32 genericTrap = new Integer32(0);
+        private readonly Integer32 specificTrap = new Integer32(0);
+        private readonly TimeTicks timestamp = new TimeTicks(0);
 
         /// <summary>
         /// Initializes a new instance of the <see cref="PDUv1"/>
@@ -142,8 +142,7 @@ namespace JunoSnmp
         /// <param name="inputStream">An <see cref="BERInputStream"/> to read from</param>
         public override void DecodeBER(BERInputStream inputStream)
         {
-            byte pduType;
-            int length = BER.DecodeHeader(inputStream, out pduType);
+            int length = BER.DecodeHeader(inputStream, out byte pduType);
             int pduStartPos = (int)inputStream.Position;
 
             switch (pduType)
@@ -179,17 +178,16 @@ namespace JunoSnmp
             }
             else
             {
-                this.requestID.DecodeBER(inputStream);
+                this.RequestID.DecodeBER(inputStream);
                 this.errorStatus.DecodeBER(inputStream);
                 this.errorIndex.DecodeBER(inputStream);
             }
 
-            // reusing pduType here to save memory ;-)
-            int vbLength = BER.DecodeHeader(inputStream, out pduType);
+            int vbLength = BER.DecodeHeader(inputStream, out byte berType);
 
-            if (pduType != BER.SEQUENCE)
+            if (berType != BER.SEQUENCE)
             {
-                throw new IOException("Encountered invalid tag, SEQUENCE expected: " + pduType);
+                throw new IOException("Encountered invalid tag, SEQUENCE expected: " + berType);
             }
 
             // rest read count
@@ -221,9 +219,9 @@ namespace JunoSnmp
         /// <param name="outputStream">The stream to write to</param>
         public override void EncodeBER(Stream outputStream)
         {
-            BER.EncodeHeader(outputStream, type, this.BERPayloadLength);
+            BER.EncodeHeader(outputStream, this.Type, this.BERPayloadLength);
 
-            if (type == PDU.V1TRAP)
+            if (this.Type == PDU.V1TRAP)
             {
                 this.enterprise.EncodeBER(outputStream);
                 this.agentAddress.EncodeBER(outputStream);
@@ -233,7 +231,7 @@ namespace JunoSnmp
             }
             else
             {
-                this.requestID.EncodeBER(outputStream);
+                this.RequestID.EncodeBER(outputStream);
                 this.errorStatus.EncodeBER(outputStream);
                 this.errorIndex.EncodeBER(outputStream);
             }
@@ -333,6 +331,7 @@ namespace JunoSnmp
             throw new NotSupportedException(OperationNotSupported);
         }
 
+        //TODO: this is used in very ugly ways below, check if there is a better way.
         /// <summary>
         /// Checks whether this is an SNMP version 1 trap.
         /// </summary>
@@ -370,7 +369,7 @@ namespace JunoSnmp
                 this.enterprise = (OID)value.Clone();
             }
         }
-        
+
         /// <summary>
         /// Gets or sets the IP address of the originator system of this SNMP v1 trap.
         /// If this value is <c>0.0.0.0</c> (the recommended default), then the address
@@ -397,7 +396,7 @@ namespace JunoSnmp
                 this.agentAddress = value;
             }
         }
-        
+
         /// <summary>
         /// Gets or sets the generic trap ID. If this value is <c>ENTERPRISE_SPECIFIC(6)</c>
         /// then <see cref="SpecificTrap"/> must be used to set the trap ID of the enterprise
@@ -420,7 +419,7 @@ namespace JunoSnmp
                 this.genericTrap.SetValue(value);
             }
         }
-        
+
         /// <summary>
         /// Gets or sets the specific trap ID. If this value is set,
         /// <see cref="GenericTrap"/> must return <c>ENTERPRISE_SPECIFIC(6)</c>
@@ -442,7 +441,7 @@ namespace JunoSnmp
                 this.specificTrap.SetValue(value);
             }
         }
-        
+
         /// <summary>
         /// Gets or sets the <c>TimeTicks</c> value of the trap sender's notion of
         /// its sysUpTime value when this trap has been generated.
@@ -461,7 +460,7 @@ namespace JunoSnmp
                 this.timestamp.SetValue(value);
             }
         }
-        
+
         /// <summary>
         /// Checks for null parameters.
         /// </summary>
@@ -481,12 +480,12 @@ namespace JunoSnmp
         /// <returns>A text representation of this object</returns>
         public override string ToString()
         {
-            if (type == PDU.V1TRAP)
+            if (this.Type == PDU.V1TRAP)
             {
                 StringBuilder buf = new StringBuilder();
-                buf.Append(GetTypeString(type));
+                buf.Append(GetTypeString(this.Type));
                 buf.Append("[requestID=");
-                buf.Append(requestID);
+                buf.Append(this.RequestID);
                 buf.Append(",timestamp=");
                 buf.Append(timestamp);
                 buf.Append(",enterprise=");
@@ -522,20 +521,31 @@ namespace JunoSnmp
         /// </returns>
         public override bool Equals(object obj)
         {
-            if (obj is PDUv1)
+            if (obj is PDUv1 p)
             {
-                PDUv1 o = (PDUv1)obj;
-                return base.Equals(obj) &&
-                  AbstractVariable.Equal(enterprise, o.enterprise) &&
-                  AbstractVariable.Equal(agentAddress, o.agentAddress) &&
-                  AbstractVariable.Equal(genericTrap, o.genericTrap) &&
-                  AbstractVariable.Equal(specificTrap, o.specificTrap) &&
-                  AbstractVariable.Equal(timestamp, o.timestamp);
+                return this.Equals(p);
             }
 
-            return base.Equals(obj);    //To change body of overridden methods use File | Settings | File Templates.
+            return base.Equals(obj);
         }
-        
+
+        /// <summary>
+        /// Checks this object for equality with another object
+        /// </summary>
+        /// <param name="obj">Another objet to compare against</param>
+        /// <returns>
+        /// True if the objects are equal, i.e. all their properties are equal. False if not
+        /// </returns>
+        public bool Equals(PDUv1 p)
+        {
+            return base.Equals(p)
+                && AbstractVariable.Equal(enterprise, p.enterprise) 
+                && AbstractVariable.Equal(agentAddress, p.agentAddress) 
+                && AbstractVariable.Equal(genericTrap, p.genericTrap) 
+                && AbstractVariable.Equal(specificTrap, p.specificTrap) 
+                && AbstractVariable.Equal(timestamp, p.timestamp);
+        }
+
         /// <summary>
         /// Gets a hash code for this object
         /// </summary>
