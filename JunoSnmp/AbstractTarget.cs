@@ -36,18 +36,57 @@ namespace JunoSnmp
     /// take advantage of the implementation of common <c>Target</c>
     //// properties.
     /// </summary>
-    public abstract class AbstractTarget : ITarget
+    public abstract class AbstractTarget : ITarget, IEquatable<AbstractTarget>
     {
-        private IAddress address;
-        private int version = SnmpConstants.version3;
-        private int retries = 0;
-        private long timeout = 1000;
-        private int maxSizeRequestPDU = 65535;
-        private IList<ITransportMapping<IAddress>> preferredTransports;
+        public IAddress Address { get; set; }
 
-        protected SecurityLevel securityLevel = SecurityLevel.NoAuthNoPriv;
-        protected JunoSnmp.Security.SecurityModel.SecurityModelID securityModel = JunoSnmp.Security.SecurityModel.SecurityModelID.SECURITY_MODEL_USM;
-        protected OctetString securityName = new OctetString();
+        /// <summary>
+        /// Gets or sets the SNMP version (and thus the SNMP message processing model) of the target
+        /// </summary>
+        /// <see cref="SnmpConstants.version1"/>
+        /// <see cref="SnmpConstants.version2c"/>
+        /// <see cref="SnmpConstants.version3"/>
+        public int Version { get; set; } = SnmpConstants.version3;
+
+        private int retries = 0;
+
+        /// <summary>
+        /// Gets or sets the timeout for the target, in milliseconds
+        /// </summary>
+        public long Timeout { get; set;} = 1000;
+        private int maxSizeRequestPDU = 65535;
+
+        /// <summary>
+        /// Gets or sets the prioritised list of transport mappings to be used for this
+        /// target. The first mapping in the list that matches the target address
+        /// will be chosen for sending new requests.If the value is set to
+        /// <c>null</c> (default), the appropriate <see cref="ITransportMapping{A}"/>
+        /// will be chosen by the supplied address of the target.
+        /// If an entity supports more than one transport mapping for
+        /// an <see cref="IAddress"/> class, then the results are not defined.
+        /// This situation can be controlled by setting this preferredTransports list.
+        /// </summary>
+        public IList<ITransportMapping<IAddress>> PreferredTransports { get; set; }
+
+        /// <summary>
+        /// Gets or sets the security level for this target. The supplied security level must
+        /// be supported by the security model dependent information associated with
+        /// the security name set for this target.
+        /// </summary>
+        /// <see cref="Security.SecurityLevel.NoAuthNoPriv"/>
+        /// <see cref="Security.SecurityLevel.AuthNoPriv"/>
+        /// <see cref="Security.SecurityLevel.AuthPriv"/>
+        public virtual SecurityLevel SecurityLevel { get; set; } = SecurityLevel.NoAuthNoPriv;
+
+        /// <summary>
+        /// Sets the security model for this target.
+        /// </summary>
+        public virtual JunoSnmp.Security.SecurityModel.SecurityModelID SecurityModel { get; set; } = JunoSnmp.Security.SecurityModel.SecurityModelID.SECURITY_MODEL_USM;
+
+        /// <summary>
+        /// Gets or sets the securityname used to authenticate with this target
+        /// </summary>
+        public OctetString SecurityName { get; set; } = new OctetString();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="AbstractTarget"/> class.
@@ -63,7 +102,7 @@ namespace JunoSnmp
         /// <param name="address">An <see cref="IAddress"/> instance</param>
         protected AbstractTarget(IAddress address)
         {
-            this.address = address;
+            this.Address = address;
         }
 
         /// <summary>
@@ -74,44 +113,9 @@ namespace JunoSnmp
         /// <param name="securityName">The security name to be used</param>
         protected AbstractTarget(IAddress address, OctetString securityName) : this(address)
         {
-            this.securityName = securityName;
+            this.SecurityName = securityName;
         }
-
-        /// <summary>
-        /// Gets or sets this target's IAddress object
-        /// </summary>
-        public IAddress Address
-        {
-            get
-            {
-                return this.address;
-            }
-
-            set
-            {
-                this.address = value;
-            }
-        }
-
-        /// <summary>
-        /// Gets or sets the SNMP version (and thus the SNMP message processing model) of the target
-        /// </summary>
-        /// <see cref="SnmpConstants.version1"/>
-        /// <see cref="SnmpConstants.version2c"/>
-        /// <see cref="SnmpConstants.version3"/>
-        public int Version
-        {
-            get
-            {
-                return this.version;
-            }
-
-            set
-            {
-                this.version = value;
-            }
-        }
-
+        
         /// <summary>
         /// Gets or sets the number of retries to be performed before a request is timed out.
         /// </summary>
@@ -137,22 +141,6 @@ namespace JunoSnmp
         }
 
         /// <summary>
-        /// Gets or sets the timeout for the target, in milliseconds
-        /// </summary>
-        public long Timeout
-        {
-            get
-            {
-                return this.timeout;
-            }
-
-            set
-            {
-                this.timeout = value;
-            }
-        }
-
-        /// <summary>
         /// Gets or sets the maximum size in bytes of the request PDUs that this target can respond to.
         /// The default is 65535, and the value must be greater than 484.
         /// </summary>
@@ -172,82 +160,6 @@ namespace JunoSnmp
                 }
 
                 this.maxSizeRequestPDU = value;
-            }
-        }
-        
-        /// <summary>
-        /// Gets or sets the prioritised list of transport mappings to be used for this
-        /// target. The first mapping in the list that matches the target address
-        /// will be chosen for sending new requests.If the value is set to
-        /// <c>null</c> (default), the appropriate <see cref="ITransportMapping{A}"/>
-        /// will be chosen by the supplied address of the target.
-        /// If an entity supports more than one transport mapping for
-        /// an <see cref="IAddress"/> class, then the results are not defined.
-        /// This situation can be controlled by setting this preferredTransports list.
-        /// </summary>
-        public IList<ITransportMapping<IAddress>> PreferredTransports
-        {
-            get
-            {
-                return this.preferredTransports;
-            }
-
-            set
-            {
-                this.preferredTransports = value;
-            }
-        }
-
-        /// <summary>
-        /// Sets the security model for this target.
-        /// </summary>
-        public virtual JunoSnmp.Security.SecurityModel.SecurityModelID SecurityModel
-        {
-            get
-            {
-                return this.securityModel;
-            }
-
-            set
-            {
-                this.securityModel = value;
-            }
-        }
-
-        /// <summary>
-        /// Gets or sets the securityname used to authenticate with this target
-        /// </summary>
-        public OctetString SecurityName
-        {
-            get
-            {
-                return this.securityName;
-            }
-
-            set
-            {
-                this.securityName = value;
-            }
-        }
-
-        /// <summary>
-        /// Gets or sets the security level for this target. The supplied security level must
-        /// be supported by the security model dependent information associated with
-        /// the security name set for this target.
-        /// </summary>
-        /// <see cref="Security.SecurityLevel.NoAuthNoPriv"/>
-        /// <see cref="Security.SecurityLevel.AuthNoPriv"/>
-        /// <see cref="Security.SecurityLevel.AuthPriv"/>
-        public virtual SecurityLevel SecurityLevel
-        {
-            get
-            {
-                return this.securityLevel;
-            }
-
-            set
-            {
-                this.securityLevel = value;
             }
         }
 
@@ -281,17 +193,31 @@ namespace JunoSnmp
                 return false;
             }
 
-            AbstractTarget that = (AbstractTarget)o;
+            if (o is AbstractTarget that)
+            {
+                return this.Equals(that);
+            }
 
-            if ((version != that.version)
-                || (retries != that.retries)
-                || (timeout != that.timeout)
-                || (maxSizeRequestPDU != that.maxSizeRequestPDU)
-                || (securityLevel != that.securityLevel)
-                || (securityModel != that.securityModel)
-                || (!address.Equals(that.address))
-                || (preferredTransports != null ? !preferredTransports.Equals(that.preferredTransports) : that.preferredTransports != null)
-                || (!securityName.Equals(that.securityName)))
+            return false;
+        }
+
+        /// <summary>
+        /// Tests this object for equality with another object
+        /// </summary>
+        /// <param name="o">The object to compare against</param>
+        /// <returns>True if the objects are of the same value, false if not</returns>
+        public bool Equals(AbstractTarget that)
+        {
+            if (that == null
+                || (this.Version != that.Version)
+                || (this.Retries != that.Retries)
+                || (this.Timeout != that.Timeout)
+                || (this.maxSizeRequestPDU != that.maxSizeRequestPDU)
+                || (this.SecurityLevel != that.SecurityLevel)
+                || (this.SecurityModel != that.SecurityModel)
+                || (!this.Address.Equals(that.Address))
+                || (this.PreferredTransports != null ? !this.PreferredTransports.Equals(that.PreferredTransports) : that.PreferredTransports != null)
+                || (!this.SecurityName.Equals(that.SecurityName)))
             {
                 return false;
             }
@@ -305,9 +231,9 @@ namespace JunoSnmp
         /// <returns>A hashcode for this object</returns>
         public override int GetHashCode()
         {
-            int result = address.GetHashCode();
-            result = 31 * result + version;
-            result = 31 * result + securityName.GetHashCode();
+            int result = this.Address.GetHashCode();
+            result = 31 * result + this.Version;
+            result = 31 * result + this.SecurityName.GetHashCode();
             return result;
         }
 
@@ -327,12 +253,12 @@ namespace JunoSnmp
         /// <returns>A string representation of this target</returns>
         protected string ToStringAbstractTarget()
         {
-            return "address=" + this.Address + ",version=" + this.version +
-                ",timeout=" + this.timeout + ",retries=" + this.retries +
-                ",securityLevel=" + this.securityLevel +
-                ",securityModel=" + this.securityModel +
-                ",securityName=" + this.securityName +
-                ",preferredTransports=" + this.preferredTransports;
+            return "address=" + this.Address + ",version=" + this.Version +
+                ",timeout=" + this.Timeout + ",retries=" + this.retries +
+                ",securityLevel=" + this.SecurityLevel +
+                ",securityModel=" + this.SecurityModel +
+                ",securityName=" + this.SecurityName +
+                ",preferredTransports=" + this.PreferredTransports;
         }
     }
 }

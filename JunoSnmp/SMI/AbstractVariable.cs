@@ -39,7 +39,7 @@ namespace JunoSnmp.SMI
     /// time. The path of the property file must be accessible from the classpath
     /// and it has to be specified relative to the <c>IVariable</c> class.
     /// </summary>
-    public abstract class AbstractVariable : IVariable, ISerializable
+    public abstract class AbstractVariable : IVariable, ISerializable, IEquatable<AbstractVariable>
     {
 
         public static readonly string SMISyntaxesProperties =
@@ -335,6 +335,20 @@ namespace JunoSnmp.SMI
         /// <param name="o">The object to compare against</param>
         /// <returns>True if both objects are of equal value, false if not</returns>
         public abstract override bool Equals(object o);
+
+        public bool Equals(AbstractVariable that)
+        {
+            if(that != null 
+                && this.BERLength == that.BERLength
+                && this.BERPayloadLength == that.BERPayloadLength
+                && this.LongValue == that.LongValue
+                && this.Syntax == that.Syntax)
+            {
+                return true;
+            }
+
+            return false;
+        }
 
         /// <summary>
         /// Compares this object with another object

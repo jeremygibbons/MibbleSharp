@@ -29,7 +29,7 @@ namespace JunoSnmp.Util
     /// representation for SNMP variables based on their type only.
     /// No MIB information is used (or in fact can be used).
     /// </summary>
-    public class SimpleVariableTextFormat : VariableTextFormat
+    public class SimpleVariableTextFormat : IVariableTextFormat
     {
         /// <summary>
         /// Creates a simple variable text format.
@@ -75,9 +75,9 @@ namespace JunoSnmp.Util
         public IVariable Parse(int smiSyntax, string text)
         {
             IVariable v = AbstractVariable.CreateFromSyntax(smiSyntax);
-            if (v is IAssignableFrom<string>)
+            if (v is IAssignableFrom<string> s)
             {
-                ((IAssignableFrom<string>)v).SetValue(text);
+                s.SetValue(text);
             }
 
             return v;
@@ -106,7 +106,7 @@ namespace JunoSnmp.Util
         /// <exception cref="ParseException">If the variable binding could not be parsed successfully</exception>
         public VariableBinding ParseVariableBinding(string text)
         {
-            int assignmentPos = text.IndexOf(" = ");
+            int assignmentPos = text.IndexOf(" = ", StringComparison.InvariantCulture);
             if (assignmentPos <= 0)
             {
                 throw new ParseException(0, "Could not locate assignment ' = ' string in '" + text);

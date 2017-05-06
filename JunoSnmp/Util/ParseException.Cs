@@ -22,9 +22,15 @@ namespace JunoSnmp.Util
 
     public class ParseException : FormatException
     {
-        int line = -1;
-        int col = -1;
-        int offset = -1;
+        private readonly int line = -1;
+        private readonly int col = -1;
+        private readonly int offset = -1;
+
+        public int Line => line;
+
+        public int Col => col;
+
+        public int Offset => offset;
 
         public ParseException() : base()
         {
@@ -67,9 +73,9 @@ namespace JunoSnmp.Util
 
         public override string ToString()
         {
-            if(offset != -1)
+            if(Offset != -1)
             {
-                string msg = "ParseException at offset " + offset;
+                string msg = "ParseException at offset " + Offset;
                 if(string.IsNullOrEmpty(this.Message) == false)
                 {
                     msg += ": " + this.Message;
@@ -77,9 +83,9 @@ namespace JunoSnmp.Util
                 return msg;
             }
 
-            if (line != -1)
+            if (Line != -1)
             {
-                string msg = "ParseException at line " + this.line + " and column " + this.col;
+                string msg = "ParseException at line " + this.Line + " and column " + this.Col;
                 if (string.IsNullOrEmpty(this.Message) == false)
                 {
                     msg += ": " + this.Message;

@@ -27,7 +27,7 @@ namespace JunoSnmp.Util
     /// of SNMP <see cref="IVariable"/>s
     /// in dependence of their associated(instance) OID.
     /// </summary>
-    public interface VariableTextFormat
+    public interface IVariableTextFormat
     {
         /// <summary>
         /// Returns a textual representation of the supplied variable against the

@@ -28,8 +28,8 @@ namespace JunoSnmp
     /// </summary>
     public class CertifiedTarget : SecureTarget, ICertifiedIdentity, ISerializable
     {
-        private OctetString serverFingerprint;
-        private OctetString clientFingerprint;
+        private readonly OctetString serverFingerprint;
+        private readonly OctetString clientFingerprint;
 
         public CertifiedTarget(OctetString identity) : base(new TlsAddress(), identity)
         {

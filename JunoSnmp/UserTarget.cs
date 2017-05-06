@@ -18,15 +18,16 @@
 
 namespace JunoSnmp
 {
+    using System;
     using JunoSnmp.Security;
     using JunoSnmp.SMI;
 
     /// <summary>
     /// User based target for SNMPv3 or later.
     /// </summary>
-    public class UserTarget : SecureTarget
+    public class UserTarget : SecureTarget, IEquatable<UserTarget>
     {
-        private OctetString authoritativeEngineID = new OctetString();
+        private readonly OctetString authoritativeEngineID = new OctetString();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="UserTarget"/> class,
@@ -52,7 +53,7 @@ namespace JunoSnmp
                           byte[] authoritativeEngineID)
             : base(address, securityName)
         {
-            AuthoritativeEngineID = authoritativeEngineID;
+            this.AuthoritativeEngineID = authoritativeEngineID;
             this.SecurityModel = Security.SecurityModel.SecurityModelID.SECURITY_MODEL_USM;
         }
 
@@ -75,8 +76,7 @@ namespace JunoSnmp
             SecurityLevel securityLevel)
             : base(address, securityName)
         {
-            
-            AuthoritativeEngineID = authoritativeEngineID;
+            this.AuthoritativeEngineID = authoritativeEngineID;
             this.SecurityLevel = securityLevel;
             this.SecurityModel = Security.SecurityModel.SecurityModelID.SECURITY_MODEL_USM;
         }
@@ -89,7 +89,7 @@ namespace JunoSnmp
         {
             get
             {
-                return authoritativeEngineID.GetValue();
+                return this.authoritativeEngineID.GetValue();
             }
 
             set
@@ -104,8 +104,8 @@ namespace JunoSnmp
         /// <returns>A string representation of this object</returns>
         public override string ToString()
         {
-            return "UserTarget[" + ToStringAbstractTarget() +
-                ", authoritativeEngineID=" + authoritativeEngineID +
+            return "UserTarget[" + this.ToStringAbstractTarget() +
+                ", authoritativeEngineID=" + this.AuthoritativeEngineID +
                 ']';
         }
 
@@ -123,6 +123,17 @@ namespace JunoSnmp
             UserTarget that = (UserTarget)o;
 
             if (authoritativeEngineID != null ? !authoritativeEngineID.Equals(that.authoritativeEngineID) : that.authoritativeEngineID != null)
+                return false;
+
+            return true;
+        }
+
+        public bool Equals(UserTarget ut)
+        {
+            if (ut == null || this.GetType() != ut.GetType()) return false;
+            if (!base.Equals(ut)) return false;
+
+            if (this.authoritativeEngineID != null ? !authoritativeEngineID.Equals(ut.authoritativeEngineID) : ut.authoritativeEngineID != null)
                 return false;
 
             return true;

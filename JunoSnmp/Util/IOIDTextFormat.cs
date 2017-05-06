@@ -25,7 +25,7 @@ namespace JunoSnmp.Util
     /// The <code>OIDTextFormat</code> provides a textual representation of a raw
     /// object ID.
     /// </summary>
-    public interface OIDTextFormat
+    public interface IOIDTextFormat
     {
         /// <summary>
         /// Returns a textual representation of a raw object ID, for example as

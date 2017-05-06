@@ -42,7 +42,7 @@ namespace JunoSnmp.SMI
 
         private static readonly long[] NullOID = new long[0];
 
-        private static OIDTextFormat oidTextFormat = new SimpleOIDTextFormat();
+        private static IOIDTextFormat oidTextFormat = new SimpleOIDTextFormat();
 
         private long[] value = NullOID;
 
@@ -343,7 +343,7 @@ namespace JunoSnmp.SMI
 
         /// <summary>
         /// Gets the OID as dotted string (e.g., "1.3.6.1.4.1") regardless of what
-        /// <see cref="OIDTextFormat"/> instance is set in <see cref="JunoSnmpSettings"/>.
+        /// <see cref="IOIDTextFormat"/> instance is set in <see cref="JunoSnmpSettings"/>.
         /// </summary>
         public string DottedStringValue
         {
@@ -551,7 +551,7 @@ namespace JunoSnmp.SMI
         /// <returns>
         /// A formatted string representation of this OID (e.g. <c>"ifDescr.1"</c>) that
         /// can be parsed again as defined by
-        /// <see cref="OIDTextFormat.FormatForRoundTrip(long[])"/>
+        /// <see cref="IOIDTextFormat.FormatForRoundTrip(long[])"/>
         /// in <see cref="JunoSnmpSettings"/>
         /// </returns>
         public override string ToString()

@@ -112,17 +112,17 @@ namespace JunoSnmp
         {
             get
             {
-                return this.securityLevel;
+                return Security.SecurityLevel.NoAuthNoPriv;
             }
 
             set
             {
-                if (securityLevel != Security.SecurityLevel.NoAuthNoPriv)
+                if (value != Security.SecurityLevel.NoAuthNoPriv)
                 {
                     throw new ArgumentException("CommunityTarget only supports SecurityLevel.NOAUTH_NOPRIV");
                 }
 
-                base.SecurityLevel = securityLevel;
+                base.SecurityLevel = value;
             }
         }
 

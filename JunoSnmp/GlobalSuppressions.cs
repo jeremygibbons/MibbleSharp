@@ -16,3 +16,7 @@
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Sonar Code Smell", "S101:Types should be named in camel case", Justification = "PDU is official upper case acronym", Scope = "type", Target = "~T:JunoSnmp.PDUv1")]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Sonar Code Smell", "S101:Types should be named in camel case", Justification = "PDU is official upper case acronym", Scope = "type", Target = "~T:JunoSnmp.PDU")]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Sonar Bug", "S2437:Silly bit operations should not be performed", Justification = "Bit operation retained for clarity", Scope = "member", Target = "~F:JunoSnmp.PDU.GET")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Sonar Code Smell", "S101:Types should be named in camel case", Justification = "<Pending>", Scope = "type", Target = "~T:JunoSnmp.MutablePDU")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Sonar Code Smell", "S101:Types should be named in camel case", Justification = "<Pending>", Scope = "type", Target = "~T:JunoSnmp.Util.SimpleOIDTextFormat")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Sonar Code Smell", "S101:Types should be named in camel case", Justification = "<Pending>", Scope = "type", Target = "~T:JunoSnmp.Util.IOIDTextFormat")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Sonar Code Smell", "S101:Types should be named in camel case", Justification = "<Pending>", Scope = "type", Target = "~T:JunoSnmp.Util.IPDUFactory")]
