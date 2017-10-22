@@ -36,7 +36,7 @@ namespace JunoSnmp.Security
         /// <summary>
         /// Initializes a new instance of the <see cref="AuthSHA"/> class.
         /// </summary>
-        public AuthSHA() : base("SHA-1", 20)
+        public AuthSHA() : base("SHA1", 20)
         {
         }
 

@@ -39,8 +39,8 @@ namespace JunoSnmp.Security
     public class SecurityProtocols : ISerializable
     {
 
-        private Dictionary<OID, IAuthenticationProtocol> authProtocols;
-        private Dictionary<OID, IPrivacyProtocol> privProtocols;
+        private readonly Dictionary<OID, IAuthenticationProtocol> authProtocols;
+        private readonly Dictionary<OID, IPrivacyProtocol> privProtocols;
 
         public static readonly string SECURITY_PROTOCOLS_PROPERTIES =
           "org.junosnmp.securityProtocols";

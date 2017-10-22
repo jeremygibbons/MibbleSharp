@@ -38,10 +38,10 @@ namespace JunoSnmp.Security
         private static int HmacBlockSize = 64;
         private static int DefaultAuthenticationCodeLength = 12;
 
-        private int hmacBlockSize;
-        private int authenticationCodeLength;
-        private int hashLength;
-        private string protoName;
+        private readonly int hmacBlockSize;
+        private readonly int authenticationCodeLength;
+        private readonly int hashLength;
+        private readonly string protoName;
         
         /// <summary>
         /// Creates an authentication protocol with the specified name (ID) and digest length and using the
@@ -52,7 +52,7 @@ namespace JunoSnmp.Security
         /// the underlying platform may be used
         /// </param>
         /// <param name="hashLength">The hash length in bytes</param>
-        public AuthGeneric(string protoName, int hashLength)
+        protected AuthGeneric(string protoName, int hashLength)
         {
             this.hmacBlockSize = HmacBlockSize;
             this.authenticationCodeLength = DefaultAuthenticationCodeLength;
@@ -72,7 +72,7 @@ namespace JunoSnmp.Security
          *   the length of the hash output (i.e., the authentication code length).
          * @since 2.4.0
          */
-        public AuthGeneric(string protoName, int digestLength, int authenticationCodeLength)
+        protected  AuthGeneric(string protoName, int digestLength, int authenticationCodeLength)
                 : this(protoName, digestLength)
         {
             this.authenticationCodeLength = authenticationCodeLength;
@@ -284,7 +284,7 @@ namespace JunoSnmp.Security
             // algorithm according to USM-document textual convention KeyChange
             HashAlgorithm ha = this.CreateHashAlgorithm();
 
-            int hashLength = ha.HashSize / 8; // Note: HashSize is in bits
+            int hashLen = ha.HashSize / 8; // Note: HashSize is in bits
 
             if (log.IsDebugEnabled)
             {
@@ -296,7 +296,7 @@ namespace JunoSnmp.Security
                              new OctetString(random).ToHexString());
             }
 
-            int iterations = (oldKey.Length - 1) / hashLength;
+            int iterations = (oldKey.Length - 1) / hashLen;
 
             OctetString tmp = new OctetString(oldKey);
             OctetString delta = new OctetString();
@@ -305,10 +305,10 @@ namespace JunoSnmp.Security
             {
                 tmp.Append(random);
                 tmp.SetValue(ha.ComputeHash(tmp.GetValue()));
-                delta.Append(new byte[hashLength]);
-                for (int kk = 0; kk < hashLength; kk++)
+                delta.Append(new byte[hashLen]);
+                for (int kk = 0; kk < hashLen; kk++)
                 {
-                    delta[k * hashLength + kk] = (byte)(tmp[kk] ^ newKey[k * hashLength + kk]);
+                    delta[k * hashLen + kk] = (byte)(tmp[kk] ^ newKey[k * hashLen + kk]);
                 }
             }
 
@@ -318,7 +318,7 @@ namespace JunoSnmp.Security
             
             for (int j = 0; j < tmp.Length; j++)
             {
-                tmp[j] = (byte)(tmp[j] ^ newKey[iterations * hashLength + j]);
+                tmp[j] = (byte)(tmp[j] ^ newKey[iterations * hashLen + j]);
             }
 
             byte[] keyChange = new byte[random.Length + delta.Length + tmp.Length];

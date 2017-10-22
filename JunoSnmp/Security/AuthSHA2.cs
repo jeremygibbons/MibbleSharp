@@ -33,7 +33,7 @@ namespace JunoSnmp.Security
         /// <summary>
         /// The object identifier that identifies this authentication protocol.
         /// </summary> 
-        private OID protocolID;
+        private readonly OID protocolID;
         
         /// <summary>
         /// Initializes a new instance of the <see cref="AuthSHA2"/> class,with the specified hash length.

@@ -60,8 +60,8 @@ namespace JunoSnmp.Security
         /// <param name="messageLength">
         /// The actual message length (may be smaller than <c>message.length</c>).
         /// </param>
-        /// <param name="digest">
-        /// The offset in <code>message</code> where to store the digest.
+        /// <param name="hash">
+        /// The offset in <code>message</code> where to store the hash.
         /// </param>
         /// <returns>
         /// <c>True</c> if the message digest has been successfully computed
@@ -72,7 +72,7 @@ namespace JunoSnmp.Security
             byte[] message,
             int messageOffset,
             int messageLength,
-            ByteArrayWindow digest);
+            ByteArrayWindow hash);
 
         /// <summary>
         /// <para>Authenticates an incoming message.</para>
@@ -100,8 +100,8 @@ namespace JunoSnmp.Security
         /// <param name="messageLength">
         /// the actual message length (may be smaller than <c>message.length</c>).
         /// </param>
-        /// <param name="digest">
-        /// The digest of the <code>message</code>.
+        /// <param name="hash">
+        /// The hash of the <code>message</code>.
         /// </param>
         /// <returns>True if the message is authentic, false if not</returns>
         bool IsAuthentic(
@@ -109,7 +109,7 @@ namespace JunoSnmp.Security
             byte[] message,
             int messageOffset,
             int messageLength,
-            ByteArrayWindow digest);
+            ByteArrayWindow hash);
 
         /// <summary>
         /// Computes the delta digest needed to remotely change an user's
