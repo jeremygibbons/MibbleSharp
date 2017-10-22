@@ -36,18 +36,10 @@ namespace JunoSnmp
     /// take advantage of the implementation of common <c>Target</c>
     //// properties.
     /// </summary>
-    public abstract class AbstractTarget : ITarget
+    public abstract class AbstractTarget : ITarget, IEquatable<AbstractTarget>
     {
-        private IAddress address;
-        private int version = SnmpConstants.version3;
         private int retries = 0;
-        private long timeout = 1000;
         private int maxSizeRequestPDU = 65535;
-        private IList<ITransportMapping<IAddress>> preferredTransports;
-
-        protected SecurityLevel securityLevel = SecurityLevel.NoAuthNoPriv;
-        protected JunoSnmp.Security.SecurityModel.SecurityModelID securityModel = JunoSnmp.Security.SecurityModel.SecurityModelID.SECURITY_MODEL_USM;
-        protected OctetString securityName = new OctetString();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="AbstractTarget"/> class.
@@ -63,7 +55,7 @@ namespace JunoSnmp
         /// <param name="address">An <see cref="IAddress"/> instance</param>
         protected AbstractTarget(IAddress address)
         {
-            this.address = address;
+            this.Address = address;
         }
 
         /// <summary>
@@ -74,7 +66,7 @@ namespace JunoSnmp
         /// <param name="securityName">The security name to be used</param>
         protected AbstractTarget(IAddress address, OctetString securityName) : this(address)
         {
-            this.securityName = securityName;
+            this.SecurityName = securityName;
         }
 
         /// <summary>
@@ -82,15 +74,9 @@ namespace JunoSnmp
         /// </summary>
         public IAddress Address
         {
-            get
-            {
-                return this.address;
-            }
+            get;
 
-            set
-            {
-                this.address = value;
-            }
+            set;
         }
 
         /// <summary>
@@ -101,16 +87,10 @@ namespace JunoSnmp
         /// <see cref="SnmpConstants.version3"/>
         public int Version
         {
-            get
-            {
-                return this.version;
-            }
+            get;
 
-            set
-            {
-                this.version = value;
-            }
-        }
+            set;
+        } = SnmpConstants.version3;
 
         /// <summary>
         /// Gets or sets the number of retries to be performed before a request is timed out.
@@ -141,16 +121,10 @@ namespace JunoSnmp
         /// </summary>
         public long Timeout
         {
-            get
-            {
-                return this.timeout;
-            }
+            get;
 
-            set
-            {
-                this.timeout = value;
-            }
-        }
+            set;
+        } = 1000;
 
         /// <summary>
         /// Gets or sets the maximum size in bytes of the request PDUs that this target can respond to.
@@ -187,15 +161,9 @@ namespace JunoSnmp
         /// </summary>
         public IList<ITransportMapping<IAddress>> PreferredTransports
         {
-            get
-            {
-                return this.preferredTransports;
-            }
+            get;
 
-            set
-            {
-                this.preferredTransports = value;
-            }
+            set;
         }
 
         /// <summary>
@@ -203,32 +171,20 @@ namespace JunoSnmp
         /// </summary>
         public virtual JunoSnmp.Security.SecurityModel.SecurityModelID SecurityModel
         {
-            get
-            {
-                return this.securityModel;
-            }
+            get;
 
-            set
-            {
-                this.securityModel = value;
-            }
-        }
+            set;
+        } = JunoSnmp.Security.SecurityModel.SecurityModelID.SECURITY_MODEL_USM;
 
         /// <summary>
         /// Gets or sets the securityname used to authenticate with this target
         /// </summary>
         public OctetString SecurityName
         {
-            get
-            {
-                return this.securityName;
-            }
+            get;
 
-            set
-            {
-                this.securityName = value;
-            }
-        }
+            set;
+        } = new OctetString();
 
         /// <summary>
         /// Gets or sets the security level for this target. The supplied security level must
@@ -240,16 +196,10 @@ namespace JunoSnmp
         /// <see cref="Security.SecurityLevel.AuthPriv"/>
         public virtual SecurityLevel SecurityLevel
         {
-            get
-            {
-                return this.securityLevel;
-            }
+            get;
 
-            set
-            {
-                this.securityLevel = value;
-            }
-        }
+            set;
+        } = SecurityLevel.NoAuthNoPriv;
 
         /// <summary>
         /// Gets a string representation of this target
@@ -274,24 +224,30 @@ namespace JunoSnmp
         /// </summary>
         /// <param name="o">The object to compare against</param>
         /// <returns>True if the objects are of the same value, false if not</returns>
-        public override bool Equals(object o)
+        public override bool Equals(object obj)
         {
-            if (o == null || this.GetType() != o.GetType())
+            AbstractTarget that = obj as AbstractTarget;
+
+            if (that == null || this.GetType() != that.GetType())
             {
                 return false;
             }
 
-            AbstractTarget that = (AbstractTarget)o;
+            return this.Equals(that);
 
-            if ((version != that.version)
-                || (retries != that.retries)
-                || (timeout != that.timeout)
-                || (maxSizeRequestPDU != that.maxSizeRequestPDU)
-                || (securityLevel != that.securityLevel)
-                || (securityModel != that.securityModel)
-                || (!address.Equals(that.address))
-                || (preferredTransports != null ? !preferredTransports.Equals(that.preferredTransports) : that.preferredTransports != null)
-                || (!securityName.Equals(that.securityName)))
+        }
+
+        public bool Equals(AbstractTarget other)
+        {
+            if ((this.Version != other.Version)
+                || (retries != other.retries)
+                || (this.Timeout != other.Timeout)
+                || (this.MaxSizeRequestPDU != other.MaxSizeRequestPDU)
+                || (this.SecurityLevel != other.SecurityLevel)
+                || (this.SecurityModel != other.SecurityModel)
+                || (!this.Address.Equals(other.Address))
+                || (this.PreferredTransports != null ? !this.PreferredTransports.Equals(other.PreferredTransports) : other.PreferredTransports != null)
+                || (!this.SecurityName.Equals(other.SecurityName)))
             {
                 return false;
             }
@@ -305,9 +261,9 @@ namespace JunoSnmp
         /// <returns>A hashcode for this object</returns>
         public override int GetHashCode()
         {
-            int result = address.GetHashCode();
-            result = 31 * result + version;
-            result = 31 * result + securityName.GetHashCode();
+            int result = this.Address.GetHashCode();
+            result = 31 * result + this.Version;
+            result = 31 * result + this.SecurityName.GetHashCode();
             return result;
         }
 
@@ -327,12 +283,12 @@ namespace JunoSnmp
         /// <returns>A string representation of this target</returns>
         protected string ToStringAbstractTarget()
         {
-            return "address=" + this.Address + ",version=" + this.version +
-                ",timeout=" + this.timeout + ",retries=" + this.retries +
-                ",securityLevel=" + this.securityLevel +
-                ",securityModel=" + this.securityModel +
-                ",securityName=" + this.securityName +
-                ",preferredTransports=" + this.preferredTransports;
+            return "address=" + this.Address + ",version=" + this.Version +
+                ",timeout=" + this.Timeout + ",retries=" + this.Retries +
+                ",securityLevel=" + this.SecurityLevel +
+                ",securityModel=" + this.SecurityModel +
+                ",securityName=" + this.SecurityName +
+                ",preferredTransports=" + this.PreferredTransports;
         }
     }
 }

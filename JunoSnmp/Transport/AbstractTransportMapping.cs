@@ -60,7 +60,7 @@ namespace JunoSnmp.Transport
 
         public abstract void Close();
         public abstract Task Listen();
-        public abstract A ListenAddress { get; }
+        public abstract A ListenAddress { get; set; }
 
         public virtual int MaxInboundMessageSize { get; set; } = (1 << 16) - 1;
 

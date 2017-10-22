@@ -34,8 +34,7 @@ namespace JunoSnmp
     /// </summary>
     public class MessageException : IOException
     {
-        private StatusInformation statusInformation;
-        private int junoSnmpErrorStatus;
+        private readonly int junoSnmpErrorStatus;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MessageException"/> class.
@@ -96,15 +95,8 @@ namespace JunoSnmp
         /// </summary>
         public StatusInformation StatusInformation
         {
-            get
-            {
-                return this.statusInformation;
-            }
-
-            set
-            {
-                this.statusInformation = value;
-            }
+            get;
+            set;
         }
 
         /// <summary>

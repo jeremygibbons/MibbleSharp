@@ -154,8 +154,6 @@ namespace JunoSnmp.Security
             int messageLength,
             ByteArrayWindow hash)
         {
-            HashAlgorithm ha = this.CreateHashAlgorithm();
-
             byte[] authKey = authenticationKey;
 
             byte[] newHash;
@@ -167,6 +165,8 @@ namespace JunoSnmp.Security
             {
                 hash[i] = 0;
             }
+
+            HashAlgorithm ha = this.CreateHashAlgorithm();
 
             if (authKey.Length > hmacBlockSize)
             {
@@ -197,6 +197,8 @@ namespace JunoSnmp.Security
                 k_ipad[i] = 0x36;
                 k_opad[i] = 0x5c;
             }
+
+            ha = this.CreateHashAlgorithm();
             /* perform inner MD */
             using (MemoryStream ms = new MemoryStream())
             {
@@ -205,10 +207,11 @@ namespace JunoSnmp.Security
                     cs.Write(k_ipad, 0, k_ipad.Length);/* start with inner pad      */
                     cs.Write(message, messageOffset, messageLength); /* then text of msg  */
                     cs.FlushFinalBlock();
-                    newHash = ms.ToArray(); /* finish up 1st pass        */
+                    newHash = ha.Hash; /* finish up 1st pass        */
                 }
             }
 
+            ha = this.CreateHashAlgorithm();
             /* perform outer MD */
             using (MemoryStream ms = new MemoryStream())
             {
@@ -217,7 +220,7 @@ namespace JunoSnmp.Security
                     cs.Write(k_opad, 0, k_opad.Length);/* start with outer pad */
                     cs.Write(newHash, 0, newHash.Length); /* then results of 1st hash */
                     cs.FlushFinalBlock();
-                    newHash = ms.ToArray(); /* finish up 2nd pass */
+                    newHash = ha.Hash; /* finish up 2nd pass */
                 }
             }
             
@@ -372,7 +375,7 @@ namespace JunoSnmp.Security
                     }
 
                     cs.FlushFinalBlock();
-                    hash = ms.ToArray();
+                    hash = ha.Hash;
                 }
             }
                     
@@ -387,6 +390,7 @@ namespace JunoSnmp.Security
             /* Now localize the key with the engine_id and pass  */
             /* through Hash Algorithm to produce final key       */
             /*****************************************************/
+            ha = this.CreateHashAlgorithm();
             using (MemoryStream ms = new MemoryStream())
             {
                 using (CryptoStream cs = new CryptoStream(ms, ha, CryptoStreamMode.Write))
@@ -398,7 +402,7 @@ namespace JunoSnmp.Security
                     cs.FlushFinalBlock();
                 }
 
-                hash = ms.ToArray();
+                hash = ha.Hash;
             }
 
             if (log.IsDebugEnabled)

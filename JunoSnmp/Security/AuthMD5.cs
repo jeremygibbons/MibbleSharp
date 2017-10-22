@@ -23,6 +23,7 @@ namespace JunoSnmp.Security
 {
     using System;
     using System.Runtime.Serialization;
+    using System.Security.Cryptography;
     using JunoSnmp.MP;
     using JunoSnmp.SMI;
 
@@ -38,7 +39,7 @@ namespace JunoSnmp.Security
         /// </summary>
         public AuthMD5() : base("MD5", 16)
         {
-        }
+        }   
 
         /// <summary>
         /// Gets the OID uniquely identifying the privacy protocol.

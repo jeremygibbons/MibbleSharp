@@ -160,9 +160,9 @@ namespace JunoSnmp.SMI
             return this.Equals(ui);
         }
 
-        public bool Equals(UnsignedInteger32 o)
+        public bool Equals(UnsignedInteger32 other)
         {
-            return o.value == this.value;
+            return other.value == this.value;
         }
 
         public override int CompareTo(IVariable o)
@@ -193,26 +193,26 @@ namespace JunoSnmp.SMI
         /// <summary>
         /// Sets the value of this variable from a string
         /// </summary>
-        /// <param name="value">A string containing a <c>long</c></param>
-        public virtual void SetValue(string value)
+        /// <param name="val">A string containing a <c>long</c></param>
+        public virtual void SetValue(string val)
         {
-            SetValue(long.Parse(value));
+            SetValue(long.Parse(val));
         }
 
         /// <summary>
         /// Sets the value of this variable from a <c>long</c>
         /// </summary>
-        /// <param name="value">The value</param>
+        /// <param name="val">The value</param>
         /// <exception cref="ArgumentException">If the value is not in the allowed range</exception>
-        public void SetValue(long value)
+        public void SetValue(long val)
         {
-            if ((value < 0) || (value > 4294967295L))
+            if ((val < 0) || (val > 4294967295L))
             {
                 throw new ArgumentException(
                     "Argument must be an unsigned 32bit value");
             }
 
-            this.value = value;
+            this.value = val;
         }
 
         /// <summary>

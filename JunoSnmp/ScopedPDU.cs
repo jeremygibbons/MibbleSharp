@@ -68,7 +68,7 @@ namespace JunoSnmp
             {
                 if (value == null)
                 {
-                    throw new ArgumentNullException("Context engine ID must not be null");
+                    throw new ArgumentNullException("value", "Context engine ID must not be null");
                 }
 
                 this.contextEngineID = value;
@@ -89,7 +89,7 @@ namespace JunoSnmp
             {
                 if (value == null)
                 {
-                    throw new ArgumentNullException("Context name must not be null");
+                    throw new ArgumentNullException("value", "Context name must not be null");
                 }
 
                 this.contextName = value;
@@ -173,18 +173,18 @@ namespace JunoSnmp
         public override string ToString()
         {
             StringBuilder buf = new StringBuilder();
-            buf.Append(PDU.GetTypeString(type));
-            buf.Append("[{contextEngineID=" + contextEngineID + ", contextName=" + contextName + "}, requestID=");
-            buf.Append(requestID);
+            buf.Append(PDU.GetTypeString(this.Type));
+            buf.Append("[{contextEngineID=" + this.ContextEngineID + ", contextName=" + this.ContextName + "}, requestID=");
+            buf.Append(this.RequestID);
             buf.Append(", errorStatus=");
-            buf.Append(errorStatus);
+            buf.Append(this.ErrorStatus);
             buf.Append(", errorIndex=");
-            buf.Append(errorIndex);
+            buf.Append(this.ErrorIndex);
             buf.Append(", VBS[");
-            for (int i = 0; i < variableBindings.Count; i++)
+            for (int i = 0; i < this.VariableBindings.Count; i++)
             {
-                buf.Append(variableBindings[i]);
-                if (i + 1 < variableBindings.Count)
+                buf.Append(this.VariableBindings[i]);
+                if (i + 1 < this.VariableBindings.Count)
                 {
                     buf.Append("; ");
                 }
@@ -201,15 +201,14 @@ namespace JunoSnmp
         /// <returns>True if the objects are equal, false if not</returns>
         public override bool Equals(object obj)
         {
-            if (obj is ScopedPDU)
-            {
-                ScopedPDU o = (ScopedPDU)obj;
-                return base.Equals(obj) &&
-                  AbstractVariable.Equal(contextEngineID, o.contextEngineID) &&
-                  AbstractVariable.Equal(contextName, o.contextName);
-            }
-
-            return base.Equals(obj);
+            ScopedPDU o = obj as ScopedPDU;
+            if(o == null)
+                return false;
+            
+            
+            return base.Equals(obj) && 
+                AbstractVariable.Equal(this.ContextEngineID, o.ContextEngineID) &&
+                AbstractVariable.Equal(this.ContextName, o.ContextName);
         }
 
         /// <summary>

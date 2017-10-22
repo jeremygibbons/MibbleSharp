@@ -220,18 +220,11 @@ namespace JunoSnmp.Test
             int length = 7559605;
             BER.EncodeLength(os1, length);
             byte[] result = os1.ToArray();
-            IOException ex = null;
-            try
-            {
-                int decodedLength =
-                    BER.DecodeLength(new BERInputStream(result));
-                Assert.AreEqual(length, decodedLength);
-            }
-            catch (IOException iox)
-            {
-                ex = iox;
-            }
-            Assert.IsNotNull(ex);
+            int decodedLength = BER.DecodeLength(new BERInputStream(result));
+            Assert.AreEqual(length, decodedLength);
+            // Note: original java code contained a try-catch for IOExceptions
+            // and asserted that there would be an exception in this test. It is
+            // unclear why.
         }
 
         [TestCase]

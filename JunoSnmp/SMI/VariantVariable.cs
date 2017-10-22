@@ -60,7 +60,7 @@ namespace JunoSnmp.SMI
         {
             if (initialVariable == null)
             {
-                throw new ArgumentNullException();
+                throw new ArgumentNullException("initialVariable");
             }
 
             this.variable = initialVariable;
@@ -181,10 +181,10 @@ namespace JunoSnmp.SMI
         }
 
         [MethodImpl(MethodImplOptions.Synchronized)]
-        public bool Equals(VariantVariable vv)
+        public bool Equals(VariantVariable other)
         {
             this.UpdateVariable();
-            return this.variable.Equals(vv);
+            return this.variable.Equals(other);
         }
 
         [MethodImpl(MethodImplOptions.Synchronized)]
@@ -208,11 +208,11 @@ namespace JunoSnmp.SMI
         }
 
         [MethodImpl(MethodImplOptions.Synchronized)]
-        public void SetValue(int value)
+        public void SetValue(int val)
         {
             if (variable is IAssignableFrom<int> intvar)
             {
-                intvar.SetValue(value);
+                intvar.SetValue(val);
             }
             else
             {
@@ -222,11 +222,11 @@ namespace JunoSnmp.SMI
         }
 
         [MethodImpl(MethodImplOptions.Synchronized)]
-        public void SetValue(long value)
+        public void SetValue(long val)
         {
             if (variable is IAssignableFrom<long> longvar)
             {
-                longvar.SetValue(value);
+                longvar.SetValue(val);
             }
             else
             {
@@ -250,11 +250,11 @@ namespace JunoSnmp.SMI
         }
 
         [MethodImpl(MethodImplOptions.Synchronized)]
-        public void SetValue(byte[] value)
+        public void SetValue(byte[] val)
         {
             if (variable is IAssignableFrom<byte[]> byt)
             {
-                 byt.SetValue(value);
+                 byt.SetValue(val);
             }
             else
             {
@@ -264,11 +264,11 @@ namespace JunoSnmp.SMI
         }
 
         [MethodImpl(MethodImplOptions.Synchronized)]
-        public void SetValue(string value)
+        public void SetValue(string val)
         {
             if (variable is IAssignableFrom<string> str)
             {
-                str.SetValue(value);
+                str.SetValue(val);
             }
             else
             {

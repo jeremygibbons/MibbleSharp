@@ -19,6 +19,7 @@
 namespace JunoSnmp.SMI
 {
     using System;
+    using System.Collections.Generic;
     using System.IO;
     using JunoSnmp.ASN1;
 
@@ -26,7 +27,7 @@ namespace JunoSnmp.SMI
     /// The <code>Null</code> class represents SMI Null and the derived
     /// SMIv2 exception syntaxes.
     /// </summary>
-    public class Null : AbstractVariable, IEquatable<Null>
+    public class Null : AbstractVariable, IEquatable<Null>, IEqualityComparer<Null>
     {
 
         private int syntax = SMIConstants.SyntaxNull;
@@ -69,6 +70,11 @@ namespace JunoSnmp.SMI
             return this.Syntax;
         }
 
+        public int GetHashCode(Null obj)
+        {
+            return obj.Syntax;
+        }
+
         public override int BERLength
         {
             get
@@ -82,9 +88,14 @@ namespace JunoSnmp.SMI
             return (o is Null n) ? this.Equals(n) : false;
         }
 
-        public bool Equals(Null n)
+        public bool Equals(Null other)
         {
-            return this.Syntax == n.Syntax;
+            return this.Syntax == other.Syntax;
+        }
+
+        public bool Equals(Null x, Null y)
+        {
+            return x != null && y != null && x.Equals(y);
         }
 
         public override int CompareTo(IVariable o)

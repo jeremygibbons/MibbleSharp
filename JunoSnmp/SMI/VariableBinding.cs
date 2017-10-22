@@ -251,9 +251,9 @@ namespace JunoSnmp.SMI
             return this.oid.GetHashCode();
         }
 
-        public override bool Equals(Object o)
+        public override bool Equals(Object obj)
         {
-            if (o is VariableBinding vb)
+            if (obj is VariableBinding vb)
             {
                 return this.Equals(vb);
             }
@@ -261,9 +261,9 @@ namespace JunoSnmp.SMI
             return false;
         }
 
-        public bool Equals(VariableBinding o)
+        public bool Equals(VariableBinding other)
         {
-            return this.oid.Equals(o.Oid) && this.variable.Equals(o.Variable);
+            return this.oid.Equals(other.Oid) && this.variable.Equals(other.Variable);
         }
 
         /**

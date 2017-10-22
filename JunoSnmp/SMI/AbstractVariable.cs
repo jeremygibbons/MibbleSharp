@@ -334,14 +334,14 @@ namespace JunoSnmp.SMI
         /// </summary>
         /// <param name="o">The object to compare against</param>
         /// <returns>True if both objects are of equal value, false if not</returns>
-        public abstract override bool Equals(object o);
+        public abstract override bool Equals(object obj);
 
         /// <summary>
         /// Compares this object with another object
         /// </summary>
         /// <param name="o">The object to compare against</param>
         /// <returns>0 if both objects are of equal value, a non-zero value if not</returns>
-        public abstract int CompareTo(IVariable o);
+        public abstract int CompareTo(IVariable other);
 
         /// <summary>
         /// Gets a hashcode for this object

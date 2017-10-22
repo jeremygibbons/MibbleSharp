@@ -470,7 +470,7 @@ namespace JunoSnmp
         {
             if (parameter == null)
             {
-                throw new ArgumentNullException("Members of PDUv1 must not be null");
+                throw new ArgumentNullException("parameter", "Members of PDUv1 must not be null");
             }
         }
 
@@ -536,14 +536,14 @@ namespace JunoSnmp
         /// <returns>
         /// True if the objects are equal, i.e. all their properties are equal. False if not
         /// </returns>
-        public bool Equals(PDUv1 p)
+        public bool Equals(PDUv1 other)
         {
-            return base.Equals(p)
-                && AbstractVariable.Equal(enterprise, p.enterprise) 
-                && AbstractVariable.Equal(agentAddress, p.agentAddress) 
-                && AbstractVariable.Equal(genericTrap, p.genericTrap) 
-                && AbstractVariable.Equal(specificTrap, p.specificTrap) 
-                && AbstractVariable.Equal(timestamp, p.timestamp);
+            return base.Equals(other)
+                && AbstractVariable.Equal(enterprise, other.enterprise) 
+                && AbstractVariable.Equal(agentAddress, other.agentAddress) 
+                && AbstractVariable.Equal(genericTrap, other.genericTrap) 
+                && AbstractVariable.Equal(specificTrap, other.specificTrap) 
+                && AbstractVariable.Equal(timestamp, other.timestamp);
         }
 
         /// <summary>

@@ -39,7 +39,7 @@ namespace JunoSnmp
     /// <seealso cref="PDUv1"/>
     /// <seealso cref="ScopedPDU"/>
     /// <remarks>The PDU class does not use the request ID as a hash code because the ID can change</remarks>
-    public class PDU : IBERSerializable, ISerializable, IEquatable<PDU>
+    public class PDU : IBERSerializable, ISerializable, IEquatable<PDU>, IEqualityComparer<PDU>
     {
         /**
          * Denotes a get PDU.
@@ -336,7 +336,7 @@ namespace JunoSnmp
             {
                 if (value == null)
                 {
-                    throw new ArgumentNullException("Variable binding must not be null");
+                    throw new ArgumentNullException("value", "Variable binding must not be null");
                 }
 
                 this.variableBindings[index] = value;
@@ -412,7 +412,7 @@ namespace JunoSnmp
             {
                 if (value == null)
                 {
-                    throw new ArgumentNullException();
+                    throw new ArgumentNullException("value", "VariableBindings cannot be null");
                 }
 
                 this.variableBindings = new List<VariableBinding>(value);
@@ -886,13 +886,18 @@ namespace JunoSnmp
             return false;
         }
 
-        public bool Equals(PDU p)
+        public bool Equals(PDU other)
         {
-            return (this.Type == p.Type) 
-                && AbstractVariable.Equal(this.RequestID, p.RequestID)
-                && AbstractVariable.Equal(errorStatus, p.errorStatus)
-                && AbstractVariable.Equal(errorIndex, p.errorIndex)
-                && variableBindings.Equals(p.variableBindings);
+            return (this.Type == other.Type) 
+                && AbstractVariable.Equal(this.RequestID, other.RequestID)
+                && AbstractVariable.Equal(errorStatus, other.errorStatus)
+                && AbstractVariable.Equal(errorIndex, other.errorIndex)
+                && variableBindings.Equals(other.variableBindings);
+        }
+
+        public bool Equals(PDU x, PDU y)
+        {
+            return x!= null && y != null && x.Equals(y);
         }
 
         public override int GetHashCode()
@@ -909,6 +914,11 @@ namespace JunoSnmp
             }
 
             return hash;
+        }
+
+        public int GetHashCode(PDU obj)
+        {
+            return obj.GetHashCode();
         }
 
         public void GetObjectData(SerializationInfo info, StreamingContext context)
