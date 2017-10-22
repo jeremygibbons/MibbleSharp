@@ -224,7 +224,7 @@ namespace JunoSnmp.SMI
          */
         public override string ToString()
         {
-            VariableTextFormat varFormat = JunoSnmpSettings.VariableTextFormat;
+            IVariableTextFormat varFormat = JunoSnmpSettings.VariableTextFormat;
             return varFormat.Format(this.oid, this.variable, true);
         }
 
@@ -237,7 +237,7 @@ namespace JunoSnmp.SMI
          */
         public string ToValueString()
         {
-            VariableTextFormat varFormat = JunoSnmpSettings.VariableTextFormat;
+            IVariableTextFormat varFormat = JunoSnmpSettings.VariableTextFormat;
             return varFormat.Format(this.oid, this.variable, false);
         }
 

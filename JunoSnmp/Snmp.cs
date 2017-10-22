@@ -36,7 +36,7 @@ namespace JunoSnmp
     using JunoSnmp.Transport;
     /**
  * The <code>Snmp</code> class is the core of SNMP4J. It provides functions to
- * send and receive SNMP PDUs. All SNMP PDU types can be send. Confirmed
+ * send and receive SNMP PDUs. All SNMP PDU types can be sent. Confirmed
  * PDUs can be sent synchronously and asynchronously.
  * <p>
  * The <code>Snmp</code> class is transport protocol independent. Support for

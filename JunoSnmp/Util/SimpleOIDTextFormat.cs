@@ -30,7 +30,7 @@ namespace JunoSnmp.Util
     /// The <code>SimpleOIDTextFormat</code> implements a simple textual
     /// representation for object IDs as dotted string.
     /// </summary>
-    public class SimpleOIDTextFormat : OIDTextFormat
+    public class SimpleOIDTextFormat : IOIDTextFormat
     {
 
         /// <summary>

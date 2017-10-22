@@ -218,13 +218,13 @@
     <Compile Include="Transport\UdpTransportMapping.cs" />
     <Compile Include="UserTarget.cs" />
     <Compile Include="Util\ICommonTimer.cs" />
-    <Compile Include="Util\OIDTextFormat.cs" />
+    <Compile Include="Util\IOIDTextFormat.cs" />
     <Compile Include="Util\ParseException.cs" />
     <Compile Include="Util\IPDUFactory.cs" />
     <Compile Include="Util\SimpleOIDTextFormat.cs" />
     <Compile Include="Util\SimpleVariableTextFormat.cs" />
     <Compile Include="Util\ArrayUtils.cs" />
-    <Compile Include="Util\VariableTextFormat.cs" />
+    <Compile Include="Util\IVariableTextFormat.cs" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Security\AuthHMAC128SHA224.cs" />

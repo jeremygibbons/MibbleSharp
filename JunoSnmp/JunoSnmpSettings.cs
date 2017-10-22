@@ -58,13 +58,13 @@ namespace JunoSnmp
         /// By default SNMP4J uses the <see cref="SimpleOIDTextFormat"/> to convert
         /// <see cref="OID"/>s to/from a textual representation.
         /// </summary>
-        private static OIDTextFormat oidTextFormat = new SimpleOIDTextFormat();
+        private static IOIDTextFormat oidTextFormat = new SimpleOIDTextFormat();
 
         /// <summary>
         /// By default SNMP4J uses the <see cref="SimpleVariableTextFormat"/> to convert
         /// <see cref="VariableBinding"/>s to/from a textual representation.
         /// </summary>        
-        private static VariableTextFormat variableTextFormat =
+        private static IVariableTextFormat variableTextFormat =
             new SimpleVariableTextFormat();
 
         /// <summary>
@@ -171,7 +171,7 @@ namespace JunoSnmp
         /// <summary>
         /// Gets or sets the OID text format for textual representation of OIDs.
         /// </summary>
-        public static OIDTextFormat OIDTextFormat
+        public static IOIDTextFormat OIDTextFormat
         {
             get
             {
@@ -193,7 +193,7 @@ namespace JunoSnmp
         /// Gets or sets the variable text format for textual representation of variable
         /// bindings.
         /// </summary>
-        public static VariableTextFormat VariableTextFormat
+        public static IVariableTextFormat VariableTextFormat
         {
             get
             {
