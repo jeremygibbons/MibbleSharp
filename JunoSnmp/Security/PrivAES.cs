@@ -36,7 +36,8 @@ namespace JunoSnmp.Security
     public abstract class PrivAES : PrivacyGeneric, IPrivacyProtocol
     {
 
-        private static readonly string PROTOCOL_ID = "AES/CFB/NoPadding";
+        //private static readonly string PROTOCOL_ID = "AES/CFB/NoPadding";
+        private static readonly string PROTOCOL_ID = "Aes";
         private static readonly string PROTOCOL_CLASS = "AES";
         private static readonly int DECRYPT_PARAMS_LENGTH = 8;
         private static readonly int INIT_VECTOR_LENGTH = 16;

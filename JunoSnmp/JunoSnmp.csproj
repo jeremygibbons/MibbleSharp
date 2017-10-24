@@ -153,6 +153,7 @@
     <Compile Include="Security\SecurityModels.cs" />
     <Compile Include="Security\SecurityProtocols.cs" />
     <Compile Include="Security\SNMPv3SecurityModel.cs" />
+    <Compile Include="Test\TestAuthHMAC192SHA256.cs" />
     <Compile Include="Security\TSM.cs" />
     <Compile Include="Security\TsmSecurityParameters.cs" />
     <Compile Include="Security\TsmSecurityStateReference.cs" />
@@ -202,6 +203,8 @@
     <Compile Include="Test\TestAuthMD5.cs" />
     <Compile Include="Test\TestOctetString.cs" />
     <Compile Include="Test\TestOID.cs" />
+    <Compile Include="Test\TestPrivAES.cs" />
+    <Compile Include="Test\TestPrivDES.cs" />
     <Compile Include="Test\TestSnmp.cs" />
     <Compile Include="Test\TestTimeTicks.cs" />
     <Compile Include="TransportStateReference.cs" />
