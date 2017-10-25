@@ -38,10 +38,10 @@ namespace JunoSnmp.Security
         private static int HmacBlockSize = 64;
         private static int DefaultAuthenticationCodeLength = 12;
 
-        private int hmacBlockSize;
-        private int authenticationCodeLength;
-        private int hashLength;
-        private string protoName;
+        private readonly int hmacBlockSize;
+        private readonly int authenticationCodeLength;
+        private readonly int hashLength;
+        private readonly string protoName;
         
         /// <summary>
         /// Creates an authentication protocol with the specified name (ID) and digest length and using the
@@ -52,7 +52,7 @@ namespace JunoSnmp.Security
         /// the underlying platform may be used
         /// </param>
         /// <param name="hashLength">The hash length in bytes</param>
-        public AuthGeneric(string protoName, int hashLength)
+        protected AuthGeneric(string protoName, int hashLength)
         {
             this.hmacBlockSize = HmacBlockSize;
             this.authenticationCodeLength = DefaultAuthenticationCodeLength;
@@ -72,7 +72,7 @@ namespace JunoSnmp.Security
          *   the length of the hash output (i.e., the authentication code length).
          * @since 2.4.0
          */
-        public AuthGeneric(string protoName, int digestLength, int authenticationCodeLength)
+        protected  AuthGeneric(string protoName, int digestLength, int authenticationCodeLength)
                 : this(protoName, digestLength)
         {
             this.authenticationCodeLength = authenticationCodeLength;
@@ -154,8 +154,6 @@ namespace JunoSnmp.Security
             int messageLength,
             ByteArrayWindow hash)
         {
-            HashAlgorithm ha = this.CreateHashAlgorithm();
-
             byte[] authKey = authenticationKey;
 
             byte[] newHash;
@@ -167,6 +165,8 @@ namespace JunoSnmp.Security
             {
                 hash[i] = 0;
             }
+
+            HashAlgorithm ha = this.CreateHashAlgorithm();
 
             if (authKey.Length > hmacBlockSize)
             {
@@ -197,6 +197,8 @@ namespace JunoSnmp.Security
                 k_ipad[i] = 0x36;
                 k_opad[i] = 0x5c;
             }
+
+            ha = this.CreateHashAlgorithm();
             /* perform inner MD */
             using (MemoryStream ms = new MemoryStream())
             {
@@ -205,10 +207,11 @@ namespace JunoSnmp.Security
                     cs.Write(k_ipad, 0, k_ipad.Length);/* start with inner pad      */
                     cs.Write(message, messageOffset, messageLength); /* then text of msg  */
                     cs.FlushFinalBlock();
-                    newHash = ms.ToArray(); /* finish up 1st pass        */
+                    newHash = ha.Hash; /* finish up 1st pass        */
                 }
             }
 
+            ha = this.CreateHashAlgorithm();
             /* perform outer MD */
             using (MemoryStream ms = new MemoryStream())
             {
@@ -217,7 +220,7 @@ namespace JunoSnmp.Security
                     cs.Write(k_opad, 0, k_opad.Length);/* start with outer pad */
                     cs.Write(newHash, 0, newHash.Length); /* then results of 1st hash */
                     cs.FlushFinalBlock();
-                    newHash = ms.ToArray(); /* finish up 2nd pass */
+                    newHash = ha.Hash; /* finish up 2nd pass */
                 }
             }
             
@@ -281,7 +284,7 @@ namespace JunoSnmp.Security
             // algorithm according to USM-document textual convention KeyChange
             HashAlgorithm ha = this.CreateHashAlgorithm();
 
-            int hashLength = ha.HashSize / 8; // Note: HashSize is in bits
+            int hashLen = ha.HashSize / 8; // Note: HashSize is in bits
 
             if (log.IsDebugEnabled)
             {
@@ -293,7 +296,7 @@ namespace JunoSnmp.Security
                              new OctetString(random).ToHexString());
             }
 
-            int iterations = (oldKey.Length - 1) / hashLength;
+            int iterations = (oldKey.Length - 1) / hashLen;
 
             OctetString tmp = new OctetString(oldKey);
             OctetString delta = new OctetString();
@@ -302,10 +305,10 @@ namespace JunoSnmp.Security
             {
                 tmp.Append(random);
                 tmp.SetValue(ha.ComputeHash(tmp.GetValue()));
-                delta.Append(new byte[hashLength]);
-                for (int kk = 0; kk < hashLength; kk++)
+                delta.Append(new byte[hashLen]);
+                for (int kk = 0; kk < hashLen; kk++)
                 {
-                    delta[k * hashLength + kk] = (byte)(tmp[kk] ^ newKey[k * hashLength + kk]);
+                    delta[k * hashLen + kk] = (byte)(tmp[kk] ^ newKey[k * hashLen + kk]);
                 }
             }
 
@@ -315,7 +318,7 @@ namespace JunoSnmp.Security
             
             for (int j = 0; j < tmp.Length; j++)
             {
-                tmp[j] = (byte)(tmp[j] ^ newKey[iterations * hashLength + j]);
+                tmp[j] = (byte)(tmp[j] ^ newKey[iterations * hashLen + j]);
             }
 
             byte[] keyChange = new byte[random.Length + delta.Length + tmp.Length];
@@ -372,7 +375,7 @@ namespace JunoSnmp.Security
                     }
 
                     cs.FlushFinalBlock();
-                    hash = ms.ToArray();
+                    hash = ha.Hash;
                 }
             }
                     
@@ -387,6 +390,7 @@ namespace JunoSnmp.Security
             /* Now localize the key with the engine_id and pass  */
             /* through Hash Algorithm to produce final key       */
             /*****************************************************/
+            ha = this.CreateHashAlgorithm();
             using (MemoryStream ms = new MemoryStream())
             {
                 using (CryptoStream cs = new CryptoStream(ms, ha, CryptoStreamMode.Write))
@@ -398,7 +402,7 @@ namespace JunoSnmp.Security
                     cs.FlushFinalBlock();
                 }
 
-                hash = ms.ToArray();
+                hash = ha.Hash;
             }
 
             if (log.IsDebugEnabled)

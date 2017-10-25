@@ -29,7 +29,7 @@ namespace JunoSnmp.Test
     [TestFixture]
     class TestOID
     {
-        private OID oID = new OID(SnmpConstants.usmStatsUnknownEngineIDs);
+        private readonly OID oID = new OID(SnmpConstants.usmStatsUnknownEngineIDs);
 
         private static readonly log4net.ILog log = log4net.LogManager
             .GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);

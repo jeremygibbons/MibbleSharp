@@ -23,6 +23,7 @@ namespace JunoSnmp.SMI
 {
     using System;
     using System.IO;
+    using System.Linq;
     using JunoSnmp.ASN1;
     using JunoSnmp.Util;
 
@@ -107,6 +108,7 @@ namespace JunoSnmp.SMI
             this.value = new long[prefixOID.Length + suffixOID.Length];
             System.Array.Copy(prefixOID, 0, this.value, 0, prefixOID.Length);
             System.Array.Copy(suffixOID, 0, this.value, prefixOID.Length, suffixOID.Length);
+            this.value = this.value.Select(i => i & 0xFFFFFFFFL).ToArray();
         }
         
         /// <summary>
@@ -129,6 +131,7 @@ namespace JunoSnmp.SMI
             this.value = new long[prefixOID.Length + 1];
             System.Array.Copy(prefixOID, 0, this.value, 0, prefixOID.Length);
             this.value[prefixOID.Length] = suffixID;
+            this.value = this.value.Select(i => i & 0xFFFFFFFFL).ToArray();
         }
 
         /// <summary>
@@ -613,10 +616,10 @@ namespace JunoSnmp.SMI
         {
             if (arr == null)
             {
-                throw new ArgumentNullException("OID value must not be set to null");
+                throw new ArgumentNullException("arr", "OID value must not be set to null");
             }
 
-            this.value = arr;
+            this.value = arr.Select(i => i & 0xFFFFFFFFL).ToArray();
         }
 
         /// <summary>
@@ -662,7 +665,7 @@ namespace JunoSnmp.SMI
         {
             long[] newValue = new long[this.value.Length + 1];
             System.Array.Copy(this.value, 0, newValue, 0, this.value.Length);
-            newValue[this.value.Length] = subID;
+            newValue[this.value.Length] = subID & 0xFFFFFFFFL;
             this.value = newValue;
             return this;
         }
@@ -894,16 +897,17 @@ namespace JunoSnmp.SMI
         {
             if (rawOID == null)
             {
-                throw new ArgumentNullException();
+                throw new ArgumentNullException("rawOID");
             }
 
             if (rawOID.Length < offset + length)
             {
-                throw new ArgumentOutOfRangeException();
+                throw new ArgumentOutOfRangeException("rawOID");
             }
 
             this.value = new long[length];
             System.Array.Copy(rawOID, offset, this.value, 0, length);
+            this.value = this.value.Select(i => i & 0xFFFFFFFFL).ToArray();
         }
     }
 }

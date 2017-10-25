@@ -82,6 +82,11 @@ namespace JunoSnmp.Transport
             {
                 return listenAddress;
             }
+
+            set
+            {
+                listenAddress = value;
+            }
         }
 
         public void setListenAddress(A listenAddress)
@@ -176,6 +181,10 @@ namespace JunoSnmp.Transport
                 get
                 {
                     return dummyTransport.receiverAddress;
+                }
+                set
+                {
+                    dummyTransport.receiverAddress = value;
                 }
 
             }

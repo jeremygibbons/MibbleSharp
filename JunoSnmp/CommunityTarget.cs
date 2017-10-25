@@ -112,7 +112,7 @@ namespace JunoSnmp
         {
             get
             {
-                return Security.SecurityLevel.NoAuthNoPriv;
+                return base.SecurityLevel;
             }
 
             set

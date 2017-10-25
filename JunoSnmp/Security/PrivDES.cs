@@ -22,7 +22,9 @@
 namespace JunoSnmp.Security
 {
     using System;
+    using System.IO;
     using System.Runtime.Serialization;
+    using System.Security.Cryptography;
     using JunoSnmp.SMI;
 
     /// <summary>
@@ -40,7 +42,8 @@ namespace JunoSnmp.Security
         /// </summary>
         private static readonly OID protocolOid = new OID("1.3.6.1.6.3.10.1.2.2");
 
-        private static readonly string PROTOCOL_ID = "DES/CBC/NoPadding";
+        //private static readonly string PROTOCOL_ID = "DES/CBC/NoPadding";
+        private static readonly string PROTOCOL_ID = "DES";
         private static readonly string PROTOCOL_CLASS = "DES";
         private static readonly int DECRYPT_PARAMS_LENGTH = 8;
         private static readonly int INIT_VECTOR_LENGTH = 8;
@@ -116,8 +119,21 @@ namespace JunoSnmp.Security
 
             try
             {
+                DES des = new DESCryptoServiceProvider();
+
                 // now do CBC encryption of the plaintext
-                encryptedData = DoEncryptWithPadding(encryptionKey, iv, unencryptedData, offset, length);
+                byte[] key = GetValidSizedKey(des, encryptionKey);
+                using (MemoryStream ms = new MemoryStream())
+                {
+                    using (CryptoStream encStream = new CryptoStream(ms, des.CreateEncryptor(key, iv), CryptoStreamMode.Write))
+                    {
+                        encStream.Write(unencryptedData, offset, length);
+                    }
+                    encryptedData = ms.ToArray();
+                }
+
+                        
+                //encryptedData = DoEncryptWithPadding(encryptionKey, iv, unencryptedData, offset, length);
             }
             catch (Exception e)
             {
@@ -132,6 +148,7 @@ namespace JunoSnmp.Security
             {
                 log.Debug("Encryption finished.");
             }
+
             return encryptedData;
         }
 

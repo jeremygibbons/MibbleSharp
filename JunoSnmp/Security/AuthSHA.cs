@@ -31,12 +31,12 @@ namespace JunoSnmp.Security
     /// </summary>
     public class AuthSHA : AuthGeneric
     {
-        private static readonly OID Id = new OID(SnmpConstants.usmHMACSHAAuthProtocol);
+        public static readonly OID Id = new OID(SnmpConstants.usmHMACSHAAuthProtocol);
 
         /// <summary>
         /// Initializes a new instance of the <see cref="AuthSHA"/> class.
         /// </summary>
-        public AuthSHA() : base("SHA-1", 20)
+        public AuthSHA() : base("SHA1", 20)
         {
         }
 

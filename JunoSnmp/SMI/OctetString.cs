@@ -234,9 +234,9 @@ namespace JunoSnmp.SMI
         /// </summary>
         /// <param name="o">The object to compare to</param>
         /// <returns>True if the two objects are identical <see cref="OctetString"/>s, false if not</returns>
-        public bool Equals(OctetString os)
+        public bool Equals(OctetString other)
         {
-            return Enumerable.SequenceEqual(this.value, os.value);
+            return Enumerable.SequenceEqual(this.value, other.value);
         }
 
         /**
@@ -295,9 +295,14 @@ namespace JunoSnmp.SMI
          */
         public OctetString Substring(int beginIndex, int endIndex)
         {
-            if ((beginIndex < 0) || (endIndex > this.Length))
+            if (beginIndex < 0)
             {
-                throw new ArgumentOutOfRangeException();
+                throw new ArgumentOutOfRangeException("beginIndex", "beginIndex may not be negative.");
+            }
+
+            if (endIndex > this.Length)
+            {
+                throw new ArgumentOutOfRangeException("endIndex", "endIndex may not be greater than the size of the string");
             }
 
             byte[] substring = new byte[endIndex - beginIndex];
@@ -530,14 +535,14 @@ namespace JunoSnmp.SMI
             this.SetValue(Encoding.UTF8.GetBytes(val));
         }
 
-        public void SetValue(byte[] value)
+        public void SetValue(byte[] val)
         {
-            if (value == null)
+            if (val == null)
             {
                 throw new ArgumentException(
                     "OctetString must not be assigned a null value");
             }
-            this.value = value;
+            this.value = val;
         }
 
         public byte[] GetValue()

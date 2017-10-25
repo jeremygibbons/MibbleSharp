@@ -71,9 +71,9 @@ namespace JunoSnmp.SMI
             return (o is UdpAddress) && base.Equals(o);
         }
 
-        public bool Equals(UdpAddress u)
+        public bool Equals(UdpAddress other)
         {
-            return base.Equals(u);
+            return base.Equals(other);
         }
 
         public override int GetHashCode()

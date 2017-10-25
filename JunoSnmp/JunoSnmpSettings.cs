@@ -40,31 +40,6 @@ namespace JunoSnmp
         public static readonly int JunoSnmpEnterpriseID = 48056;
 
         /// <summary>
-        /// By default allow worth of ~2MB memory for engine ID cache.
-        /// </summary>
-        private static int maxEngineIdCacheSize = 50000;
-
-        /// <summary>
-        /// Specifies whether JunoSnmp can be extended by custom implementations of
-        /// security protocols, transport mappings, address types, SMI syntaxes, etc.
-        /// through property files defined via System properties.
-        /// If set to <c>false</c> all classes JunoSnmp is aware of will be
-        /// used hard coded which speeds up initialization and is required to use
-        /// JunoSnmp in a secure environment where System properties are not available
-        /// </summary>
-        private static bool extensibilityEnabled = false;
-
-        /// <summary>
-        /// By default JunoSnmp catches runtime exceptions at thread
-        /// boundaries of API controlled threads. In JunoSnmp such a thread runs in each
-        /// <see cref="TransportMapping"/> and in each <see cref="Snmp"/> session object. To ensure
-        /// robust runtime behavior, unexpected runtime exceptions are caught and
-        /// logged. If you need to localize and debug such exceptions then set this
-        /// value to <c>true</c>.
-        /// </summary>
-        private static volatile bool forwardRuntimeExceptions = false;
-
-        /// <summary>
         /// By default JunoSnmp uses <see cref="Task"/> instances to run
         /// concurrent tasks. For environments with restricted thread management,
         /// a custom thread factory can be used.
@@ -91,63 +66,6 @@ namespace JunoSnmp
         /// </summary>        
         private static IVariableTextFormat variableTextFormat =
             new SimpleVariableTextFormat();
-
-        /// <summary>
-        /// The default Thread join timeout, used for example by the
-        /// <see cref="DefaultThreadFactory"/>, defines the maximum time to wait for a
-        /// Thread running a worker task to end that task (end join the main thread
-        /// if that Thread has been exclusively used for that task). The default value
-        /// is 60 seconds (1 min.).
-        /// </summary>
-        private static long threadJoinTimeout = 60000;
-
-        /// <summary>
-        /// This setting can used to be compatible with some faulty SNMP implementations
-        /// which send Counter64 objects with SNMP v1 PDUs.
-        /// </summary>
-        private static bool allowSNMPv2InV1 = false;
-
-        /// <summary>
-        /// Suppress GETBULK sending. Instead use GETNEXT. This option may be useful in environments
-        /// with buggy devices which support SNMP v2c or v3 but do not support the mandatory GETBULK PDU type.
-        /// </summary>
-        private static bool noGetBulk = false;
-
-        /// <summary><para>
-        /// This flag enables or disables (default) whether REPORT PDUs should be send by
-        /// a command responder with securityLevel <see cref="JunoSnmp.Security.SecurityLevel.NoAuthNoPriv"/>
-        /// if otherwise the command generator would not able to receive the <see cref="PDU.REPORT"/>.
-        /// RFC 3412 §7.6.2.3 requires that the securityLevel is the same as in the confirmed class
-        /// PDU if not explicitly otherwise specified.
-        /// </para><para>
-        /// For <see cref="SnmpConstants.usmStatsUnsupportedSecLevels"/> reports, this would
-        /// always render the command responder unable to return the report.
-        /// </para><para>
-        /// Setting this flag to <see cref="ReportSecurityLevelOption.noAuthNoPrivIfNeeded"/>
-        /// reactivates the behavior of SNMP4J prior to v2.2 which sends out the reports with
-        /// <see cref="JunoSnmp.Security.SecurityLevel.NoAuthNoPriv"/> if otherwise, the report would
-        /// not be sent out.
-        /// </para></summary>
-        private static ReportSecurityLevelOption reportSecurityLevelStrategy = ReportSecurityLevelOption.standard;
-
-        /// <summary>
-        /// The enterprise ID that is used to build SNMP engine IDs and other enterprise
-        /// specific OIDs.This value should be changed by API users from other enterprises (companies or
-        /// organizations).
-        /// </summary>
-        private static int enterpriseID = JunoSnmpEnterpriseID;
-
-        /// <summary>
-        /// The snmp4jStatistics value defines the level of statistic values that are collected
-        /// in extension to those collected for the SNMP standard.
-        /// </summary>
-        private static JunoSnmpStatistics junoSnmpStatistics = JunoSnmpStatistics.basic;
-
-        /// <summary>
-        /// The checkUsmUserPassphraseLength specifies whether the minimum USM passphrase length should be
-        /// checked when creating UsmUser instances(RFC3414 §11.2). Default is yes.
-        /// </summary>
-        private static bool checkUsmUserPassphraseLength = true;
 
         /// <summary>
         /// Specifies the how the security level of retry requests after a REPORT PDU is
@@ -206,35 +124,24 @@ namespace JunoSnmp
         /// </para></summary>
         public static bool ExtensibilityEnabled
         {
-            get
-            {
-                return JunoSnmpSettings.extensibilityEnabled;
-            }
-
-            set
-            {
-                JunoSnmpSettings.extensibilityEnabled = value;
-            }
-        }
+            get;
+            set;
+        } = false;
 
         /// <summary>
         /// Gets or sets a value indicating whether to forward runtime exceptions.
-        /// If <c>true</c>, runtime exceptions are thrown on thread boundaries
-        /// controlled by JunoSnmp and related APIs
-        /// </summary>
-        /// <remarks>Default is false</remarks>
+        /// By default JunoSnmp catches runtime exceptions at thread
+        /// boundaries of API controlled threads. In JunoSnmp such a thread runs in each
+        /// <see cref="TransportMapping"/> and in each <see cref="Snmp"/> session object. To ensure
+        /// robust runtime behavior, unexpected runtime exceptions are caught and
+        /// logged. If you need to localize and debug such exceptions then set this
+        /// value to <c>true</c>. 
+        /// <summary>
         public static bool ForwardRuntimeExceptions
         {
-            get
-            {
-                return JunoSnmpSettings.forwardRuntimeExceptions;
-            }
-
-            set
-            {
-                JunoSnmpSettings.forwardRuntimeExceptions = value;
-            }
-        }
+            get;
+            set;
+        } = false;
 
         /// <summary>
         /// Gets or sets the TaskFactory used to create new threads
@@ -254,33 +161,12 @@ namespace JunoSnmp
             {
                 if (value == null)
                 {
-                    throw new ArgumentNullException();
+                    throw new ArgumentNullException("value", "Task Factory cannot be null");
                 }
 
                 JunoSnmpSettings.taskFactory = value;
             }
         }
-
-        /// <summary>
-        /// Gets or sets the timer factory.
-        /// </summary>
-        //public static TimerFactory TimerFactory
-        //{
-        //    get
-        //    {
-        //        return JunoSnmpSettings.timerFactory;
-        //    }
-
-        //    set
-        //    {
-        //        if (value == null)
-        //        {
-        //            throw new ArgumentNullException();
-        //        }
-
-        //        JunoSnmpSettings.timerFactory = value;
-        //    }
-        //}
 
         /// <summary>
         /// Gets or sets the OID text format for textual representation of OIDs.
@@ -296,7 +182,7 @@ namespace JunoSnmp
             {
                 if (value == null)
                 {
-                    throw new ArgumentNullException();
+                    throw new ArgumentNullException("value", "OIDTextFormat cannot be null");
                 }
 
                 JunoSnmpSettings.oidTextFormat = value;
@@ -318,70 +204,64 @@ namespace JunoSnmp
             {
                 if (value == null)
                 {
-                    throw new ArgumentNullException();
+                    throw new ArgumentNullException("value", "VariableTextFormat cannot be null");
                 }
 
                 JunoSnmpSettings.variableTextFormat = value;
             }
         }
-        
+
         /// <summary>
-        /// Gets or sets the thread join timeout used to join threads if no explicit timeout
-        /// is set.
+        /// Gets or sets the default Thread join timeout, used for example by the
+        /// <see cref="DefaultThreadFactory"/>, defines the maximum time to wait for a
+        /// Thread running a worker task to end that task (end join the main thread
+        /// if that Thread has been exclusively used for that task). The default value
+        /// is 60 seconds (1 min.).
         /// </summary>
         /// <remarks>
         /// Timeout value is given in milliseconds
         /// </remarks>
         public static long ThreadJoinTimeout
         {
-            get
-            {
-                return JunoSnmpSettings.threadJoinTimeout;
-            }
-
-            set
-            {
-                JunoSnmpSettings.threadJoinTimeout = value;
-            }
-        }
+            get;
+            set;
+        } = 60000;
 
         /// <summary>
         /// Gets or sets a value indicating whether to disable SNMP Standard conformity. This
-        /// provides for Counter64 usage in SNMP v1 PDUs and
-        /// the ability to decode SNMP v2 traps in SNMP v1 version PDUs.
+        /// provides for Counter64 usage in SNMP v1 PDUs and the ability to decode SNMP v2 
+        /// traps in SNMP v1 version PDUs.
         /// </summary>
         /// <remarks>Default is false (do not allow non-compliant behaviors). This setting is meant 
         /// to help deal with buggy Snmp implementations which use v2 features in v1 PDUs
         /// </remarks>
         public static bool AllowSNMPv2InV1
         {
-            get
-            {
-                return JunoSnmpSettings.allowSNMPv2InV1;
-            }
+            get;
+            set;
+        } = false;
 
-            set
-            {
-                JunoSnmpSettings.allowSNMPv2InV1 = value;
-            }
-        }
-
-        /// <summary>
-        /// Gets or sets the ReportSecurityLevel strategy
-        /// </summary>
+        /// <summary><para>
+        /// Gets or sets a value indicating whether to enable or disable (default) whether REPORT PDUs should 
+        /// be sent by a command responder with securityLevel <see cref="JunoSnmp.Security.SecurityLevel.NoAuthNoPriv"/>
+        /// if otherwise the command generator would not able to receive the <see cref="PDU.REPORT"/>.
+        /// RFC 3412 §7.6.2.3 requires that the securityLevel is the same as in the confirmed class
+        /// PDU if not explicitly otherwise specified.
+        /// </para><para>
+        /// For <see cref="SnmpConstants.usmStatsUnsupportedSecLevels"/> reports, this would
+        /// always render the command responder unable to return the report.
+        /// </para><para>
+        /// Setting this flag to <see cref="ReportSecurityLevelOption.noAuthNoPrivIfNeeded"/>
+        /// reactivates the behavior of SNMP4J prior to v2.2 which sends out the reports with
+        /// <see cref="JunoSnmp.Security.SecurityLevel.NoAuthNoPriv"/> if otherwise, the report would
+        /// not be sent out.
+        /// </para></summary>
         public static ReportSecurityLevelOption ReportSecurityLevelStrategy
         {
-            get
-            {
-                return JunoSnmpSettings.reportSecurityLevelStrategy;
-            }
+            get;
+            set;
+        } = JunoSnmpSettings.ReportSecurityLevelOption.standard;
 
-            set
-            {
-                JunoSnmpSettings.reportSecurityLevelStrategy = value;
-            }
-        }
-        
         /// <summary>
         /// Gets or sets a value indicating whether to suppress use of GetBulk. Instead use GETNEXT.
         /// This option may be useful in environments with buggy devices which support SNMP v2c 
@@ -390,17 +270,10 @@ namespace JunoSnmp
         /// <remarks>Default is False (use of GetBulk is allowed)</remarks>
         public static bool NoGetBulk
         {
-            get
-            {
-                return JunoSnmpSettings.noGetBulk;
-            }
+            get;
+            set;
+        } = false;
 
-            set
-            {
-                JunoSnmpSettings.noGetBulk = value;
-            }
-        }
-        
         /// <summary>
         /// Gets or sets the enterprise OID used for creating SNMP engine IDs and other enterprise
         /// specific identifiers.
@@ -411,17 +284,10 @@ namespace JunoSnmp
         /// </remarks>
         public static int EnterpriseID
         {
-            get
-            {
-                return JunoSnmpSettings.enterpriseID;
-            }
+            get;
+            set;
+        } = JunoSnmpEnterpriseID;
 
-            set
-            {
-                JunoSnmpSettings.enterpriseID = value;
-            }
-        }        
-        
         /// <summary>
         /// Gets or sets the maximum number of engine IDs to be hold in the cache of the <see cref="MPv3"/>.
         /// A upper limit is necessary to avoid DoS attacks with unconfirmed SNMP v3 PDUs. 
@@ -431,32 +297,20 @@ namespace JunoSnmp
         /// </remarks>
         public static int MaxEngineIdCacheSize
         {
-            get
-            {
-                return JunoSnmpSettings.maxEngineIdCacheSize;
-            }
-
-            set
-            {
-                JunoSnmpSettings.maxEngineIdCacheSize = value;
-            }
-        }
+            get;
+            set;
+        } = 50000;
 
         /// <summary>
         /// Gets or sets the JunoSnmp statistics level.
+        /// The JunoSnmpStatistics value defines the level of statistic values that are collected
+        /// in extension to those collected for the SNMP standard.
         /// </summary>
         public static JunoSnmpStatistics JunoSnmpStatisticsLevel
         {
-            get
-            {
-                return JunoSnmpSettings.junoSnmpStatistics;
-            }
-
-            set
-            {
-                JunoSnmpSettings.junoSnmpStatistics = value;
-            }
-        }
+            get;
+            set;
+        } = JunoSnmpStatistics.basic;
 
         /// <summary>
         /// Gets or sets a value indicating whether the minimum USM passphrase length should be
@@ -465,15 +319,8 @@ namespace JunoSnmp
         /// <remarks>Default is True.</remarks>
         public static bool CheckUsmUserPassphraseLength
         {
-            get
-            {
-                return JunoSnmpSettings.checkUsmUserPassphraseLength;
-            }
-
-            set
-            {
-                JunoSnmpSettings.checkUsmUserPassphraseLength = value;
-            }
-        }
+            get;
+            set;
+        } = true;
     }
 }

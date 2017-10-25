@@ -146,7 +146,8 @@ namespace JunoSnmp.Security
 
             using (SymmetricAlgorithm sa = SymmetricAlgorithm.Create(protocolId))
             {
-                sa.Key = decryptionKey;
+                byte[] key = GetValidSizedKey(sa, decryptionKey);
+                sa.Key = key;
                 sa.IV = iv;
 
                 // Create a decrytor to perform the stream transform.
@@ -163,6 +164,36 @@ namespace JunoSnmp.Security
                     }
                 }
             }
+        }
+
+        protected byte[] GetValidSizedKey(SymmetricAlgorithm sa, byte[] inputKey)
+        {
+            int keySizeBytes = 0;
+            int decKeySizeBits = inputKey.Length * 8;
+            KeySizes[] ks = sa.LegalKeySizes;
+            foreach (KeySizes k in ks)
+            {
+                if (decKeySizeBits == k.MinSize
+                    || decKeySizeBits == k.MaxSize
+                    || (decKeySizeBits > k.MinSize
+                        && decKeySizeBits < k.MaxSize
+                        && (decKeySizeBits - k.MinSize) % k.SkipSize == 0))
+                {
+                    keySizeBytes = inputKey.Length;
+                }
+            }
+
+            if (keySizeBytes == 0)
+            {
+                //Key is too long, trim it.
+                //TODO: This needs to be reworked...
+                decKeySizeBits = ks[0].MinSize;
+                keySizeBytes = decKeySizeBits / 8;
+            }
+
+            byte[] key = new byte[keySizeBytes];
+            Array.Copy(inputKey, key, keySizeBytes);
+            return key;
         }
 
         public abstract byte[] Encrypt(byte[] unencryptedData, int offset, int length, byte[] encryptionKey, long engineBoots, long engineTime, DecryptParams decryptParams);

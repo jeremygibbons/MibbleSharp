@@ -44,13 +44,13 @@ namespace JunoSnmp.SMI
         /// <summary>
         /// Set this address' value from a supplied string
         /// </summary>
-        /// <param name="address">A string containing the address</param>
-        public abstract void SetValue(string address);
+        /// <param name="val">A string containing the address</param>
+        public abstract void SetValue(string val);
 
         /// <summary>
         /// Set this address' value from a supplied byte array
         /// </summary>
-        /// <param name="address">A byte array representing an address</param>
-        public abstract void SetValue(byte[] address);
+        /// <param name="val">A byte array representing an address</param>
+        public abstract void SetValue(byte[] val);
     }
 }

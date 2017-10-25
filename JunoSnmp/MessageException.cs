@@ -34,7 +34,6 @@ namespace JunoSnmp
     /// </summary>
     public class MessageException : IOException
     {
-        public StatusInformation StatusInfo { get; set; }
         private readonly int junoSnmpErrorStatus;
 
         /// <summary>
@@ -51,7 +50,7 @@ namespace JunoSnmp
         /// <param name="status">A <see cref="StatusInformation"/> instance</param>
         public MessageException(StatusInformation status) : base(string.Empty + status.ErrorIndication)
         {
-            this.StatusInfo = status;
+            StatusInformation = status;
         }
 
         /// <summary>
@@ -89,6 +88,15 @@ namespace JunoSnmp
         public MessageException(string message, int junoSnmpErrorStatus, Exception innerException) : base(message, innerException)
         {   
             this.junoSnmpErrorStatus = junoSnmpErrorStatus;
+        }
+
+        /// <summary>
+        /// Gets or sets the status information for this exception
+        /// </summary>
+        public StatusInformation StatusInformation
+        {
+            get;
+            set;
         }
 
         /// <summary>

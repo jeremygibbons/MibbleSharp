@@ -287,6 +287,12 @@ namespace JunoSnmp.Transport
             return actualListenAddress;
         }
 
+        public override UdpAddress ListenAddress
+        {
+            get;
+            set;
+        }
+
         /**
          * If receiving new datagrams fails with a {@link SocketException}, this method is called to renew the
          * socket - if possible.

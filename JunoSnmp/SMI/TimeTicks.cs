@@ -32,10 +32,7 @@ namespace JunoSnmp.SMI
     /// </summary>
     public class TimeTicks : UnsignedInteger32
     {
-
-        private static readonly string FormatPattern =
-          "{0,choice,0#|1#1 day, |1<{0,number,integer} days, }" +
-          "{1,number,integer}:{2,number,00}:{3,number,00}.{4,number,00}";
+        private static readonly string FormatPattern = "{0}:{1:00}:{2:00}.{3:00}";
         private static readonly int[] FormatFactors = { 24 * 60 * 60 * 100, 60 * 60 * 100, 60 * 100, 100, 1 };
 
         public TimeTicks()
@@ -70,9 +67,9 @@ namespace JunoSnmp.SMI
             }
         }
 
-        public override void EncodeBER(Stream os)
+        public override void EncodeBER(Stream outputStream)
         {
-            BER.EncodeUnsignedInteger(os, BER.TIMETICKS, base.GetValue());
+            BER.EncodeUnsignedInteger(outputStream, BER.TIMETICKS, base.GetValue());
         }
 
         public override void DecodeBER(BERInputStream inputStream)
@@ -107,17 +104,17 @@ namespace JunoSnmp.SMI
          *    (b) matches the format {@link FORMAT_PATTERN}.
          * @since 2.1.2
          */
-        public override void SetValue(string value)
+        public override void SetValue(string val)
         {
             try
             {
-                long v = long.Parse(value);
+                long v = long.Parse(val);
                 this.SetValue(v);
             }
             catch (FormatException)
             {
                 long v = 0;
-                string[] num = value.Split(new string[] { "days :", "\\." }, StringSplitOptions.RemoveEmptyEntries);
+                string[] num = val.Split(new string[] { "days :", "\\." }, StringSplitOptions.RemoveEmptyEntries);
                 int i = 0;
                 foreach (string n in num)
                 {
@@ -161,14 +158,17 @@ namespace JunoSnmp.SMI
 
             hseconds = tt;
 
-            long[] values = new long[5];
-            values[0] = days;
-            values[1] = hours;
-            values[2] = minutes;
-            values[3] = seconds;
-            values[4] = hseconds;
+            string res = "";
+            if (days == 1)
+            {
+                res += "1 day, ";
+            }
+            else if(days > 1)
+            {
+                res += days + " days, ";
+            }
 
-            return string.Format(pattern, values);
+            return res + string.Format(pattern, hours, minutes, seconds, hseconds);
         }
 
         /**

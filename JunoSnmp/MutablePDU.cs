@@ -29,15 +29,22 @@ namespace JunoSnmp
     /// </summary>
     public class MutablePDU : ISerializable
     {
-        public PDU Pdu { get; set; }
-
         /// <summary>
         /// Initializes a new instance of the <see cref="MutablePDU"/> class.
         /// </summary>
         public MutablePDU()
         {
         }
-        
+
+        /// <summary>
+        /// Gets or sets the PDU property.
+        /// </summary>
+        public PDU Pdu
+        {
+            get;
+            set;
+        }
+
         /// <summary>
         /// Writes this object to a stream for serialization
         /// </summary>
