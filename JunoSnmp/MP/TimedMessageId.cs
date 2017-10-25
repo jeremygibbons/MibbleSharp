@@ -29,7 +29,7 @@ namespace JunoSnmp.MP
     /// </summary>
     public class TimedMessageID : SimpleMessageID
     {
-        private long creationNanoTime;
+        private readonly long creationNanoTime;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="TimedMessageID"/> class.

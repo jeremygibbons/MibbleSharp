@@ -32,10 +32,10 @@ namespace JunoSnmp.MP
     /// </summary>
     public class StatusInformation : ISerializable
     {
-        private VariableBinding errorIndication;
-        private byte[] contextName;
-        private byte[] contextEngineID;
-        private SecurityLevel securityLevel;
+        public VariableBinding ErrorIndication { get; set; }
+        public byte[] ContextName { get; set; }
+        public byte[] ContextEngineID { get; set; }
+        public SecurityLevel SecurityLevel { get; set; }
 
         public StatusInformation()
         {
@@ -47,72 +47,20 @@ namespace JunoSnmp.MP
             byte[] contextEngineID,
             SecurityLevel securityLevel)
         {
-            this.errorIndication = errorIndication;
-            this.contextName = contextName;
-            this.contextEngineID = contextEngineID;
-            this.securityLevel = securityLevel;
+            this.ErrorIndication = errorIndication;
+            this.ContextName = contextName;
+            this.ContextEngineID = contextEngineID;
+            this.SecurityLevel = securityLevel;
         }
-
-        public VariableBinding ErrorIndication
-        {
-            get
-            {
-                return this.errorIndication;
-            }
-
-            set
-            {
-                this.errorIndication = value;
-            }
-        }
-
-        public byte[] ContextName
-        {
-            get
-            {
-                return this.contextName;
-            }
-
-            set
-            {
-                this.contextName = value;
-            }
-        }
-
-        public byte[] ContextEngineID
-        {
-            get
-            {
-                return this.contextEngineID;
-            }
-
-            set
-            {
-                this.contextEngineID = value;
-            }
-        }
-
-        public SecurityLevel SecurityLevel
-        {
-            get
-            {
-                return this.securityLevel;
-            }
-
-            set
-            {
-                this.securityLevel = value;
-            }
-        }
-
+        
         public override string ToString()
         {
-            if (this.errorIndication == null)
+            if (this.ErrorIndication == null)
             {
                 return "noError";
             }
 
-            return this.errorIndication.ToString();
+            return this.ErrorIndication.ToString();
         }
 
         public void GetObjectData(SerializationInfo info, StreamingContext context)

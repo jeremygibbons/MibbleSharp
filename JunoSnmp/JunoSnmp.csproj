@@ -92,13 +92,17 @@
     <Compile Include="Event\CounterSupport.cs" />
     <Compile Include="Event\EngineChangeEventArgs.cs" />
     <Compile Include="Event\IncomingMessageEventArgs.cs" />
-    <Compile Include="Event\ResponseEvent.cs" />
+    <Compile Include="Event\ResponseEventArgs.cs" />
+    <Compile Include="Event\RetrievalEventArgs.cs" />
+    <Compile Include="Event\TableEventArgs.cs" />
     <Compile Include="Event\TransportStateEventArgs.cs" />
+    <Compile Include="Event\TreeEventArgs.cs" />
     <Compile Include="Event\UsmUserChangeEventArgs.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="ICertifiedIdentity.cs" />
     <Compile Include="ICommandResponder.cs" />
     <Compile Include="IMessageDispatcher.cs" />
+    <Compile Include="ISession.cs" />
     <Compile Include="ITarget.cs" />
     <Compile Include="ITimeoutModel.cs" />
     <Compile Include="ITransportMapping.cs" />
@@ -140,6 +144,7 @@
     <Compile Include="Security\ISecurityProtocol.cs" />
     <Compile Include="Security\ISecurityStateReference.cs" />
     <Compile Include="Security\NonStandard\INonStandardSecurityProtocol.cs" />
+    <Compile Include="Security\Priv3DES.cs" />
     <Compile Include="Security\PrivacyGeneric.cs" />
     <Compile Include="Security\PrivAES.cs" />
     <Compile Include="Security\PrivAES128.cs" />
@@ -195,6 +200,12 @@
     <Compile Include="SMI\VariableBinding.cs" />
     <Compile Include="SMI\VariantVariable.cs" />
     <Compile Include="SMI\IVariantVariableCallback.cs" />
+    <Compile Include="Tools\Console\SnmpRequest.cs" />
+    <Compile Include="Util\Table\DenseTableRequest.cs" />
+    <Compile Include="Util\Table\Row.cs" />
+    <Compile Include="Util\Table\TableRequest.cs" />
+    <Compile Include="Util\Table\TableUtils.cs" />
+    <Compile Include="Util\Tree\TreeUtils.cs" />
     <Content Include="Snmp.cs" />
     <Compile Include="Test\TestBER.cs" />
     <Compile Include="Test\TestCounter64.cs" />
@@ -213,6 +224,7 @@
     <Compile Include="Transport\TransportMappings.cs" />
     <Compile Include="Transport\UdpTransportMapping.cs" />
     <Compile Include="UserTarget.cs" />
+    <Compile Include="Util\AbstractSnmpUtility.cs" />
     <Compile Include="Util\ICommonTimer.cs" />
     <Compile Include="Util\IOIDTextFormat.cs" />
     <Compile Include="Util\ParseException.cs" />

@@ -668,10 +668,10 @@ namespace JunoSnmp.MP
                     {
                         if (log.IsDebugEnabled)
                         {
-                            log.Debug("Adding previous message IDs " + existing.getMessageIDs() + " to new entry " + entry);
+                            log.Debug("Adding previous message IDs " + existing.GetMessageIDs() + " to new entry " + entry);
                         }
 
-                        entry.addMessageIDs(existing.getMessageIDs());
+                        entry.AddMessageIDs(existing.GetMessageIDs());
                     }
                     else if (log.IsDebugEnabled)
                     {

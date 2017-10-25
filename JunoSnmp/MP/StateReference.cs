@@ -36,26 +36,28 @@ namespace JunoSnmp.MP
  * @author Frank Fock
  * @version 2.0
  */
-    public class StateReference : ISerializable
+    public class StateReference : ISerializable, IEquatable<StateReference>
     {
 
-        private IAddress address;
-        private ITransportMapping<IAddress> transportMapping;
-        private byte[] contextEngineID;
-        private byte[] contextName;
-        private SecurityModel.SecurityModelID securityModel;
-        private byte[] securityName;
-        private SecurityLevel securityLevel;
-        private ISecurityStateReference securityStateReference;
-        private IMessageId msgID;
-        private int maxSizeResponseScopedPDU;
-        private int msgFlags;
-        private PduHandle pduHandle;
-        private byte[] securityEngineID;
-        private int errorCode = 0;
+        public IAddress Address { get; set; }
+        public ITransportMapping<IAddress> TransportMapping { get; set; }
+        public byte[] ContextEngineID { get; set; }
+        public byte[] ContextName { get; set; }
+        public SecurityModel.SecurityModelID SecurityModel { get; set; }
+        public byte[] SecurityName { get; set; }
+        public SecurityLevel SecurityLevel { get; set; }
+        public ISecurityStateReference SecurityStateReference { get; set; }
+        public IMessageId MsgID { get; set; }
+        public int MaxSizeResponseScopedPDU { get; set;}
+        public int MsgFlags { get; set; }
+        public byte[] SecurityEngineID { get; set; }
+        public int ErrorCode { get; set; } = 0;
+
         protected List<IMessageId> retryMsgIDs;
+
         private int matchedMsgID;
         private long responseRuntimeNanos;
+        private PduHandle pduHandle;
 
         /**
          * Default constructor.
@@ -135,168 +137,37 @@ namespace JunoSnmp.MP
                               ISecurityStateReference secStateReference,
                               int errorCode)
         {
-            this.msgID = CreateMessageID(msgID);
-            this.msgFlags = msgFlags;
-            this.maxSizeResponseScopedPDU = maxSizeResponseScopedPDU;
-            this.pduHandle = pduHandle;
-            this.address = peerAddress;
-            this.transportMapping = peerTransport;
-            this.securityEngineID = secEngineID;
-            this.securityModel = secModel;
-            this.securityName = secName;
-            this.securityLevel = secLevel;
-            this.contextEngineID = contextEngineID;
-            this.contextName = contextName;
-            this.securityStateReference = secStateReference;
-            this.errorCode = errorCode;
+            this.MsgID = CreateMessageID(msgID);
+            this.MsgFlags = msgFlags;
+            this.MaxSizeResponseScopedPDU = maxSizeResponseScopedPDU;
+            this.PDUHandle = pduHandle;
+            this.Address = peerAddress;
+            this.TransportMapping = peerTransport;
+            this.SecurityEngineID = secEngineID;
+            this.SecurityModel = secModel;
+            this.SecurityName = secName;
+            this.SecurityLevel = secLevel;
+            this.ContextEngineID = contextEngineID;
+            this.ContextName = contextName;
+            this.SecurityStateReference = secStateReference;
+            this.ErrorCode = errorCode;
         }
 
-        public bool isReportable()
+        public bool IsReportable()
         {
-            return ((msgFlags & 0x04) > 0);
+            return ((this.MsgFlags & 0x04) > 0);
         }
-
-        public IAddress Address
-        {
-            get
-            {
-                return this.address;
-            }
-
-            set
-            {
-                this.address = value;
-            }
-        }
-
-        public byte[] ContextEngineID
-        {
-            get
-            {
-                return contextEngineID;
-            }
-
-            set
-            {
-                this.contextEngineID = value;
-            }
-        }
-
-        public byte[] ContextName
-        {
-            get
-            {
-                return contextName;
-            }
-
-            set
-            {
-                this.contextName = value;
-            }
-        }
-
-        public SecurityModel.SecurityModelID SecurityModel
-        {
-            get
-            {
-                return this.securityModel;
-            }
-
-            set
-            {
-                this.securityModel = value;
-            }
-        }
-
-        public byte[] SecurityName
-        {
-            get
-            {
-                return securityName;
-            }
-
-            set
-            {
-                this.securityName = value;
-            }
-        }
-
-        public SecurityLevel SecurityLevel
-        {
-            get
-            {
-                return securityLevel;
-            }
-
-            set
-            {
-                this.securityLevel = value;
-            }
-        }
-
-        public ISecurityStateReference SecurityStateReference
-        {
-            get
-            {
-                return securityStateReference;
-            }
-
-            set
-            {
-                this.securityStateReference = value;
-            }
-        }
-
+        
         public void SetMsgID(int msgID)
         {
-            this.msgID = CreateMessageID(msgID);
+            this.MsgID = CreateMessageID(msgID);
         }
-
-        public IMessageId MsgID
+        
+        public PduHandle PDUHandle
         {
             get
             {
-                return msgID;
-            }
-
-            set
-            {
-                this.msgID = value;
-            }
-        }
-
-        public int MsgFlags
-        {
-            get
-            {
-                return msgFlags;
-            }
-
-            set
-            {
-                this.msgFlags = value;
-            }
-        }
-
-        public int MaxSizeResponseScopedPDU
-        {
-            get
-            {
-                return maxSizeResponseScopedPDU;
-            }
-
-            set
-            {
-                this.maxSizeResponseScopedPDU = value;
-            }
-        }
-
-
-        public PduHandle PduHandle
-        {
-            get
-            {
-                return pduHandle;
+                return this.pduHandle;
             }
 
             set
@@ -306,57 +177,15 @@ namespace JunoSnmp.MP
             }
         }
 
-        public byte[] SecurityEngineID
-        {
-            get
-            {
-                return securityEngineID;
-            }
-
-            set
-            {
-                this.securityEngineID = value;
-            }
-        }
-
-
-        public int ErrorCode
-        {
-            get
-            {
-                return errorCode;
-            }
-
-            set
-            {
-                this.errorCode = value;
-            }
-        }
-
-
-        public ITransportMapping<IAddress> TransportMapping
-        {
-            get
-            {
-                return transportMapping;
-            }
-
-            set
-            {
-                this.transportMapping = value;
-            }
-        }
-
         protected void UpdateRequestStatisticsPduHandle(PduHandle pduHandle)
         {
-            if (pduHandle is IRequestStatistics)
+            if (pduHandle is IRequestStatistics rs)
             {
-                IRequestStatistics requestStatistics = (IRequestStatistics)pduHandle;
-                requestStatistics.TotalMessagesSent = 1 + ((retryMsgIDs != null) ? retryMsgIDs.Count : 0);
-                requestStatistics.ResponseRuntimeNanos = responseRuntimeNanos;
-                if (msgID.MessageId == matchedMsgID)
+                rs.TotalMessagesSent = 1 + ((retryMsgIDs != null) ? retryMsgIDs.Count : 0);
+                rs.ResponseRuntimeNanos = responseRuntimeNanos;
+                if (MsgID.MessageId == matchedMsgID)
                 {
-                    requestStatistics.IndexOfMessageResponded = 0;
+                    rs.IndexOfMessageResponded = 0;
                 }
                 else if (retryMsgIDs != null)
                 {
@@ -365,9 +194,10 @@ namespace JunoSnmp.MP
                     {
                         if (mid.MessageId == matchedMsgID)
                         {
-                            requestStatistics.IndexOfMessageResponded = index;
+                            rs.IndexOfMessageResponded = index;
                             break;
                         }
+
                         index++;
                     }
                 }
@@ -376,18 +206,18 @@ namespace JunoSnmp.MP
 
         protected bool IsMatchingMessageID(IMessageId msgID)
         {
-            return ((this.msgID == msgID) ||
+            return ((this.MsgID == msgID) ||
                     ((retryMsgIDs != null) && (retryMsgIDs.Contains(msgID))));
         }
 
         public bool IsMatchingMessageID(int msgID)
         {
-            if (this.msgID.MessageId == msgID)
+            if (this.MsgID.MessageId == msgID)
             {
                 matchedMsgID = msgID;
-                if (this.msgID is TimedMessageID)
+                if (this.MsgID is TimedMessageID tmid)
                 {
-                    responseRuntimeNanos = DateTime.Now.Ticks - ((TimedMessageID)this.msgID).CreationNanoTime;
+                    responseRuntimeNanos = DateTime.Now.Ticks - tmid.CreationNanoTime;
                 }
             }
             else if (retryMsgIDs != null)
@@ -397,9 +227,9 @@ namespace JunoSnmp.MP
                     if (retryMsgID.MessageId == msgID)
                     {
                         matchedMsgID = msgID;
-                        if (this.msgID is TimedMessageID)
+                        if (this.MsgID is TimedMessageID tmid)
                         {
-                            responseRuntimeNanos = DateTime.Now.Ticks - ((TimedMessageID)this.msgID).CreationNanoTime;
+                            responseRuntimeNanos = DateTime.Now.Ticks - tmid.CreationNanoTime;
                         }
 
                         break;
@@ -407,69 +237,76 @@ namespace JunoSnmp.MP
                 }
             }
 
-            UpdateRequestStatisticsPduHandle(pduHandle);
+            UpdateRequestStatisticsPduHandle(this.PDUHandle);
             return (matchedMsgID == msgID);
         }
 
         public override bool Equals(object o)
         {
-            if (o is StateReference) {
-                StateReference other = (StateReference)o;
-                return ((IsMatchingMessageID(other.msgID) ||
-                         ((other.retryMsgIDs != null) && (other.retryMsgIDs.Contains(msgID)))) &&
-                        EqualsExceptMsgID(other));
+            if (o is StateReference other) {
+                return this.Equals(other);
             }
+
             return false;
+        }
+
+        public bool Equals(StateReference that)
+        {
+            return ((this.IsMatchingMessageID(that.MsgID)
+                || ((that.retryMsgIDs != null) && (that.retryMsgIDs.Contains(this.MsgID)))) &&
+                        this.EqualsExceptMsgID(that));
         }
 
         public bool EqualsExceptMsgID(StateReference other)
         {
-            return (((pduHandle == null) && (other.pduHandle == null)) ||
-                     (pduHandle != null) && (pduHandle.Equals(other.PduHandle)) &&
-                    (Array.Equals(securityEngineID, other.securityEngineID)) &&
-                    (securityModel.Equals(other.securityModel)) &&
-                    (Array.Equals(securityName, other.securityName)) &&
-                    (securityLevel == other.securityLevel) &&
-                    (Array.Equals(contextEngineID, other.contextEngineID)) &&
-                    (Array.Equals(contextName, other.contextName)));
+            return (((this.PDUHandle == null) && (other.PDUHandle == null)) ||
+                     (this.PDUHandle != null) && (this.PDUHandle.Equals(other.PDUHandle)) &&
+                    (Array.Equals(SecurityEngineID, other.SecurityEngineID)) &&
+                    (SecurityModel.Equals(other.SecurityModel)) &&
+                    (Array.Equals(SecurityName, other.SecurityName)) &&
+                    (SecurityLevel == other.SecurityLevel) &&
+                    (Array.Equals(ContextEngineID, other.ContextEngineID)) &&
+                    (Array.Equals(ContextName, other.ContextName)));
         }
 
         public override int GetHashCode()
         {
-            return msgID.MessageId;
+            return MsgID.MessageId;
         }
 
         public override string ToString()
         {
-            return "StateReference[msgID=" + msgID + ",pduHandle=" + pduHandle +
-                ",securityEngineID=" + OctetString.FromByteArray(securityEngineID) +
-                ",securityModel=" + securityModel +
-                ",securityName=" + OctetString.FromByteArray(securityName) +
-                ",securityLevel=" + securityLevel +
-                ",contextEngineID=" + OctetString.FromByteArray(contextEngineID) +
-                ",contextName=" + OctetString.FromByteArray(contextName) +
+            return "StateReference[msgID=" + this.MsgID + ",pduHandle=" + this.PDUHandle +
+                ",securityEngineID=" + OctetString.FromByteArray(SecurityEngineID) +
+                ",securityModel=" + this.SecurityModel +
+                ",securityName=" + OctetString.FromByteArray(SecurityName) +
+                ",securityLevel=" + this.SecurityLevel +
+                ",contextEngineID=" + OctetString.FromByteArray(ContextEngineID) +
+                ",contextName=" + OctetString.FromByteArray(ContextName) +
                 ",retryMsgIDs=" + retryMsgIDs + "]";
         }
 
         [MethodImpl(MethodImplOptions.Synchronized)]
-        public void addMessageIDs(List<IMessageId> msgIDs)
+        public void AddMessageIDs(List<IMessageId> msgIDs)
         {
             if (retryMsgIDs == null)
             {
                 retryMsgIDs = new List<IMessageId>(msgIDs.Count);
             }
+
             retryMsgIDs.AddRange(msgIDs);
         }
 
         [MethodImpl(MethodImplOptions.Synchronized)]
-        public List<IMessageId> getMessageIDs()
+        public List<IMessageId> GetMessageIDs()
         {
             List<IMessageId> msgIDs = new List<IMessageId>(1 + ((retryMsgIDs != null) ? retryMsgIDs.Count : 0));
-            msgIDs.Add(msgID);
+            msgIDs.Add(MsgID);
             if (retryMsgIDs != null)
             {
                 msgIDs.AddRange(retryMsgIDs);
             }
+
             return msgIDs;
         }
 

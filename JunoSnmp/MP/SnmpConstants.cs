@@ -28,7 +28,7 @@ namespace JunoSnmp.MP
     /// The <code>SnmpConstants</code> class holds constants, ObjectIDs and
     /// Message strings used within the library.
     /// </summary>
-    public sealed class SnmpConstants
+    public static class SnmpConstants
     {
         public static readonly int DEFAULT_COMMAND_RESPONDER_PORT = 161;
         public static readonly int DEFAULT_NOTIFICATION_RECEIVER_PORT = 162;
@@ -44,34 +44,34 @@ namespace JunoSnmp.MP
 
         // SNMP error conditions defined (indirectly) by the SNMP standards:
         /** Command responders did not respond within specified timeout interval. */
-        public static readonly int SNMP_ERROR_TIMEOUT = -1;
+        public const int SNMP_ERROR_TIMEOUT = -1;
         /** OIDs returned from a GETNEXT or GETBULK are less or equal than the requested one (which is not allowed by SNMP). */
-        public static readonly int SNMP_ERROR_LEXICOGRAPHIC_ORDER = -2;
+        public const int SNMP_ERROR_LEXICOGRAPHIC_ORDER = -2;
         /** A unresolvable REPORT message was received while processing a request. */
-        public static readonly int SNMP_ERROR_REPORT = -3;
+        public const int SNMP_ERROR_REPORT = -3;
         /** An IOException occurred during request processing. */
-        public static readonly int SNMP_ERROR_IO = -4;
+        public const int SNMP_ERROR_IO = -4;
 
         // SNMP error codes defined by the protocol:
-        public static readonly int SNMP_ERROR_SUCCESS = 0;
-        public static readonly int SNMP_ERROR_TOO_BIG = 1;
-        public static readonly int SNMP_ERROR_NO_SUCH_NAME = 2;
-        public static readonly int SNMP_ERROR_BAD_VALUE = 3;
-        public static readonly int SNMP_ERROR_READ_ONLY = 4;
-        public static readonly int SNMP_ERROR_GENERAL_ERROR = 5;
-        public static readonly int SNMP_ERROR_NO_ACCESS = 6;
-        public static readonly int SNMP_ERROR_WRONG_TYPE = 7;
-        public static readonly int SNMP_ERROR_WRONG_LENGTH = 8;
-        public static readonly int SNMP_ERROR_WRONG_ENCODING = 9;
-        public static readonly int SNMP_ERROR_WRONG_VALUE = 10;
-        public static readonly int SNMP_ERROR_NO_CREATION = 11;
-        public static readonly int SNMP_ERROR_INCONSISTENT_VALUE = 12;
-        public static readonly int SNMP_ERROR_RESOURCE_UNAVAILABLE = 13;
-        public static readonly int SNMP_ERROR_COMMIT_FAILED = 14;
-        public static readonly int SNMP_ERROR_UNDO_FAILED = 15;
-        public static readonly int SNMP_ERROR_AUTHORIZATION_ERROR = 16;
-        public static readonly int SNMP_ERROR_NOT_WRITEABLE = 17;
-        public static readonly int SNMP_ERROR_INCONSISTENT_NAME = 18;
+        public const int SNMP_ERROR_SUCCESS = 0;
+        public const int SNMP_ERROR_TOO_BIG = 1;
+        public const int SNMP_ERROR_NO_SUCH_NAME = 2;
+        public const int SNMP_ERROR_BAD_VALUE = 3;
+        public const int SNMP_ERROR_READ_ONLY = 4;
+        public const int SNMP_ERROR_GENERAL_ERROR = 5;
+        public const int SNMP_ERROR_NO_ACCESS = 6;
+        public const int SNMP_ERROR_WRONG_TYPE = 7;
+        public const int SNMP_ERROR_WRONG_LENGTH = 8;
+        public const int SNMP_ERROR_WRONG_ENCODING = 9;
+        public const int SNMP_ERROR_WRONG_VALUE = 10;
+        public const int SNMP_ERROR_NO_CREATION = 11;
+        public const int SNMP_ERROR_INCONSISTENT_VALUE = 12;
+        public const int SNMP_ERROR_RESOURCE_UNAVAILABLE = 13;
+        public const int SNMP_ERROR_COMMIT_FAILED = 14;
+        public const int SNMP_ERROR_UNDO_FAILED = 15;
+        public const int SNMP_ERROR_AUTHORIZATION_ERROR = 16;
+        public const int SNMP_ERROR_NOT_WRITEABLE = 17;
+        public const int SNMP_ERROR_INCONSISTENT_NAME = 18;
 
         public const int SNMP_MP_OK = 0;
         public const int SNMP_MP_ERROR = -1400;
@@ -385,78 +385,117 @@ namespace JunoSnmp.MP
         public static readonly OID snmpSetSerialNo =
             new OID(new long[] { 1, 3, 6, 1, 6, 3, 1, 1, 6, 1, 0 });
 
-        public static readonly string[] SNMP_TP_ERROR_MESSAGES = {
-      "Request timed out"
-  };
+        private static readonly string[] snmpTpErrorMessages = {
+            "Request timed out"
+        };
 
-        public static readonly string[] SNMP_ERROR_MESSAGES = {
-      "Success",
-      "PDU encoding too big",
-      "No such name",
-      "Bad value",
-      "Variable is read-only",
-      "General variable binding error",
-      "No access",
-      "Wrong type",
-      "Variable binding data with incorrect length",
-      "Variable binding data with wrong encoding",
-      "Wrong value",
-      "Unable to create object",
-      "Inconsistent value",
-      "Resource unavailable",
-      "Commit failed",
-      "Undo failed",
-      "Authorization error",
-      "Not writable",
-      "Inconsistent naming used"
-  };
-        public static string[][] MD_ERROR_MESSAGES = new string[][] {
-      new string [] { string.Empty + SNMP_MD_ERROR, "Message Dispatcher error" },
-      new string [] { string.Empty + SNMP_MD_UNSUPPORTED_MP_MODEL, "Unsupported message processing model" },
-      new string [] { string.Empty + SNMP_MD_UNSUPPORTED_ADDRESS_CLASS, "Unsupported address class" },
-      new string [] { string.Empty + SNMP_MD_UNSUPPORTED_SNMP_VERSION, "Unsupported address class" }
-  };
-
-        public static string[][] MP_ERROR_MESSAGES = new string[][] {
-      new string [] { string.Empty + SNMP_MP_ERROR, "MP error" },
-      new string [] { string.Empty + SNMP_MP_UNSUPPORTED_SECURITY_MODEL, "Unsupported security model" },
-      new string [] { string.Empty + SNMP_MP_NOT_IN_TIME_WINDOW, "Message not in time window"},
-      new string [] { string.Empty + SNMP_MP_DOUBLED_MESSAGE, "Doubled message" },
-      new string [] { string.Empty + SNMP_MP_INVALID_MESSAGE, "Invalid message" },
-      new string [] { string.Empty + SNMP_MP_INVALID_ENGINEID, "Invalid engine ID" },
-      new string [] { string.Empty + SNMP_MP_NOT_INITIALIZED, "MP not initialized" },
-      new string [] { string.Empty + SNMP_MP_PARSE_ERROR, "MP parse error"},
-      new string [] { string.Empty + SNMP_MP_UNKNOWN_MSGID, "Unknown message ID"},
-      new string [] { string.Empty + SNMP_MP_MATCH_ERROR, "MP match error"},
-      new string [] { string.Empty + SNMP_MP_COMMUNITY_ERROR, "MP community error"},
-      new string [] { string.Empty + SNMP_MP_WRONG_USER_NAME, "Wrong user name"},
-      new string [] { string.Empty + SNMP_MP_BUILD_ERROR, "MP build error"},
-      new string [] { string.Empty + SNMP_MP_USM_ERROR, "USM error"},
-      new string [] { string.Empty + SNMP_MP_UNKNOWN_PDU_HANDLERS, "Unknown PDU handles"},
-      new string [] { string.Empty + SNMP_MP_UNAVAILABLE_CONTEXT, "Unavailable context"},
-      new string [] { string.Empty + SNMP_MP_UNKNOWN_CONTEXT, "Unknown context"},
-      new string [] { string.Empty + SNMP_MP_REPORT_SENT, "Report sent"}
-  };
-
-        public static String[][] USM_ERROR_MESSAGES = new string[][]
+        public static string[] SNMP_TP_ERROR_MESSAGES
         {
-      new string [] { string.Empty + SNMPv3_USM_OK, "USM OK" },
-      new string [] { string.Empty + SNMPv3_USM_ERROR, "USM error" },
-      new string [] { string.Empty + SNMPv3_USM_UNSUPPORTED_SECURITY_LEVEL, "Unsupported security level" },
-      new string [] { string.Empty + SNMPv3_USM_UNKNOWN_SECURITY_NAME, "Unknown security name"},
-      new string [] { string.Empty + SNMPv3_USM_ENCRYPTION_ERROR, "Encryption error"},
-      new string [] { string.Empty + SNMPv3_USM_DECRYPTION_ERROR, "Decryption error"},
-      new string [] { string.Empty + SNMPv3_USM_AUTHENTICATION_ERROR, "Authentication error"},
-      new string [] { string.Empty + SNMPv3_USM_AUTHENTICATION_FAILURE, "Authentication failure"},
-      new string [] { string.Empty + SNMPv3_USM_PARSE_ERROR, "USM parse error"},
-      new string [] { string.Empty + SNMPv3_USM_UNKNOWN_ENGINEID, "Unknown engine ID"},
-      new string [] { string.Empty + SNMPv3_USM_NOT_IN_TIME_WINDOW, "Not in time window"},
-      new string [] { string.Empty + SNMPv3_USM_UNSUPPORTED_AUTHPROTOCOL, "Unsupported authentication protocol"},
-      new string [] { string.Empty + SNMPv3_USM_UNSUPPORTED_PRIVPROTOCOL, "Unsupported privacy protocol"},
-      new string [] { string.Empty + SNMPv3_USM_ADDRESS_ERROR, "Address error"},
-      new string [] { string.Empty + SNMPv3_USM_ENGINE_ID_TOO_LONG, "Engine ID too long"},
-      new string [] { string.Empty + SNMPv3_USM_SECURITY_NAME_TOO_LONG, "Security name too long"}
-  };
+            get { return snmpTpErrorMessages; }
+        }
+
+        private static readonly string[] snmpErrorMessages = {
+            "Success",
+            "PDU encoding too big",
+            "No such name",
+            "Bad value",
+            "Variable is read-only",
+            "General variable binding error",
+            "No access",
+            "Wrong type",
+            "Variable binding data with incorrect length",
+            "Variable binding data with wrong encoding",
+            "Wrong value",
+            "Unable to create object",
+            "Inconsistent value",
+            "Resource unavailable",
+            "Commit failed",
+            "Undo failed",
+            "Authorization error",
+            "Not writable",
+            "Inconsistent naming used"
+        };
+
+
+        public static string[] SNMP_ERROR_MESSAGES
+        {
+            get
+            {
+                return snmpErrorMessages;
+            }
+        }
+
+        private static readonly string[][] mdErrorMessages = new string[][] {
+            new string [] { string.Empty + SNMP_MD_ERROR, "Message Dispatcher error" },
+            new string [] { string.Empty + SNMP_MD_UNSUPPORTED_MP_MODEL, "Unsupported message processing model" },
+            new string [] { string.Empty + SNMP_MD_UNSUPPORTED_ADDRESS_CLASS, "Unsupported address class" },
+            new string [] { string.Empty + SNMP_MD_UNSUPPORTED_SNMP_VERSION, "Unsupported address class" }
+        };
+
+        public static string[][] MD_ERROR_MESSAGES
+        {
+            get
+            {
+                return mdErrorMessages;
+            }
+        }
+
+        private static readonly string[][] mpErrorMessages = new string[][] {
+            new string [] { string.Empty + SNMP_MP_ERROR, "MP error" },
+            new string [] { string.Empty + SNMP_MP_UNSUPPORTED_SECURITY_MODEL, "Unsupported security model" },
+            new string [] { string.Empty + SNMP_MP_NOT_IN_TIME_WINDOW, "Message not in time window"},
+            new string [] { string.Empty + SNMP_MP_DOUBLED_MESSAGE, "Doubled message" },
+            new string [] { string.Empty + SNMP_MP_INVALID_MESSAGE, "Invalid message" },
+            new string [] { string.Empty + SNMP_MP_INVALID_ENGINEID, "Invalid engine ID" },
+            new string [] { string.Empty + SNMP_MP_NOT_INITIALIZED, "MP not initialized" },
+            new string [] { string.Empty + SNMP_MP_PARSE_ERROR, "MP parse error"},
+            new string [] { string.Empty + SNMP_MP_UNKNOWN_MSGID, "Unknown message ID"},
+            new string [] { string.Empty + SNMP_MP_MATCH_ERROR, "MP match error"},
+            new string [] { string.Empty + SNMP_MP_COMMUNITY_ERROR, "MP community error"},
+            new string [] { string.Empty + SNMP_MP_WRONG_USER_NAME, "Wrong user name"},
+            new string [] { string.Empty + SNMP_MP_BUILD_ERROR, "MP build error"},
+            new string [] { string.Empty + SNMP_MP_USM_ERROR, "USM error"},
+            new string [] { string.Empty + SNMP_MP_UNKNOWN_PDU_HANDLERS, "Unknown PDU handles"},
+            new string [] { string.Empty + SNMP_MP_UNAVAILABLE_CONTEXT, "Unavailable context"},
+            new string [] { string.Empty + SNMP_MP_UNKNOWN_CONTEXT, "Unknown context"},
+            new string [] { string.Empty + SNMP_MP_REPORT_SENT, "Report sent"}
+        };
+
+        public static string[][] MP_ERROR_MESSAGES
+        {
+            get
+            {
+                return mpErrorMessages;
+            }
+        }
+
+        private static readonly string[][] usmErrorMessages = new string[][]
+        {
+            new string [] { string.Empty + SNMPv3_USM_OK, "USM OK" },
+            new string [] { string.Empty + SNMPv3_USM_ERROR, "USM error" },
+            new string [] { string.Empty + SNMPv3_USM_UNSUPPORTED_SECURITY_LEVEL, "Unsupported security level" },
+            new string [] { string.Empty + SNMPv3_USM_UNKNOWN_SECURITY_NAME, "Unknown security name"},
+            new string [] { string.Empty + SNMPv3_USM_ENCRYPTION_ERROR, "Encryption error"},
+            new string [] { string.Empty + SNMPv3_USM_DECRYPTION_ERROR, "Decryption error"},
+            new string [] { string.Empty + SNMPv3_USM_AUTHENTICATION_ERROR, "Authentication error"},
+            new string [] { string.Empty + SNMPv3_USM_AUTHENTICATION_FAILURE, "Authentication failure"},
+            new string [] { string.Empty + SNMPv3_USM_PARSE_ERROR, "USM parse error"},
+            new string [] { string.Empty + SNMPv3_USM_UNKNOWN_ENGINEID, "Unknown engine ID"},
+            new string [] { string.Empty + SNMPv3_USM_NOT_IN_TIME_WINDOW, "Not in time window"},
+            new string [] { string.Empty + SNMPv3_USM_UNSUPPORTED_AUTHPROTOCOL, "Unsupported authentication protocol"},
+            new string [] { string.Empty + SNMPv3_USM_UNSUPPORTED_PRIVPROTOCOL, "Unsupported privacy protocol"},
+            new string [] { string.Empty + SNMPv3_USM_ADDRESS_ERROR, "Address error"},
+            new string [] { string.Empty + SNMPv3_USM_ENGINE_ID_TOO_LONG, "Engine ID too long"},
+            new string [] { string.Empty + SNMPv3_USM_SECURITY_NAME_TOO_LONG, "Security name too long"}
+        };
+
+        public static string[][] USM_ERROR_MESSAGES
+        {
+            get
+            {
+                return usmErrorMessages;
+            }
+        }
 
         public static string MpErrorMessage(int status)
         {
@@ -512,10 +551,12 @@ namespace JunoSnmp.MP
             {
                 return -1;
             }
+
             if (oid.LeftMostCompare(snmpTraps.Size, snmpTraps) == 0)
             {
                 return oid[oid.Size - 1] - 1;
             }
+
             return -1;
         }
 

@@ -58,7 +58,7 @@ namespace JunoSnmp
          * @throws IOException
          *    if the message could not be send.
          */
-        ResponseEvent Send(PDU pdu, ITarget target);
+        ResponseEventArgs Send(PDU pdu, ITarget target);
 
         /**
          * Asynchronously sends a <code>PDU</code> to the given target. The response
@@ -113,7 +113,7 @@ namespace JunoSnmp
          * @throws IOException
          *    if the message could not be send.
          */
-        ResponseEvent Send(PDU pdu, ITarget target,
+        ResponseEventArgs Send(PDU pdu, ITarget target,
                                   ITransportMapping<IAddress> transport);
 
         /**

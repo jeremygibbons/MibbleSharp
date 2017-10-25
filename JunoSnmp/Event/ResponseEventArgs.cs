@@ -24,6 +24,8 @@ namespace JunoSnmp.Event
     using System;
     using JunoSnmp.SMI;
 
+    public delegate void ResponseHandler(object o, ResponseEventArgs args);
+
     /**
  * <code>ResponseEvent</code> associates a request PDU with the corresponding
  * response and an optional user object.
@@ -31,14 +33,13 @@ namespace JunoSnmp.Event
  * @author Frank Fock
  * @version 1.1
  */
-    public class ResponseEvent
+    public class ResponseEventArgs : EventArgs
     {
         private IAddress peerAddress;
         private PDU request;
         private PDU response;
         private object userObject;
-        private Exception error;
-        private object source;
+        private readonly Exception error;
 
         /**
          * Creates an <code>ResponseEvent</code> instance.
@@ -53,8 +54,7 @@ namespace JunoSnmp.Event
          * @param userObject
          *    an optional user object.
          */
-        public ResponseEvent(
-            object source,
+        public ResponseEventArgs(
             IAddress peerAddress,
             PDU request,
             PDU response,
@@ -64,7 +64,6 @@ namespace JunoSnmp.Event
             this.Request = request;
             this.Response = response;
             this.UserObject = userObject;
-            this.Source = source;
         }
 
         /**
@@ -83,27 +82,13 @@ namespace JunoSnmp.Event
          * @param error
          *    an <code>Exception</code>.
          */
-        public ResponseEvent(object source,
-                             IAddress peerAddress,
+        public ResponseEventArgs(IAddress peerAddress,
                              PDU request, PDU response,
                              object userObject,
                              Exception error)
-            : this(source, peerAddress, request, response, userObject)
+            : this(peerAddress, request, response, userObject)
         {
             this.error = error;
-        }
-
-        public object Source
-        {
-            get
-            {
-                return this.source;
-            }
-
-            set
-            {
-                this.source = value;
-            }
         }
 
         /**

@@ -28,23 +28,10 @@ namespace JunoSnmp.MP
     public class MutableStateReference
     {
 
-        private StateReference stateReference;
+        public StateReference StateReference { get; set; }
 
         public MutableStateReference()
         {
-        }
-
-        public StateReference StateReference
-        {
-            get
-            {
-                return this.stateReference;
-            }
-
-            set
-            {
-                this.stateReference = value;
-            }
         }
     }
 }
