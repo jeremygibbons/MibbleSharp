@@ -61,6 +61,7 @@ namespace JunoSnmp.Security
             base.initVectorLength = INIT_VECTOR_LENGTH;
             base.protocolId = PROTOCOL_ID;
             base.protocolClass = PROTOCOL_CLASS;
+            this.paddingMode = System.Security.Cryptography.PaddingMode.None;
             base.keyBytes = KEY_LENGTH;
             this.salt = Salt.GetInstance();
         }

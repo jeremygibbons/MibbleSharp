@@ -42,6 +42,9 @@ namespace JunoSnmp.Security
 
         protected string protocolId;
         protected string protocolClass;
+        protected PaddingMode paddingMode;
+        protected CipherMode cipherMode;
+        protected int feedbackSize = 0;
         protected int keyBytes;
         protected Salt salt;
         protected int initVectorLength;
@@ -86,9 +89,15 @@ namespace JunoSnmp.Security
         {
             using (SymmetricAlgorithm sa = SymmetricAlgorithm.Create(protocolId))
             {
+                if (this.feedbackSize > 0)
+                {
+                    sa.FeedbackSize = this.feedbackSize;
+                }
+
+                sa.Padding = this.paddingMode;
+                sa.Mode = this.cipherMode;
                 sa.Key = encryptionKey;
                 sa.IV = initVect;
-
                 // Create a decrytor to perform the stream transform.
                 ICryptoTransform encryptor = sa.CreateEncryptor(sa.Key, sa.IV);
 
@@ -100,7 +109,15 @@ namespace JunoSnmp.Security
                         csEncrypt.Write(unencryptedData, offset, length);
                     }
 
-                    return msEncrypt.ToArray();
+                    byte[] encryptedBytes = msEncrypt.ToArray();
+                    if (encryptionKey.Length == length)
+                    {
+                        return encryptedBytes;
+                    }
+
+                    byte[] result = new byte[length];
+                    Array.Copy(encryptedBytes, result, length);
+                    return result;
                 }
             }
         }
@@ -147,6 +164,14 @@ namespace JunoSnmp.Security
             using (SymmetricAlgorithm sa = SymmetricAlgorithm.Create(protocolId))
             {
                 byte[] key = GetValidSizedKey(sa, decryptionKey);
+
+                if (this.feedbackSize > 0)
+                {
+                    sa.FeedbackSize = this.feedbackSize;
+                }
+
+                sa.Padding = this.paddingMode;
+                sa.Mode = this.cipherMode;
                 sa.Key = key;
                 sa.IV = iv;
 

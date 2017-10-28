@@ -141,7 +141,7 @@ namespace JunoSnmp.MP
                 securityLevel,
                 pdu,
                 false,
-                stateReference.PduHandle,
+                stateReference.PDUHandle,
                 null,
                 outgoingMessage,
                 null);

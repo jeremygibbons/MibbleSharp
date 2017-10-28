@@ -199,7 +199,7 @@ namespace JunoSnmp.Security
         [MethodImpl(MethodImplOptions.Synchronized)]
         public void AddAuthenticationProtocol(IAuthenticationProtocol auth)
         {
-            if (authProtocols[auth.ID] == null)
+            if (authProtocols.ContainsKey(auth.ID) == false)
             {
                 authProtocols.Add(auth.ID, auth);
                 if (auth.HashLength > maxAuthDigestLength)
@@ -250,7 +250,7 @@ namespace JunoSnmp.Security
         [MethodImpl(MethodImplOptions.Synchronized)]
         public void AddPrivacyProtocol(IPrivacyProtocol priv)
         {
-            if (privProtocols[priv.ID] == null)
+            if (privProtocols.ContainsKey(priv.ID) == false)
             {
                 privProtocols.Add(priv.ID, priv);
                 if (priv.DecryptParamsLength > maxPrivDecryptParamsLength)

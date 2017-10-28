@@ -79,7 +79,7 @@ namespace JunoSnmp.Security
             DecryptParams decryptParams);
 
         /// <summary>
-        /// Encrypts a message using a given encryption key, engine boots count, and
+        /// Decrypts a message using a given encryption key, engine boots count, and
         /// engine ID.
         /// </summary>
         /// <param name="cryptedData">

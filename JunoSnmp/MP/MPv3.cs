@@ -649,11 +649,11 @@ namespace JunoSnmp.MP
                 }
 
                 StateReference existing = null;
-                bool result = entries.TryGetValue(entry.PduHandle, out existing);
+                bool result = entries.TryGetValue(entry.PDUHandle, out existing);
                 if (result)
                 {
                     // reassign handle for comparison:
-                    existing.PduHandle = entry.PduHandle;
+                    existing.PDUHandle = entry.PDUHandle;
                     if (existing.Equals(entry))
                     {
                         if (log.IsDebugEnabled)
@@ -661,7 +661,7 @@ namespace JunoSnmp.MP
                             log.Debug("Doubled message: " + entry);
                         }
                         // clear it again to remove strong self-reference
-                        existing.PduHandle = null;
+                        existing.PDUHandle = null;
                         return SnmpConstants.SNMP_MP_DOUBLED_MESSAGE;
                     }
                     else if (existing.EqualsExceptMsgID(entry))
@@ -678,13 +678,14 @@ namespace JunoSnmp.MP
                         log.Debug("New entry does not match existing, although request ID is the same " + entry + " != " + existing);
                     }
                     // clear it again to remove strong self-reference
-                    existing.PduHandle = null;
+                    existing.PDUHandle = null;
                 }
+
                 // add it
-                PduHandle key = entry.PduHandle;
+                PduHandle key = entry.PDUHandle;
                 // because we are using a weak hash map for the cache, we need to null out
                 // our key from the entry.
-                entry.PduHandle = null;
+                entry.PDUHandle = null;
                 entries.Add(key, entry);
                 return SnmpConstants.SNMP_MP_OK;
             }
@@ -734,7 +735,7 @@ namespace JunoSnmp.MP
                     {
                         log.Debug("Removed cache entry: " + e);
                     }
-                    e.PduHandle = p;
+                    e.PDUHandle = p;
                     return e;
                 }
 
@@ -1489,7 +1490,7 @@ namespace JunoSnmp.MP
                 stateReference.SecurityLevel = securityLevel;
                 stateReference.SecurityModel = securityModel;
                 stateReference.SecurityStateReference = secStateReference;
-                stateReference.PduHandle = sendPduHandle;
+                stateReference.PDUHandle = sendPduHandle;
 
                 if (status != SnmpConstants.SNMPv3_USM_OK)
                 {
@@ -1565,9 +1566,9 @@ namespace JunoSnmp.MP
                             log.Debug("RFC3412 §7.2.10 - Received PDU (msgID=" +
                                          header.MsgID+ ") is a response or " +
                                          "an internal class message. PduHandle.transactionID = " +
-                                         cacheEntry.PduHandle.TransactionID);
+                                         cacheEntry.PDUHandle.TransactionID);
                         }
-                        sendPduHandle.CopyFrom(cacheEntry.PduHandle);
+                        sendPduHandle.CopyFrom(cacheEntry.PDUHandle);
 
                         if (scopedPdu.Type == PDU.REPORT)
                         {

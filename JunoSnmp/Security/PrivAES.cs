@@ -37,7 +37,7 @@ namespace JunoSnmp.Security
     {
 
         //private static readonly string PROTOCOL_ID = "AES/CFB/NoPadding";
-        private static readonly string PROTOCOL_ID = "Aes";
+        private static readonly string PROTOCOL_ID = "Rijndael";
         private static readonly string PROTOCOL_CLASS = "AES";
         private static readonly int DECRYPT_PARAMS_LENGTH = 8;
         private static readonly int INIT_VECTOR_LENGTH = 16;
@@ -58,6 +58,9 @@ namespace JunoSnmp.Security
             this.initVectorLength = PrivAES.INIT_VECTOR_LENGTH;
             this.protocolId = PrivAES.PROTOCOL_ID;
             this.protocolClass = PrivAES.PROTOCOL_CLASS;
+            this.paddingMode = System.Security.Cryptography.PaddingMode.Zeros;
+            this.cipherMode = System.Security.Cryptography.CipherMode.CFB;
+            this.feedbackSize = 128;
             if ((keyBytes != 16) && (keyBytes != 24) && (keyBytes != 32))
             {
                 throw new ArgumentException(
@@ -113,8 +116,7 @@ namespace JunoSnmp.Security
 
             // allocate space for encrypted text
             byte[] encryptedData = null;
-            try
-            {
+            
                 encryptedData = DoEncrypt(encryptionKey, initVect, unencryptedData, offset, length);
 
                 if (log.IsDebugEnabled)
@@ -129,11 +131,6 @@ namespace JunoSnmp.Security
                     log.Debug("aes encrypt: encrypted Data  " +
                                  AsHex(encryptedData));
                 }
-            }
-            catch (Exception e)
-            {
-                log.Error("Encrypt Exception " + e);
-            }
 
             return encryptedData;
         }
@@ -166,6 +163,17 @@ namespace JunoSnmp.Security
             if (log.IsDebugEnabled)
             {
                 log.Debug("initVect is " + PrivAES.AsHex(initVect));
+            }
+
+            if(cryptedData.Length % this.keyBytes != 0)
+            {
+                int div = cryptedData.Length / this.keyBytes;
+                byte[] buf = new byte[(div + 1) * this.keyBytes];
+                Array.Copy(cryptedData, buf, cryptedData.Length);
+                byte[] data = DoDecrypt(buf, offset, length, decryptionKey, initVect);
+                byte[] result = new byte[cryptedData.Length];
+                Array.Copy(data, result, cryptedData.Length);
+                return result;
             }
 
             return DoDecrypt(cryptedData, offset, length, decryptionKey, initVect);

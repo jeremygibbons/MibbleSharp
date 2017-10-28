@@ -102,7 +102,6 @@
     <Compile Include="ICertifiedIdentity.cs" />
     <Compile Include="ICommandResponder.cs" />
     <Compile Include="IMessageDispatcher.cs" />
-    <Compile Include="ISession.cs" />
     <Compile Include="ITarget.cs" />
     <Compile Include="ITimeoutModel.cs" />
     <Compile Include="ITransportMapping.cs" />
@@ -201,12 +200,7 @@
     <Compile Include="SMI\VariableBinding.cs" />
     <Compile Include="SMI\VariantVariable.cs" />
     <Compile Include="SMI\IVariantVariableCallback.cs" />
-    <Compile Include="Tools\Console\SnmpRequest.cs" />
-    <Compile Include="Util\Table\DenseTableRequest.cs" />
     <Compile Include="Util\Table\Row.cs" />
-    <Compile Include="Util\Table\TableRequest.cs" />
-    <Compile Include="Util\Table\TableUtils.cs" />
-    <Compile Include="Util\Tree\TreeUtils.cs" />
     <Content Include="Snmp.cs" />
     <Compile Include="Test\TestAuthSHA1.cs" />
     <Compile Include="Test\TestBER.cs" />
@@ -232,7 +226,6 @@
     <Compile Include="Transport\TransportMappings.cs" />
     <Compile Include="Transport\UdpTransportMapping.cs" />
     <Compile Include="UserTarget.cs" />
-    <Compile Include="Util\AbstractSnmpUtility.cs" />
     <Compile Include="Util\ICommonTimer.cs" />
     <Compile Include="Util\IOIDTextFormat.cs" />
     <Compile Include="Util\ParseException.cs" />
@@ -250,7 +243,9 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Log\" />
+    <Folder Include="Tools\Console\" />
     <Folder Include="Transport\SSH\" />
+    <Folder Include="Util\Tree\" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
