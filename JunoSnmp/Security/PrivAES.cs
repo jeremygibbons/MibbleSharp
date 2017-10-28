@@ -35,8 +35,8 @@ namespace JunoSnmp.Security
     /// </summary>
     public abstract class PrivAES : PrivacyGeneric, IPrivacyProtocol
     {
-
-        //private static readonly string PROTOCOL_ID = "AES/CFB/NoPadding";
+        // Must use Rijndael implementation as AES CryptoServiceProvider does not
+        // seem to support CFB / No-Padding
         private static readonly string PROTOCOL_ID = "Rijndael";
         private static readonly string PROTOCOL_CLASS = "AES";
         private static readonly int DECRYPT_PARAMS_LENGTH = 8;
@@ -58,6 +58,10 @@ namespace JunoSnmp.Security
             this.initVectorLength = PrivAES.INIT_VECTOR_LENGTH;
             this.protocolId = PrivAES.PROTOCOL_ID;
             this.protocolClass = PrivAES.PROTOCOL_CLASS;
+
+            // Per RFC 3826, no padding should be needed. In practice, using
+            // PaddingMode.None does not seem to work. The workaround is to use Padding.Zeros
+            // and add / remove padding as needed so the AES implementation is happy.
             this.paddingMode = System.Security.Cryptography.PaddingMode.Zeros;
             this.cipherMode = System.Security.Cryptography.CipherMode.CFB;
             this.feedbackSize = 128;
