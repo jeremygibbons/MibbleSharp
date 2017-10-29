@@ -23,13 +23,9 @@
 namespace JunoSnmp.Security
 {
     using System;
-    using System.Collections.Generic;
     using System.IO;
-    using System.Linq;
     using System.Runtime.Serialization;
     using System.Security.Cryptography;
-    using System.Text;
-    using System.Threading.Tasks;
     using JunoSnmp.SMI;
 
     /// <summary>
@@ -118,41 +114,6 @@ namespace JunoSnmp.Security
                     byte[] result = new byte[length];
                     Array.Copy(encryptedBytes, result, length);
                     return result;
-                }
-            }
-        }
-
-
-
-        protected byte[] DoEncryptWithPadding(byte[] encryptionKey, byte[] initVect, byte[] unencryptedData, int offset, int length)
-        {
-            if (length % 8 == 0)
-            {
-                return DoEncrypt(encryptionKey, initVect, unencryptedData, offset, length);
-            }
-
-            using (SymmetricAlgorithm sa = SymmetricAlgorithm.Create(protocolId))
-            {
-                sa.Key = encryptionKey;
-                sa.IV = initVect;
-
-                // Create a decrytor to perform the stream transform.
-                ICryptoTransform encryptor = sa.CreateEncryptor(sa.Key, sa.IV);
-
-                if (log.IsDebugEnabled)
-                {
-                    log.Debug("Using padding.");
-                }
-
-                // Create the streams used for encryption. 
-                using (MemoryStream msEncrypt = new MemoryStream())
-                {
-                    using (CryptoStream csEncrypt = new CryptoStream(msEncrypt, encryptor, CryptoStreamMode.Write))
-                    {
-                        csEncrypt.Write(unencryptedData, offset, length);
-                    }
-
-                    return msEncrypt.ToArray();
                 }
             }
         }
