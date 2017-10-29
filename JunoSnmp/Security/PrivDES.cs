@@ -40,7 +40,7 @@ namespace JunoSnmp.Security
         /// <summary>
         /// Unique ID of this privacy protocol.
         /// </summary>
-        private static readonly OID protocolOid = new OID("1.3.6.1.6.3.10.1.2.2");
+        public static readonly OID protocolOid = new OID("1.3.6.1.6.3.10.1.2.2");
 
         private static readonly string PROTOCOL_ID = "DES";
         private static readonly string PROTOCOL_CLASS = "DES";

@@ -32,7 +32,7 @@ namespace JunoSnmp.Security
     /// </summary>
     public class AuthMD5 : AuthGeneric
     {
-        private static readonly OID Id = new OID(SnmpConstants.usmHMACMD5AuthProtocol);
+        public static readonly OID Id = new OID(SnmpConstants.usmHMACMD5AuthProtocol);
 
         /// <summary>
         /// Initializes a new instance of the <see cref="AuthMD5"/> class.

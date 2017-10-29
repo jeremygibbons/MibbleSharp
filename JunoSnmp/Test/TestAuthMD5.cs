@@ -12,7 +12,7 @@
 //    See the License for the specific language governing permissions and
 //    limitations under the License.</para>
 //    <para>
-//    Original Java code from Snmp4J Copyright (C) 2003-2016 Frank Fock and 
+//    Original Java code from Snmp4J Copyright (C) 2003-2017 Frank Fock and 
 //    Jochen Katz (SNMP4J.org). All rights reserved.
 //    </para><para>
 //    C# conversion Copyright (c) 2017 Jeremy Gibbons. All rights reserved

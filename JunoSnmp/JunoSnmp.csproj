@@ -157,6 +157,7 @@
     <Compile Include="Security\SecurityModels.cs" />
     <Compile Include="Security\SecurityProtocols.cs" />
     <Compile Include="Security\SNMPv3SecurityModel.cs" />
+    <Compile Include="Test\TestPriv3DES.cs" />
     <Compile Include="Test\TestAuthHMAC192SHA256.cs" />
     <Compile Include="Security\TSM.cs" />
     <Compile Include="Security\TsmSecurityParameters.cs" />

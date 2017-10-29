@@ -44,9 +44,9 @@ namespace JunoSnmp.Security
         /**
          * Unique ID of this privacy protocol.
          */
-        private static readonly OID protocolOid = new OID(SnmpConstants.usm3DESEDEPrivProtocol);
+        public static readonly OID protocolOid = new OID(SnmpConstants.usm3DESEDEPrivProtocol);
 
-        private static readonly string PROTOCOL_ID = "DESede/CBC/NoPadding";
+        private static readonly string PROTOCOL_ID = "TripleDES";
         private static readonly string PROTOCOL_CLASS = "DESede";
         private static readonly int DECRYPT_PARAMS_LENGTH = 8;
         private static readonly int INIT_VECTOR_LENGTH = 8;
@@ -61,6 +61,7 @@ namespace JunoSnmp.Security
             base.initVectorLength = INIT_VECTOR_LENGTH;
             base.protocolId = PROTOCOL_ID;
             base.protocolClass = PROTOCOL_CLASS;
+            this.cipherMode = System.Security.Cryptography.CipherMode.CBC;
             this.paddingMode = System.Security.Cryptography.PaddingMode.None;
             base.keyBytes = KEY_LENGTH;
             this.salt = Salt.GetInstance();
@@ -121,10 +122,24 @@ namespace JunoSnmp.Security
 
             byte[] encryptedData = null;
 
+            // Use only first 24 bytes of key
+            byte[] key = new byte[24];
+            Buffer.BlockCopy(encryptionKey, 0, key, 0, key.Length);
+
             try
             {
                 // now do CBC encryption of the plaintext
-                encryptedData = DoEncryptWithPadding(encryptionKey, iv, unencryptedData, offset, length);
+                if ((length % 8) == 0)
+                {
+                    encryptedData = DoEncrypt(key, iv, unencryptedData, offset, length);
+                }
+                else
+                {
+                    byte[] paddedData = new byte[8 * ((length / 8) + 1)];
+                    Buffer.BlockCopy(unencryptedData, offset, paddedData, 0, length);
+                    encryptedData = DoEncrypt(key, iv, paddedData, offset, paddedData.Length);
+                }
+                    
             }
             catch (Exception e)
             {
@@ -177,7 +192,11 @@ namespace JunoSnmp.Security
                 iv[i] = (byte)(decryptionKey[KEY_LENGTH + i] ^ decryptParams.Array[i]);
             }
 
-            byte[] decryptedData = DoDecrypt(cryptedData, offset, length, decryptionKey, iv);
+            // Use only first 24 bytes of key
+            byte[] key = new byte[24];
+            Buffer.BlockCopy(decryptionKey, 0, key, 0, key.Length);
+
+            byte[] decryptedData = DoDecrypt(cryptedData, offset, length, key, iv);
             return decryptedData;
         }
 
