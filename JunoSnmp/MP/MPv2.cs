@@ -75,7 +75,7 @@ namespace JunoSnmp.MP
         }
 
         public override int PrepareOutgoingMessage(IAddress transportAddress,
-                                          int maxMessageSize,
+                                          int maxMsgSize,
                                           MessageProcessingModels messageProcessingModel,
                                           SecurityModel.SecurityModelID securityModel,
                                           byte[] securityName,
@@ -129,7 +129,7 @@ namespace JunoSnmp.MP
         }
 
         public override int PrepareResponseMessage(MessageProcessingModels messageProcessingModel,
-                                          int maxMessageSize,
+                                          int maxMsgSize,
                                           SecurityModel.SecurityModelID securityModel,
                                           byte[] securityName,
                                           SecurityLevel securityLevel,
@@ -140,7 +140,7 @@ namespace JunoSnmp.MP
                                           BEROutputStream outgoingMessage)
         {
             return PrepareOutgoingMessage(stateReference.Address,
-                                          maxMessageSize,
+                                          maxMsgSize,
                                           messageProcessingModel,
                                           securityModel,
                                           securityName,

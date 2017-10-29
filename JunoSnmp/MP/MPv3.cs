@@ -185,7 +185,7 @@ namespace JunoSnmp.MP
 
             if (secProtocols == null)
             {
-                throw new ArgumentNullException();
+                throw new ArgumentNullException("secProtocols");
             }
 
             securityProtocols = secProtocols;
@@ -194,7 +194,7 @@ namespace JunoSnmp.MP
 
             if (counterSupport == null)
             {
-                throw new ArgumentNullException();
+                throw new ArgumentNullException("counterSupport");
             }
 
             this.counterSupport = counterSupport;
@@ -462,9 +462,9 @@ namespace JunoSnmp.MP
             
         }
 
-        public override bool IsProtocolVersionSupported(int version)
+        public override bool IsProtocolVersionSupported(int snmpProtocolVersion)
         {
-            return (version == SnmpConstants.version3);
+            return (snmpProtocolVersion == SnmpConstants.version3);
         }
 
         /**
@@ -581,16 +581,16 @@ namespace JunoSnmp.MP
          */
         protected class CacheEntry : StateReference
         {
-            int msgID;
-            long transactionID;
-            byte[] secEngineID;
-            SecurityModel secModel;
-            byte[] secName;
-            SecurityLevel secLevel;
-            byte[] contextEngineID;
-            byte[] contextName;
-            ISecurityStateReference secStateReference;
-            int errorCode;
+            readonly int msgID;
+            readonly long transactionID;
+            readonly byte[] secEngineID;
+            readonly SecurityModel secModel;
+            readonly byte[] secName;
+            readonly SecurityLevel secLevel;
+            readonly byte[] contextEngineID;
+            readonly byte[] contextName;
+            readonly ISecurityStateReference secStateReference;
+            readonly int errorCode;
 
             public CacheEntry(int msgID,
                               long reqID,
@@ -625,7 +625,7 @@ namespace JunoSnmp.MP
         {
             //TODO: this should be a weakreference-based collection
             ////private ConditionalWeakTable<PduHandle, StateReference> entries = new ConditionalWeakTable<PduHandle, StateReference>();
-            private Dictionary<PduHandle, StateReference> entries = new Dictionary<PduHandle, StateReference>();
+            private readonly Dictionary<PduHandle, StateReference> entries = new Dictionary<PduHandle, StateReference>();
             /**
              * Adds a <code>StateReference</code> to the cache.
              * The <code>PduHandle</code> of the supplied entry will be set to
@@ -721,7 +721,7 @@ namespace JunoSnmp.MP
                 foreach (PduHandle ph in entries.Keys)
                 {
                     bool result = entries.TryGetValue(ph, out e);
-                    if ((e != null) && (e.IsMatchingMessageID(msgID)))
+                    if (result == true && (e != null) && (e.IsMatchingMessageID(msgID)))
                     {
                         p = ph;
                         break;
@@ -754,9 +754,9 @@ namespace JunoSnmp.MP
             public static readonly byte FLAG_AUTH = 0x01;
             public static readonly byte FLAG_PRIV = 0x02;
 
-            Integer32 msgID = new Integer32(0);
-            Integer32 msgMaxSize = new Integer32(int.MaxValue);
-            OctetString msgFlags = new OctetString(new byte[1]);
+            readonly Integer32 msgID = new Integer32(0);
+            readonly Integer32 msgMaxSize = new Integer32(int.MaxValue);
+            readonly OctetString msgFlags = new OctetString(new byte[1]);
             SecurityModel.SecurityModelID securityModel = JunoSnmp.Security.SecurityModel.SecurityModelID.SECURITY_MODEL_ANY;
 
             public int MsgID
@@ -929,7 +929,7 @@ namespace JunoSnmp.MP
         }
 
         public override int PrepareOutgoingMessage(IAddress transportAddress,
-                                          int maxMessageSize,
+                                          int maxMsgSize,
                                           MessageProcessingModels messageProcessingModel,
                                           SecurityModel.SecurityModelID securityModel,
                                           byte[] securityName,
@@ -1074,7 +1074,7 @@ namespace JunoSnmp.MP
             int msgID = this.NextMessageID;
             headerData.MsgFlags = flags;
             headerData.MsgID = msgID;
-            headerData.MsgMaxSize = maxMessageSize;
+            headerData.MsgMaxSize = maxMsgSize;
             headerData.SecurityModel = securityModel;
 
             ////ByteBuffer globalDataBuffer =
@@ -1092,7 +1092,7 @@ namespace JunoSnmp.MP
             int status =
                 secModel.GenerateRequestMessage(messageProcessingModel,
                                                 globalDataOutputStream.ToArray(),
-                                                maxMessageSize,
+                                                maxMsgSize,
                                                 securityModel,
                                                 secEngineID,
                                                 securityName,
@@ -1107,7 +1107,7 @@ namespace JunoSnmp.MP
                 {
                     cache.AddEntry(new StateReference(msgID,
                                                       flags,
-                                                      maxMessageSize,
+                                                      maxMsgSize,
                                                       sendPduHandle,
                                                       transportAddress,
                                                       null,
@@ -1124,7 +1124,7 @@ namespace JunoSnmp.MP
         }
 
         public override int PrepareResponseMessage(MessageProcessingModels messageProcessingModel,
-                                          int maxMessageSize,
+                                          int maxMsgSize,
                                           SecurityModel.SecurityModelID securityModel,
                                           byte[] securityName,
                                           SecurityLevel securityLevel,
@@ -1179,7 +1179,7 @@ namespace JunoSnmp.MP
             // response message is not reportable
             headerData.MsgFlags = flags;
             headerData.MsgID = stateReference.MsgID.MessageId;
-            headerData.MsgMaxSize = maxMessageSize;
+            headerData.MsgMaxSize = maxMsgSize;
             headerData.SecurityModel = securityModel;
 
             ////ByteBuffer globalDataBuffer =
@@ -1212,7 +1212,7 @@ namespace JunoSnmp.MP
             int status =
                 secModel.GenerateResponseMessage(this.ID,
                     globalDataOutputStream.ToArray(),
-                    maxMessageSize,
+                    maxMsgSize,
                     securityModel,
                     securityEngineID.GetValue(),
                     securityName,
@@ -1780,11 +1780,7 @@ namespace JunoSnmp.MP
 
             set
             {
-                if (value == null)
-                {
-                    throw new ArgumentNullException();
-                }
-                this.counterSupport = value;
+                this.counterSupport = value ?? throw new ArgumentNullException("value");
             }
         }
 

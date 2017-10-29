@@ -30,7 +30,7 @@ namespace JunoSnmp.Security
     /// <summary>
     /// Privacy protocol class for DES.
     /// <para>
-    /// This class uses DES in CBC mode to encrypt the data.The protocol
+    /// This class uses DES in CBC / No Padding mode to encrypt the data.The protocol
     /// is defined in the IETF standard "User-based Security Model (USM)
     /// for SNMPv3".
     /// </para>
@@ -42,7 +42,6 @@ namespace JunoSnmp.Security
         /// </summary>
         private static readonly OID protocolOid = new OID("1.3.6.1.6.3.10.1.2.2");
 
-        //private static readonly string PROTOCOL_ID = "DES/CBC/NoPadding";
         private static readonly string PROTOCOL_ID = "DES";
         private static readonly string PROTOCOL_CLASS = "DES";
         private static readonly int DECRYPT_PARAMS_LENGTH = 8;
@@ -133,9 +132,6 @@ namespace JunoSnmp.Security
                     }
                     encryptedData = ms.ToArray();
                 }
-
-                        
-                //encryptedData = DoEncryptWithPadding(encryptionKey, iv, unencryptedData, offset, length);
             }
             catch (Exception e)
             {

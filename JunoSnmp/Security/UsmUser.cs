@@ -74,7 +74,7 @@ namespace JunoSnmp.Security
         {
             if (securityName == null)
             {
-                throw new ArgumentNullException();
+                throw new ArgumentNullException("securityName");
             }
 
             if (JunoSnmpSettings.CheckUsmUserPassphraseLength)
@@ -136,7 +136,7 @@ namespace JunoSnmp.Security
                        OctetString authenticationPassphrase,
                        OID privacyProtocol,
                        OctetString privacyPassphrase,
-                       OctetString localizationEngineID) 
+                       OctetString localizationEngineID)
             : this(securityName, authenticationProtocol, authenticationPassphrase,
                  privacyProtocol, privacyPassphrase)
         {
@@ -277,10 +277,10 @@ namespace JunoSnmp.Security
          *    a negative integer, zero, or a positive integer as this object is
          *    less than, equal to, or greater than the specified object.
          */
-        public int CompareTo(object o)
+        public int CompareTo(object obj)
         {
             // allow only comparison with UsmUsers
-            UsmUser other = (UsmUser)o;
+            UsmUser other = obj as UsmUser ?? throw new ArgumentException("UsmUser.CompareTo must be called with another UsmUser", "obj");
             return securityName.CompareTo(other.securityName);
         }
 
@@ -293,12 +293,12 @@ namespace JunoSnmp.Security
             return copy;
         }
 
-  public override bool Equals(object o)
+        public override bool Equals(object obj)
         {
-            if (this == o) return true;
-            if (o == null || this.GetType() != o.GetType()) return false;
+            if (this == obj) return true;
+            if (obj == null || this.GetType() != obj.GetType()) return false;
 
-            UsmUser usmUser = (UsmUser)o;
+            UsmUser usmUser = (UsmUser)obj;
 
             if (!securityName.Equals(usmUser.securityName)) return false;
             if (authenticationPassphrase != null ? !authenticationPassphrase.Equals(usmUser.authenticationPassphrase) : usmUser.authenticationPassphrase != null)
@@ -327,7 +327,7 @@ namespace JunoSnmp.Security
                 ",authPassphrase=" + authenticationPassphrase +
                 ",privProtocol=" + privacyProtocol +
                 ",privPassphrase=" + privacyPassphrase +
-                ",localizationEngineID=" + LocalizationEngineID+ "]";
+                ",localizationEngineID=" + LocalizationEngineID + "]";
         }
 
         public void GetObjectData(SerializationInfo info, StreamingContext context)

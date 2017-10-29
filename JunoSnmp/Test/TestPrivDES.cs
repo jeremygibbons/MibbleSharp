@@ -42,17 +42,15 @@ namespace JunoSnmp.Test
             int engine_boots = 1;
             int engine_time = 2;
 
-            //cat.debug("Cleartext: " + asHex(plaintext));
             ciphertext = pd.Encrypt(plaintext, 0, plaintext.Length, key, engine_boots, engine_time, pp);
-            //cat.debug("Encrypted: " + asHex(ciphertext));
+
             decrypted = pd.Decrypt(ciphertext, 0, ciphertext.Length, key, engine_boots, engine_time, pp);
-            //cat.debug("Cleartext: " + asHex(decrypted));
 
             for (int i = 0; i < plaintext.Length; i++)
             {
                 Assert.AreEqual(plaintext[i], decrypted[i]);
             }
-            //cat.info("pp length is: " + pp.length);
+
             Assert.AreEqual(8, pp.Length);
         }
     }
