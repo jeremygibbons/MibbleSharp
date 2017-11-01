@@ -24,12 +24,10 @@ namespace JunoSnmp.Transport
     using System;
     using System.IO;
     using System.Net;
-    using System.Runtime.CompilerServices;
     using System.Net.Sockets;
     using System.Text;
     using System.Threading.Tasks;
     using System.Threading;
-    using JunoSnmp.Event;
     using JunoSnmp.Security;
     using JunoSnmp.SMI;
 

@@ -72,7 +72,7 @@ namespace JunoSnmp.Transport
          * @throws IOException
          *    on failure of binding a local port.
          */
-        public DefaultTcpTransportMapping() : base(new TcpAddress(InetAddress.getLocalHost(), 0))
+        public DefaultTcpTransportMapping() : base(new TcpAddress(System.Net.IPAddress.Any, 0))
         {
         }
 
@@ -406,7 +406,7 @@ namespace JunoSnmp.Transport
             {
                 if (value == null)
                 {
-                    throw new ArgumentNullException();
+                    throw new ArgumentNullException("value");
                 }
                 this.messageLengthDecoder = value;
             }
@@ -419,26 +419,6 @@ namespace JunoSnmp.Transport
          * @return
          *    the maximum inbound buffer size in bytes.
          */
-
-        /**
-         * Sets the maximum buffer size for incoming requests. When SNMP packets are
-         * received that are longer than this maximum size, the messages will be
-         * silently dropped and the connection will be closed.
-         * @param maxInboundMessageSize
-         *    the length of the inbound buffer in bytes.
-         */
-        public override int MaxInboundMessageSize
-        {
-            get
-            {
-                return base.MaxInboundMessageSize;
-            }
-
-            set
-            {
-                this.maxInboundMessageSize = value;
-            }
-        }
 
         [MethodImpl(MethodImplOptions.Synchronized)]
         private void TimeoutSocket(SocketEntry entry)

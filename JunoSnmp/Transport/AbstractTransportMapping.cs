@@ -46,7 +46,7 @@ namespace JunoSnmp.Transport
         public abstract Type SupportedAddressClass { get; }
 
         public abstract void SendMessage(
-            A address,
+            A targetAddress,
             byte[] message,
             TransportStateReference tmStateReference);
 

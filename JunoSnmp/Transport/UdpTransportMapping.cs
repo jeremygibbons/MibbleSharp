@@ -34,7 +34,7 @@ namespace JunoSnmp.Transport
 
         protected UdpAddress udpAddress;
 
-        public UdpTransportMapping(UdpAddress udpAddress)
+        protected UdpTransportMapping(UdpAddress udpAddress)
         {
             this.udpAddress = udpAddress;
         }
@@ -72,7 +72,7 @@ namespace JunoSnmp.Transport
         public abstract override void Close();
 
         public abstract override void SendMessage(
-            UdpAddress address, 
+            UdpAddress targetAddress, 
             byte[] message,
             TransportStateReference tmStateReference);
     }
