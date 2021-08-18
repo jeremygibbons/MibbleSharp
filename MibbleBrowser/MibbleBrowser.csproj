@@ -9,9 +9,10 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>MibbleBrowser</RootNamespace>
     <AssemblyName>MibbleBrowser</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -79,6 +80,7 @@
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
     </Compile>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -94,6 +96,14 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Grammatica\Grammatica.csproj">
+      <Project>{bb0d2058-f6e1-486b-a02d-4a52667121ee}</Project>
+      <Name>Grammatica</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\JunoSnmp\JunoSnmp.csproj">
+      <Project>{99f62c7b-883c-43dd-8224-9b74c76b5621}</Project>
+      <Name>JunoSnmp</Name>
+    </ProjectReference>
     <ProjectReference Include="..\MibbleSharp\MibbleSharp.csproj">
       <Project>{0ba94c64-91da-4501-a795-2e57dcf58b15}</Project>
       <Name>MibbleSharp</Name>
